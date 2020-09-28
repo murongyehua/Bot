@@ -3,7 +3,7 @@ package com.bot.base.service;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/23
  */
 public interface Distributor {

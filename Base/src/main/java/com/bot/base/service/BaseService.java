@@ -1,7 +1,7 @@
 package com.bot.base.service;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/22
  */
 public interface BaseService {

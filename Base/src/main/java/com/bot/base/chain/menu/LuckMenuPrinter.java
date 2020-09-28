@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 运势占卜菜单执行者
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/27
  */
 @Component("luckMenuPrinter")

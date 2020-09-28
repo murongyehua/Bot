@@ -3,6 +3,7 @@ package com.bot.base.service;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author liul
+ * 文本加载者
+ * @author murongyehua
  * @version 1.0 2020/9/28
  */
+@Slf4j
 @Service
 public class CommonTextLoader {
 
@@ -51,14 +54,18 @@ public class CommonTextLoader {
 
     @PostConstruct
     public void loadText() {
+        log.info("开始加载文本...");
         // 加载服务指令
         List<String> serviceInstructs = FileUtil.readLines(textPath + "serviceInstructCode.txt", "utf-8");
         serviceInstructMap = this.baseLoad(serviceInstructs);
+        log.info("服务指令加载完毕");
         // 加载菜单指令
         List<String> menuInstructs = FileUtil.readLines(textPath + "menuInstructCode.txt", "utf-8");
         menuInstructMap = this.baseLoad(menuInstructs);
+        log.info("菜单指令加载完毕");
         // 加载默认回复
         defaultResponseMsg = FileUtil.readLines(textPath + "defaultResponse.txt", "utf-8");
+        log.info("默认回复加载完毕");
         // 加载固定回答
         List<String> someResponse = FileUtil.readLines(textPath + "someResponse.txt", "utf-8");
         someResponseMap = new HashMap<>(16);
@@ -69,8 +76,11 @@ public class CommonTextLoader {
                 someResponseMap.put(key, Arrays.asList(keysAndResponses[1].split(StrUtil.COMMA)));
             }
         }
+        log.info("固定回答加载完毕");
         // 加载答案之书
         answers = FileUtil.readLines(textPath + "answerBook.txt", "utf-8");
+        log.info("答案之书加载完毕");
+        log.info("文本成功加载完毕!!");
     }
 
     private Map<String, String> baseLoad(List<String> instructs) {

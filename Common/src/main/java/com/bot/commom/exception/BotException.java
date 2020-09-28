@@ -1,7 +1,7 @@
 package com.bot.commom.exception;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/23
  */
 public class BotException extends RuntimeException {

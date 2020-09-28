@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 指令接收Controller
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/22
  */
 @RestController

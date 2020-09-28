@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * 菜单执行者共用基类
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/22
  */
 public class Menu implements MenuPrinter{

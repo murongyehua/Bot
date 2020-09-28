@@ -6,6 +6,7 @@ import com.bot.base.chain.Menu;
 import com.bot.base.service.BaseService;
 import com.bot.base.service.CommonTextLoader;
 import com.bot.base.service.Distributor;
+import com.bot.base.service.SystemManager;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.exception.BotException;
 import com.bot.base.commom.MessageSender;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 /**
  * 指令分发
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/23
  */
 @Slf4j
@@ -36,6 +37,9 @@ public class DistributorServiceImpl implements Distributor {
 
     @Autowired
     private MessageSender messageSender;
+
+    @Autowired
+    private SystemManager systemManager;
 
     @Override
     public void doDistribute(HttpServletResponse response, String reqContent, String token) {
@@ -57,6 +61,14 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     private String req2Resp(String reqContent, String token) {
+        // 判断是不是进入管理模式
+        if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {
+            return SystemManager.tryIntoManager(token);
+        }
+        // 判断是不是处于管理模式
+        if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
+            return systemManager.managerDistribute(reqContent);
+        }
         // 固定回答最优先 完全一致才命中
         for (String keyword : CommonTextLoader.someResponseMap.keySet()) {
             if (keyword.equals(reqContent)) {

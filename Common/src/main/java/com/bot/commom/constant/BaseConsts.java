@@ -3,7 +3,7 @@ package com.bot.commom.constant;
 import cn.hutool.core.util.StrUtil;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/9/22
  */
 public interface BaseConsts {
@@ -98,6 +98,21 @@ public interface BaseConsts {
 
         String DESCRIBE = "你可以通过【占卜】、【运势】等关键字来触发运势占卜" + StrUtil.CRLF
                 + "此功能纯属娱乐，不可作为任何行为、事件的凭证";
+    }
+
+    interface SystemManager {
+        String TRY_INTO_MANAGER_SUCCESS = "请输入管理员密码：";
+        String TRY_INTO_MANAGER_FAIL = "当前有其他人处于管理模式中，进入管理模式【失败】";
+        String TRY_INTO_MANAGER_INFO = "进入管理模式";
+        String TRY_OUT_MANAGER_INFO = "退出管理模式";
+        String TRY_INTO_MANAGER_REPEAT = "当前已处于管理模式";
+        String MANAGER_PASSWORD_ERROR = "密码错误，自动退出管理模式";
+        String MANAGER_PASSWORD_RIGHT = "密码正确，成功进入管理模式";
+
+        String MANAGER_CODE_RELOAD_TEXT = "重载文本";
+        String UN_KNOW_MANAGER_CODE = "未知管理指令";
+        String SUCCESS = "操作成功";
+        String MANAGE_OUT_TIME = "超过1分钟未发现有效操作，已自动退出管理模式";
     }
 
 }
