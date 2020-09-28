@@ -1,0 +1,3 @@
+天气,气候,温度=weatherServiceImpl
+吗,？,?,为什么,请问=answerBookServiceImpl
+占卜,运势占卜,运势=luckServiceImpl

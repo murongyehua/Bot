@@ -1,0 +1,103 @@
+package com.bot.commom.constant;
+
+import cn.hutool.core.util.StrUtil;
+
+/**
+ * @author liul
+ * @version 1.0 2020/9/22
+ */
+public interface BaseConsts {
+
+    interface ClassBeanName {
+        String WEATHER = "weatherServiceImpl";
+        String ANSWER_BOOK = "answerBookServiceImpl";
+    }
+
+    interface Weather {
+        String CITY_NAME = "city";
+        String KEY_NAME = "appkey";
+        String QUERY_STATUS = "ok";
+
+        String KEYWORD_NOW = "现在";
+        String KEYWORD_TODAY = "今天";
+        String KEYWORD_TOMORROW = "明天";
+        String KEYWORD_AFTER_TOMORROW = "后天";
+        String SUGGEST = "建议";
+
+        String LAST_UPDATE_TIME = "最后更新时间: ";
+        String DAY_COND = "白天: ";
+        String NIGHT_COND = "夜晚: ";
+        String DEG = "温度: ";
+        String WIND = "风力: ";
+        String DATE = "日期: ";
+        String NOW_TEXT = "现在外面[%s],温度[%s],[%s]";
+
+        String AIR = "空气: ";
+        String COMF = "舒适: ";
+        String CW = "洗车: ";
+        String DRSG = "穿衣: ";
+        String FLU = "流感: ";
+        String SPORT = "运动: ";
+        String TRAV = "旅游: ";
+        String UV = "日晒: ";
+
+
+
+        String DESCRIBE = "你可以发送"+ StrUtil.CRLF +
+                "【武汉今天天气怎么样】" + StrUtil.CRLF +
+                "【武汉明天天气怎么样】" + StrUtil.CRLF +
+                "【武汉后面天气怎么样】" + StrUtil.CRLF +
+                "【武汉天气建议】" + StrUtil.CRLF +
+                "等类似指令来获取天气相关的信息" + StrUtil.CRLF +
+                "不过，我只能给你提供最多近3天的天气信息";
+
+        String FAIL_QUERY = "哎呀，我也不知道了，你要不换个方式问问";
+    }
+
+    interface Menu {
+        String ONE = "1";
+        String TWO = "2";
+        String THREE = "3";
+        String FOUR = "4";
+        String FIVE = "5";
+        String SIX = "6";
+        String SEVEN = "7";
+        String EIGHT = "8";
+        String NINE  = "9";
+        String TEN = "10";
+        String ZERO = "0";
+
+        String MAIN_MENU_NAME = "菜单";
+        String WEATHER_MENU_NAME = "天气";
+        String ANSWER_BOOK = "答案之书";
+        String LUCK_NAME = "运势占卜";
+
+        String TURN_BACK = "返回";
+        String MENU_TIP = "回复选项前的数字，即可查看更多";
+    }
+
+    interface Distributor {
+        String SPLIT_REG = "=";
+        String AND_REG = "&";
+    }
+
+    interface AnswerBook {
+        String DESCRIBE = "你可以通过明显的问句来触发答案之书的回答，如：" + StrUtil.CRLF +
+                "【请问我应该吃包子吗？】" + StrUtil.CRLF +
+                "【为什么我这么好看呢？】";
+    }
+
+    interface Luck {
+        String TEXT_COMMON = "今日运势: ";
+        String TEXT_BEST = "极好";
+        String TEXT_GOOD = "较好";
+        String TEXT_RIGHT = "不错";
+        String TEXT_NORMAL = "一般";
+        String TEXT_BAD = "较差";
+        String TEXT_TERRIBLE = "极差";
+
+        String DESCRIBE = "你可以通过【占卜】、【运势】等关键字来触发运势占卜" + StrUtil.CRLF
+                + "此功能纯属娱乐，不可作为任何行为、事件的凭证";
+    }
+
+}
