@@ -60,6 +60,18 @@ public class DistributorServiceImpl implements Distributor {
         }
     }
 
+    @Override
+    public String doDistributeWithString(String reqContent, String token) {
+        try{
+            String resp = this.req2Resp(reqContent, token);
+            log.info("回复[{}],[{}]", token, resp);
+            return resp;
+        }catch (Exception e) {
+            log.error("目标[{}],响应异常");
+        }
+        return null;
+    }
+
     private String req2Resp(String reqContent, String token) {
         // 判断是不是进入管理模式
         if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {

@@ -16,4 +16,11 @@ public interface Distributor {
      */
     void doDistribute(HttpServletResponse response, String reqContent, String token);
 
+    /**
+     * 微信分发请求 进行响应
+     * @param reqContent
+     * @param token
+     */
+    String doDistributeWithString(String reqContent, String token);
+
 }
