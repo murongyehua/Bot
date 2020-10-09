@@ -34,19 +34,19 @@ public class InstructDistributor {
         String groupName = request.getParameter("GroupName");
         if ("NormalIM".equals(o)) {
             log.info("接收到私人消息[{}]，发送人[{}]", message, sender);
-            distributor.doDistribute(response, message, sender);
+            distributor.doDistribute(response, message.trim(), sender);
         }
         if ("ClusterIM".equals(o) && message.startsWith("@小林Bot")) {
             log.info("接收到群消息[{}],群号[{}],群名[{}],发送人[{}]", message, groupId, groupName, sender);
             message = message.split("\\)")[1];
             log.info("截取后的消息: [{}]", message);
-            distributor.doDistribute(response, message, sender);
+            distributor.doDistribute(response, message.trim(), sender);
         }
         if ("DiscussionIM".equals(o) && message.startsWith("@小林Bot")) {
             log.info("接收到讨论组消息[{}],讨论组ID[{}],,发送人[{}]", message, groupId, sender);
             message = message.split("\\)")[1];
             log.info("截取后的消息: [{}]", message);
-            distributor.doDistribute(response, message, sender);
+            distributor.doDistribute(response, message.trim(), sender);
         }
     }
 

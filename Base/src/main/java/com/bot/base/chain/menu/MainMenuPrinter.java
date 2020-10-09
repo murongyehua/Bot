@@ -22,6 +22,7 @@ public class MainMenuPrinter extends Menu{
         this.menuChildrenMap.put(BaseConsts.Menu.ONE, new WeatherMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.TWO, new AnswerMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.THREE, new LuckMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.FOUR, new SweetMenuPrinter());
     }
 
     @Override

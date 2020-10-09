@@ -5,21 +5,19 @@ import com.bot.commom.constant.BaseConsts;
 import org.springframework.stereotype.Component;
 
 /**
- * 天气菜单执行者
  * @author murongyehua
- * @version 1.0 2020/9/22
+ * @version 1.0 2020/10/9
  */
-@Component("weatherMenuPrinter")
-public class WeatherMenuPrinter extends Menu{
+@Component("sweetMenuPrinter")
+public class SweetMenuPrinter extends Menu {
 
-    WeatherMenuPrinter() {
+    SweetMenuPrinter() {
         this.initMenu();
     }
 
     @Override
     public void initMenu() {
-        this.menuName = BaseConsts.Menu.SWEET;
-        this.describe = BaseConsts.Sweet.DESCRIBE;
+        this.menuName = BaseConsts.Menu.WEATHER_MENU_NAME;
+        this.describe = BaseConsts.Weather.DESCRIBE;
     }
-
 }

@@ -71,6 +71,7 @@ public interface BaseConsts {
         String WEATHER_MENU_NAME = "天气";
         String ANSWER_BOOK = "答案之书";
         String LUCK_NAME = "运势占卜";
+        String SWEET = "情话Boy";
 
         String TURN_BACK = "返回";
         String MENU_TIP = "回复选项前的数字，即可查看更多";
@@ -113,6 +114,10 @@ public interface BaseConsts {
         String UN_KNOW_MANAGER_CODE = "未知管理指令";
         String SUCCESS = "操作成功";
         String MANAGE_OUT_TIME = "超过1分钟未发现有效操作，已自动退出管理模式";
+    }
+
+    interface Sweet {
+        String DESCRIBE = "发送的内容中包含【情话】，即可让小林化身情话Boy";
     }
 
 }
