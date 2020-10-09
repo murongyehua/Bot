@@ -18,8 +18,8 @@ public class WeatherMenuPrinter extends Menu{
 
     @Override
     public void initMenu() {
-        this.menuName = BaseConsts.Menu.SWEET;
-        this.describe = BaseConsts.Sweet.DESCRIBE;
+        this.menuName = BaseConsts.Menu.WEATHER_MENU_NAME;
+        this.describe = BaseConsts.Weather.DESCRIBE;
     }
 
 }
