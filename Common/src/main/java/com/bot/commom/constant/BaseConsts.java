@@ -120,4 +120,10 @@ public interface BaseConsts {
         String DESCRIBE = "发送的内容中包含【情话】，即可让小林化身情话Boy";
     }
 
+    interface Music {
+        String ERROR = "现在嗓子不太舒服，过会儿再唱吧";
+        String TIP = "希望你能喜欢！";
+        String[] SORT = {"热歌榜", "新歌榜", "飙升榜", "抖音榜", "电音榜"};
+    }
+
 }

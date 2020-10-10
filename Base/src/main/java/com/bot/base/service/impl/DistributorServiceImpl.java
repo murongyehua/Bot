@@ -67,7 +67,7 @@ public class DistributorServiceImpl implements Distributor {
             log.info("回复[{}],[{}]", token, resp);
             return resp;
         }catch (Exception e) {
-            log.error("目标[{}],响应异常");
+            log.error("目标[{}],响应异常", token, e);
         }
         return null;
     }

@@ -2,3 +2,4 @@
 吗,？,?,为什么,请问=answerBookServiceImpl
 占卜,运势占卜,运势=luckServiceImpl
 情话=sweetServiceImpl
+音乐,歌=cloudMusicServiceImpl
