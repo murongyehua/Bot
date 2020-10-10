@@ -76,6 +76,7 @@ public interface BaseConsts {
 
         String TURN_BACK = "返回";
         String MENU_TIP = "回复选项前的数字，即可查看更多";
+        String VERSION_TIP = "[小林当前版本]: [%s]";
     }
 
     interface Distributor {
@@ -126,6 +127,12 @@ public interface BaseConsts {
         String TIP = "希望你能喜欢！";
         String[] SORT = {"热歌榜", "新歌榜", "飙升榜", "抖音榜", "电音榜"};
         String DESCRIBE = "想听音乐又不知道听什么？随时来找小林听歌吧！" + StrUtil.CRLF +"我会随机从网易云音乐的排行榜上给你发一首歌哦~";
+    }
+
+    interface Chat {
+        String ILL_REX_1 = "src";
+        String ILL_REX_2 = "(";
+        String ILL_REX_3 = ")";
     }
 
 }

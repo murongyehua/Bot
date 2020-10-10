@@ -20,6 +20,8 @@ public class Menu implements MenuPrinter{
 
     protected String describe = StrUtil.EMPTY;
 
+    private static final String VERSION = "1.3.2";
+
     public String print() {
         return this.printMenuMap();
     }
@@ -27,6 +29,7 @@ public class Menu implements MenuPrinter{
     private String printMenuMap() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(StrUtil.BRACKET_START).append(menuName).append(StrUtil.BRACKET_END).append(StrUtil.CRLF);
+        stringBuilder.append(String.format(BaseConsts.Menu.VERSION_TIP, VERSION));
         // 标题与选项之间换一下行
         stringBuilder.append(StrUtil.CRLF);
         stringBuilder.append(describe).append(StrUtil.CRLF);
