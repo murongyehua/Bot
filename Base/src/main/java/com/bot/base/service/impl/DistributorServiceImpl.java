@@ -56,7 +56,7 @@ public class DistributorServiceImpl implements Distributor {
             }
             response.getWriter().print(resp);
         }catch (Exception e) {
-            log.error("目标[{}],响应异常");
+            log.error("目标[{}],响应异常", token, e);
         }
     }
 
@@ -106,7 +106,7 @@ public class DistributorServiceImpl implements Distributor {
             return maybeResp;
         }
         // 全部未命中
-        return geyDefaultMsg();
+        return geyDefaultMsg(reqContent, token);
     }
 
     private BaseService getService(String className) {
@@ -131,7 +131,12 @@ public class DistributorServiceImpl implements Distributor {
         return menu;
     }
 
-    private String geyDefaultMsg() {
+    private String geyDefaultMsg(String reqContent, String token) {
+        BaseService service = serviceMap.get("defaultChatServiceImpl");
+        String resp = service.doQueryReturn(reqContent, token);
+        if (resp != null) {
+            return resp;
+        }
         int index = RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size());
         return CommonTextLoader.defaultResponseMsg.get(index);
     }

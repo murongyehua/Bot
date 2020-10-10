@@ -46,7 +46,7 @@ public interface BaseConsts {
         String DESCRIBE = "你可以发送"+ StrUtil.CRLF +
                 "【武汉今天天气怎么样】" + StrUtil.CRLF +
                 "【武汉明天天气怎么样】" + StrUtil.CRLF +
-                "【武汉后面天气怎么样】" + StrUtil.CRLF +
+                "【武汉后天天气怎么样】" + StrUtil.CRLF +
                 "【武汉天气建议】" + StrUtil.CRLF +
                 "等类似指令来获取天气相关的信息" + StrUtil.CRLF +
                 "不过，我只能给你提供最多近3天的天气信息";
@@ -72,6 +72,7 @@ public interface BaseConsts {
         String ANSWER_BOOK = "答案之书";
         String LUCK_NAME = "运势占卜";
         String SWEET = "情话Boy";
+        String MUSIC = "听音乐";
 
         String TURN_BACK = "返回";
         String MENU_TIP = "回复选项前的数字，即可查看更多";
@@ -83,9 +84,9 @@ public interface BaseConsts {
     }
 
     interface AnswerBook {
-        String DESCRIBE = "你可以通过明显的问句来触发答案之书的回答，如：" + StrUtil.CRLF +
+        String DESCRIBE = "为了不与正常聊天冲突，现在只有包含【请问】才会触发答案之书的回答，如：" + StrUtil.CRLF +
                 "【请问我应该吃包子吗？】" + StrUtil.CRLF +
-                "【为什么我这么好看呢？】";
+                "【请问为什么我这么好看呢？】";
     }
 
     interface Luck {
@@ -124,6 +125,7 @@ public interface BaseConsts {
         String ERROR = "现在嗓子不太舒服，过会儿再唱吧";
         String TIP = "希望你能喜欢！";
         String[] SORT = {"热歌榜", "新歌榜", "飙升榜", "抖音榜", "电音榜"};
+        String DESCRIBE = "想听音乐又不知道听什么？随时来找小林听歌吧！" + StrUtil.CRLF +"我会随机从网易云音乐的排行榜上给你发一首歌哦~";
     }
 
 }

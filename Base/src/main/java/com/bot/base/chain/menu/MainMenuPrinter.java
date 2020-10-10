@@ -23,6 +23,7 @@ public class MainMenuPrinter extends Menu{
         this.menuChildrenMap.put(BaseConsts.Menu.TWO, new AnswerMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.THREE, new LuckMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.FOUR, new SweetMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.FIVE, new CloudMusicMenuPrinter());
     }
 
     @Override

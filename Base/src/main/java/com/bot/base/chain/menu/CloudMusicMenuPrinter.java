@@ -5,20 +5,21 @@ import com.bot.commom.constant.BaseConsts;
 import org.springframework.stereotype.Component;
 
 /**
- * 情话菜单执行者
+ * 音乐菜单执行者
  * @author murongyehua
- * @version 1.0 2020/10/9
+ * @version 1.0 2020/10/10
  */
-@Component("sweetMenuPrinter")
-public class SweetMenuPrinter extends Menu {
+@Component("cloudMusicMenuPrinter")
+public class CloudMusicMenuPrinter extends Menu {
 
-    SweetMenuPrinter() {
+    CloudMusicMenuPrinter() {
         this.initMenu();
     }
 
     @Override
     public void initMenu() {
-        this.menuName = BaseConsts.Menu.SWEET;
-        this.describe = BaseConsts.Sweet.DESCRIBE;
+        this.menuName = BaseConsts.Menu.MUSIC;
+        this.describe = BaseConsts.Music.DESCRIBE;
     }
+
 }
