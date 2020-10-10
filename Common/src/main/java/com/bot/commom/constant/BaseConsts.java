@@ -131,8 +131,8 @@ public interface BaseConsts {
 
     interface Chat {
         String ILL_REX_1 = "src";
-        String ILL_REX_2 = "(";
-        String ILL_REX_3 = ")";
+        String ILL_REX_2 = "（";
+        String ILL_REX_3 = "）";
     }
 
 }

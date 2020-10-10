@@ -55,7 +55,7 @@ public class DefaultChatServiceImpl implements BaseService {
         int startIndex = content.indexOf(startStr);
         int endIndex = content.indexOf(endStr);
         String replacement = content.substring(startIndex, endIndex + 1);
-        return content.replaceAll(replacement, StrUtil.EMPTY);
+        return content.replace(replacement, StrUtil.EMPTY);
     }
 
 }
