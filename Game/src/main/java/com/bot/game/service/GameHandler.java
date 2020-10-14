@@ -12,5 +12,11 @@ public interface GameHandler {
      */
     String exit(String token);
 
-
+    /**
+     * 正常触发，可能是初次进入也可能是流程调用
+     * @param reqContent
+     * @param token
+     * @return
+     */
+    String play(String reqContent, String token);
 }

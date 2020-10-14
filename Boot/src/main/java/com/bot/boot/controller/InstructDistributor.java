@@ -95,4 +95,10 @@ public class InstructDistributor {
         return JSONUtil.toJsonStr(JSONUtil.parseObj(resp));
     }
 
+    @PostMapping("/test")
+    public String test(String msg) {
+        String token = "test123";
+        return distributor.doDistributeWithString(msg, token);
+    }
+
 }

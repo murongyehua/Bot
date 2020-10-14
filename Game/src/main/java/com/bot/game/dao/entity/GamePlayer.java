@@ -1,48 +1,28 @@
 package com.bot.game.dao.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 
 /**
- * bot_base_goods
+ * bot_game_player
  * @author 
  */
 @Data
 public class GamePlayer implements Serializable {
-    /**
-     * id
-     */
     private String id;
 
-    /**
-     * 名称
-     */
-    private String name;
+    private String gameId;
 
-    /**
-     * 效果
-     */
-    private String effect;
+    private String nickname;
 
-    /**
-     * 数值
-     */
-    private String figure;
+    private Date regTime;
 
-    /**
-     * 描述
-     */
-    private String describe;
+    private String status;
 
-    /**
-     * 有效期
-     */
-    private String termOfValidity;
+    private String appellation;
 
-    /**
-     * 是否可用
-     */
-    private String used;
+    private Integer soulPower;
 
     private static final long serialVersionUID = 1L;
 }

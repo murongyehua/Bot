@@ -1,48 +1,22 @@
 package com.bot.game.dao.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 
 /**
- * bot_base_goods
+ * bot_player_appellation
  * @author 
  */
 @Data
 public class PlayerAppellation implements Serializable {
-    /**
-     * id
-     */
     private String id;
 
-    /**
-     * 名称
-     */
-    private String name;
+    private String playerId;
 
-    /**
-     * 效果
-     */
-    private String effect;
+    private String appellation;
 
-    /**
-     * 数值
-     */
-    private String figure;
-
-    /**
-     * 描述
-     */
-    private String describe;
-
-    /**
-     * 有效期
-     */
-    private String termOfValidity;
-
-    /**
-     * 是否可用
-     */
-    private String used;
+    private Date getTime;
 
     private static final long serialVersionUID = 1L;
 }

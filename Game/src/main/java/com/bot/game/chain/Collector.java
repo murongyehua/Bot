@@ -7,7 +7,7 @@ package com.bot.game.chain;
 public interface Collector {
 
     /**
-     * 构建调用链 在用户登录时/退出菜单时进行
+     * 构建调用链 在玩家进入时进行
      * @return
      */
     String buildCollector(String token);
@@ -19,4 +19,19 @@ public interface Collector {
      * @return
      */
     String toNextOrPrevious(String token, String point);
+
+    /**
+     * 玩家退出时调用
+     * @param token
+     * @return
+     */
+    void removeToken(String token);
+
+    /**
+     * 判断玩家是否在线
+     * @param token
+     * @return
+     */
+    boolean isOnLine(String token);
+
 }

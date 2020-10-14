@@ -4,45 +4,18 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * bot_base_goods
+ * bot_game
  * @author 
  */
 @Data
 public class Game implements Serializable {
-    /**
-     * id
-     */
     private String id;
 
-    /**
-     * 名称
-     */
-    private String name;
+    private String gameName;
 
-    /**
-     * 效果
-     */
-    private String effect;
+    private String keywords;
 
-    /**
-     * 数值
-     */
-    private String figure;
-
-    /**
-     * 描述
-     */
-    private String describe;
-
-    /**
-     * 有效期
-     */
-    private String termOfValidity;
-
-    /**
-     * 是否可用
-     */
-    private String used;
+    private String status;
 
     private static final long serialVersionUID = 1L;
 }

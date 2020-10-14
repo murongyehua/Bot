@@ -3,109 +3,109 @@
 <mapper namespace="com.bot.game.dao.mapper.GamePlayerMapper">
   <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.GamePlayer">
     <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="effect" jdbcType="CHAR" property="effect" />
-    <result column="figure" jdbcType="VARCHAR" property="figure" />
-    <result column="describe" jdbcType="VARCHAR" property="describe" />
-    <result column="term_of_validity" jdbcType="VARCHAR" property="termOfValidity" />
-    <result column="used" jdbcType="CHAR" property="used" />
+    <result column="game_id" jdbcType="VARCHAR" property="gameId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="reg_time" jdbcType="TIMESTAMP" property="regTime" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="appellation" jdbcType="VARCHAR" property="appellation" />
+    <result column="soul_power" jdbcType="INTEGER" property="soulPower" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, effect, figure, `describe`, term_of_validity, used
+    id, game_id, nickname, reg_time, `status`, appellation, soul_power
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from bot_base_goods
+    from bot_game_player
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from bot_base_goods
+    delete from bot_game_player
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.GamePlayer" useGeneratedKeys="true">
-    insert into bot_base_goods (`name`, effect, figure, 
-      `describe`, term_of_validity, used
+    insert into bot_game_player (game_id, nickname, reg_time, 
+      `status`, appellation, soul_power
       )
-    values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
+    values (#{gameId,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=CHAR}, #{appellation,jdbcType=VARCHAR}, #{soulPower,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.GamePlayer" useGeneratedKeys="true">
-    insert into bot_base_goods
+    insert into bot_game_player
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        `name`,
+      <if test="gameId != null">
+        game_id,
       </if>
-      <if test="effect != null">
-        effect,
+      <if test="nickname != null">
+        nickname,
       </if>
-      <if test="figure != null">
-        figure,
+      <if test="regTime != null">
+        reg_time,
       </if>
-      <if test="describe != null">
-        `describe`,
+      <if test="status != null">
+        `status`,
       </if>
-      <if test="termOfValidity != null">
-        term_of_validity,
+      <if test="appellation != null">
+        appellation,
       </if>
-      <if test="used != null">
-        used,
+      <if test="soulPower != null">
+        soul_power,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="gameId != null">
+        #{gameId,jdbcType=VARCHAR},
       </if>
-      <if test="effect != null">
-        #{effect,jdbcType=CHAR},
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
       </if>
-      <if test="figure != null">
-        #{figure,jdbcType=VARCHAR},
+      <if test="regTime != null">
+        #{regTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="describe != null">
-        #{describe,jdbcType=VARCHAR},
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
       </if>
-      <if test="termOfValidity != null">
-        #{termOfValidity,jdbcType=VARCHAR},
+      <if test="appellation != null">
+        #{appellation,jdbcType=VARCHAR},
       </if>
-      <if test="used != null">
-        #{used,jdbcType=CHAR},
+      <if test="soulPower != null">
+        #{soulPower,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.GamePlayer">
-    update bot_base_goods
+    update bot_game_player
     <set>
-      <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+      <if test="gameId != null">
+        game_id = #{gameId,jdbcType=VARCHAR},
       </if>
-      <if test="effect != null">
-        effect = #{effect,jdbcType=CHAR},
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
       </if>
-      <if test="figure != null">
-        figure = #{figure,jdbcType=VARCHAR},
+      <if test="regTime != null">
+        reg_time = #{regTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="describe != null">
-        `describe` = #{describe,jdbcType=VARCHAR},
+      <if test="status != null">
+        `status` = #{status,jdbcType=CHAR},
       </if>
-      <if test="termOfValidity != null">
-        term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
+      <if test="appellation != null">
+        appellation = #{appellation,jdbcType=VARCHAR},
       </if>
-      <if test="used != null">
-        used = #{used,jdbcType=CHAR},
+      <if test="soulPower != null">
+        soul_power = #{soulPower,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.GamePlayer">
-    update bot_base_goods
-    set `name` = #{name,jdbcType=VARCHAR},
-      effect = #{effect,jdbcType=CHAR},
-      figure = #{figure,jdbcType=VARCHAR},
-      `describe` = #{describe,jdbcType=VARCHAR},
-      term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      used = #{used,jdbcType=CHAR}
+    update bot_game_player
+    set game_id = #{gameId,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      reg_time = #{regTime,jdbcType=TIMESTAMP},
+      `status` = #{status,jdbcType=CHAR},
+      appellation = #{appellation,jdbcType=VARCHAR},
+      soul_power = #{soulPower,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

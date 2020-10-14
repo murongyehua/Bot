@@ -54,4 +54,14 @@ public class GameChainCollector implements Collector{
         chain.add(targetMenu);
         return targetMenu.print();
     }
+
+    @Override
+    public void removeToken(String token) {
+        userChainMap.remove(token);
+    }
+
+    @Override
+    public boolean isOnLine(String token) {
+        return userChainMap.containsKey(token);
+    }
 }

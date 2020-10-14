@@ -4,108 +4,190 @@
   <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.BasePhantom">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="effect" jdbcType="CHAR" property="effect" />
-    <result column="figure" jdbcType="VARCHAR" property="figure" />
+    <result column="appellation" jdbcType="VARCHAR" property="appellation" />
+    <result column="rarity" jdbcType="CHAR" property="rarity" />
+    <result column="attribute" jdbcType="CHAR" property="attribute" />
+    <result column="camp" jdbcType="CHAR" property="camp" />
+    <result column="area" jdbcType="CHAR" property="area" />
+    <result column="speed" jdbcType="INTEGER" property="speed" />
+    <result column="attack" jdbcType="INTEGER" property="attack" />
+    <result column="physique" jdbcType="INTEGER" property="physique" />
+    <result column="grow" jdbcType="INTEGER" property="grow" />
+    <result column="skills" jdbcType="VARCHAR" property="skills" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
-    <result column="term_of_validity" jdbcType="VARCHAR" property="termOfValidity" />
-    <result column="used" jdbcType="CHAR" property="used" />
+    <result column="lines" jdbcType="VARCHAR" property="lines" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, effect, figure, `describe`, term_of_validity, used
+    id, `name`, appellation, rarity, `attribute`, camp, area, speed, attack, physique, 
+    grow, skills, `describe`, `lines`
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from bot_base_goods
+    from bot_base_phantom
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from bot_base_goods
+    delete from bot_base_phantom
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BasePhantom" useGeneratedKeys="true">
-    insert into bot_base_goods (`name`, effect, figure, 
-      `describe`, term_of_validity, used
+    insert into bot_base_phantom (`name`, appellation, rarity, 
+      `attribute`, camp, area, speed, 
+      attack, physique, grow, 
+      skills, `describe`, `lines`
       )
-    values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
+    values (#{name,jdbcType=VARCHAR}, #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, 
+      #{attribute,jdbcType=CHAR}, #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, 
+      #{attack,jdbcType=INTEGER}, #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, 
+      #{skills,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{lines,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BasePhantom" useGeneratedKeys="true">
-    insert into bot_base_goods
+    insert into bot_base_phantom
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">
         `name`,
       </if>
-      <if test="effect != null">
-        effect,
+      <if test="appellation != null">
+        appellation,
       </if>
-      <if test="figure != null">
-        figure,
+      <if test="rarity != null">
+        rarity,
+      </if>
+      <if test="attribute != null">
+        `attribute`,
+      </if>
+      <if test="camp != null">
+        camp,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="speed != null">
+        speed,
+      </if>
+      <if test="attack != null">
+        attack,
+      </if>
+      <if test="physique != null">
+        physique,
+      </if>
+      <if test="grow != null">
+        grow,
+      </if>
+      <if test="skills != null">
+        skills,
       </if>
       <if test="describe != null">
         `describe`,
       </if>
-      <if test="termOfValidity != null">
-        term_of_validity,
-      </if>
-      <if test="used != null">
-        used,
+      <if test="lines != null">
+        `lines`,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="effect != null">
-        #{effect,jdbcType=CHAR},
+      <if test="appellation != null">
+        #{appellation,jdbcType=VARCHAR},
       </if>
-      <if test="figure != null">
-        #{figure,jdbcType=VARCHAR},
+      <if test="rarity != null">
+        #{rarity,jdbcType=CHAR},
+      </if>
+      <if test="attribute != null">
+        #{attribute,jdbcType=CHAR},
+      </if>
+      <if test="camp != null">
+        #{camp,jdbcType=CHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=CHAR},
+      </if>
+      <if test="speed != null">
+        #{speed,jdbcType=INTEGER},
+      </if>
+      <if test="attack != null">
+        #{attack,jdbcType=INTEGER},
+      </if>
+      <if test="physique != null">
+        #{physique,jdbcType=INTEGER},
+      </if>
+      <if test="grow != null">
+        #{grow,jdbcType=INTEGER},
+      </if>
+      <if test="skills != null">
+        #{skills,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
         #{describe,jdbcType=VARCHAR},
       </if>
-      <if test="termOfValidity != null">
-        #{termOfValidity,jdbcType=VARCHAR},
-      </if>
-      <if test="used != null">
-        #{used,jdbcType=CHAR},
+      <if test="lines != null">
+        #{lines,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.BasePhantom">
-    update bot_base_goods
+    update bot_base_phantom
     <set>
       <if test="name != null">
         `name` = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="effect != null">
-        effect = #{effect,jdbcType=CHAR},
+      <if test="appellation != null">
+        appellation = #{appellation,jdbcType=VARCHAR},
       </if>
-      <if test="figure != null">
-        figure = #{figure,jdbcType=VARCHAR},
+      <if test="rarity != null">
+        rarity = #{rarity,jdbcType=CHAR},
+      </if>
+      <if test="attribute != null">
+        `attribute` = #{attribute,jdbcType=CHAR},
+      </if>
+      <if test="camp != null">
+        camp = #{camp,jdbcType=CHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+      <if test="speed != null">
+        speed = #{speed,jdbcType=INTEGER},
+      </if>
+      <if test="attack != null">
+        attack = #{attack,jdbcType=INTEGER},
+      </if>
+      <if test="physique != null">
+        physique = #{physique,jdbcType=INTEGER},
+      </if>
+      <if test="grow != null">
+        grow = #{grow,jdbcType=INTEGER},
+      </if>
+      <if test="skills != null">
+        skills = #{skills,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
         `describe` = #{describe,jdbcType=VARCHAR},
       </if>
-      <if test="termOfValidity != null">
-        term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      </if>
-      <if test="used != null">
-        used = #{used,jdbcType=CHAR},
+      <if test="lines != null">
+        `lines` = #{lines,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.BasePhantom">
-    update bot_base_goods
+    update bot_base_phantom
     set `name` = #{name,jdbcType=VARCHAR},
-      effect = #{effect,jdbcType=CHAR},
-      figure = #{figure,jdbcType=VARCHAR},
+      appellation = #{appellation,jdbcType=VARCHAR},
+      rarity = #{rarity,jdbcType=CHAR},
+      `attribute` = #{attribute,jdbcType=CHAR},
+      camp = #{camp,jdbcType=CHAR},
+      area = #{area,jdbcType=CHAR},
+      speed = #{speed,jdbcType=INTEGER},
+      attack = #{attack,jdbcType=INTEGER},
+      physique = #{physique,jdbcType=INTEGER},
+      grow = #{grow,jdbcType=INTEGER},
+      skills = #{skills,jdbcType=VARCHAR},
       `describe` = #{describe,jdbcType=VARCHAR},
-      term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      used = #{used,jdbcType=CHAR}
+      `lines` = #{lines,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * bot_base_goods
+ * bot_base_skill
  * @author 
  */
 @Data
@@ -20,9 +20,24 @@ public class BaseSkill implements Serializable {
     private String name;
 
     /**
+     * 描述
+     */
+    private String describe;
+
+    /**
      * 效果
      */
     private String effect;
+
+    /**
+     * debuff
+     */
+    private String debuff;
+
+    /**
+     * 有效回合
+     */
+    private Integer round;
 
     /**
      * 数值
@@ -30,19 +45,9 @@ public class BaseSkill implements Serializable {
     private String figure;
 
     /**
-     * 描述
+     * 属性
      */
-    private String describe;
-
-    /**
-     * 有效期
-     */
-    private String termOfValidity;
-
-    /**
-     * 是否可用
-     */
-    private String used;
+    private String attribute;
 
     private static final long serialVersionUID = 1L;
 }

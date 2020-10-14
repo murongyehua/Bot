@@ -4,108 +4,119 @@
   <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.BaseSkill">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="effect" jdbcType="CHAR" property="effect" />
-    <result column="figure" jdbcType="VARCHAR" property="figure" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
-    <result column="term_of_validity" jdbcType="VARCHAR" property="termOfValidity" />
-    <result column="used" jdbcType="CHAR" property="used" />
+    <result column="effect" jdbcType="CHAR" property="effect" />
+    <result column="debuff" jdbcType="CHAR" property="debuff" />
+    <result column="round" jdbcType="INTEGER" property="round" />
+    <result column="figure" jdbcType="VARCHAR" property="figure" />
+    <result column="attribute" jdbcType="CHAR" property="attribute" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, effect, figure, `describe`, term_of_validity, used
+    id, `name`, `describe`, effect, debuff, round, figure, `attribute`
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from bot_base_goods
+    from bot_base_skill
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from bot_base_goods
+    delete from bot_base_skill
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseSkill" useGeneratedKeys="true">
-    insert into bot_base_goods (`name`, effect, figure, 
-      `describe`, term_of_validity, used
-      )
-    values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
-      )
+    insert into bot_base_skill (`name`, `describe`, effect, 
+      debuff, round, figure, 
+      `attribute`)
+    values (#{name,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, 
+      #{debuff,jdbcType=CHAR}, #{round,jdbcType=INTEGER}, #{figure,jdbcType=VARCHAR}, 
+      #{attribute,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseSkill" useGeneratedKeys="true">
-    insert into bot_base_goods
+    insert into bot_base_skill
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">
         `name`,
       </if>
+      <if test="describe != null">
+        `describe`,
+      </if>
       <if test="effect != null">
         effect,
+      </if>
+      <if test="debuff != null">
+        debuff,
+      </if>
+      <if test="round != null">
+        round,
       </if>
       <if test="figure != null">
         figure,
       </if>
-      <if test="describe != null">
-        `describe`,
-      </if>
-      <if test="termOfValidity != null">
-        term_of_validity,
-      </if>
-      <if test="used != null">
-        used,
+      <if test="attribute != null">
+        `attribute`,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="describe != null">
+        #{describe,jdbcType=VARCHAR},
+      </if>
       <if test="effect != null">
         #{effect,jdbcType=CHAR},
+      </if>
+      <if test="debuff != null">
+        #{debuff,jdbcType=CHAR},
+      </if>
+      <if test="round != null">
+        #{round,jdbcType=INTEGER},
       </if>
       <if test="figure != null">
         #{figure,jdbcType=VARCHAR},
       </if>
-      <if test="describe != null">
-        #{describe,jdbcType=VARCHAR},
-      </if>
-      <if test="termOfValidity != null">
-        #{termOfValidity,jdbcType=VARCHAR},
-      </if>
-      <if test="used != null">
-        #{used,jdbcType=CHAR},
+      <if test="attribute != null">
+        #{attribute,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.BaseSkill">
-    update bot_base_goods
+    update bot_base_skill
     <set>
       <if test="name != null">
         `name` = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="describe != null">
+        `describe` = #{describe,jdbcType=VARCHAR},
+      </if>
       <if test="effect != null">
         effect = #{effect,jdbcType=CHAR},
+      </if>
+      <if test="debuff != null">
+        debuff = #{debuff,jdbcType=CHAR},
+      </if>
+      <if test="round != null">
+        round = #{round,jdbcType=INTEGER},
       </if>
       <if test="figure != null">
         figure = #{figure,jdbcType=VARCHAR},
       </if>
-      <if test="describe != null">
-        `describe` = #{describe,jdbcType=VARCHAR},
-      </if>
-      <if test="termOfValidity != null">
-        term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      </if>
-      <if test="used != null">
-        used = #{used,jdbcType=CHAR},
+      <if test="attribute != null">
+        `attribute` = #{attribute,jdbcType=CHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.BaseSkill">
-    update bot_base_goods
+    update bot_base_skill
     set `name` = #{name,jdbcType=VARCHAR},
-      effect = #{effect,jdbcType=CHAR},
-      figure = #{figure,jdbcType=VARCHAR},
       `describe` = #{describe,jdbcType=VARCHAR},
-      term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      used = #{used,jdbcType=CHAR}
+      effect = #{effect,jdbcType=CHAR},
+      debuff = #{debuff,jdbcType=CHAR},
+      round = #{round,jdbcType=INTEGER},
+      figure = #{figure,jdbcType=VARCHAR},
+      `attribute` = #{attribute,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * bot_base_goods
+ * bot_base_phantom
  * @author 
  */
 @Data
@@ -20,14 +20,54 @@ public class BasePhantom implements Serializable {
     private String name;
 
     /**
-     * 效果
+     * 称号
      */
-    private String effect;
+    private String appellation;
 
     /**
-     * 数值
+     * 稀有度
      */
-    private String figure;
+    private String rarity;
+
+    /**
+     * 属性
+     */
+    private String attribute;
+
+    /**
+     * 阵营
+     */
+    private String camp;
+
+    /**
+     * 地区
+     */
+    private String area;
+
+    /**
+     * 速度
+     */
+    private Integer speed;
+
+    /**
+     * 攻击
+     */
+    private Integer attack;
+
+    /**
+     * 体质
+     */
+    private Integer physique;
+
+    /**
+     * 成长
+     */
+    private Integer grow;
+
+    /**
+     * 技能
+     */
+    private String skills;
 
     /**
      * 描述
@@ -35,14 +75,9 @@ public class BasePhantom implements Serializable {
     private String describe;
 
     /**
-     * 有效期
+     * 台词
      */
-    private String termOfValidity;
-
-    /**
-     * 是否可用
-     */
-    private String used;
+    private String lines;
 
     private static final long serialVersionUID = 1L;
 }

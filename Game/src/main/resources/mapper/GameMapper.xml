@@ -3,109 +3,74 @@
 <mapper namespace="com.bot.game.dao.mapper.GameMapper">
   <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.Game">
     <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="effect" jdbcType="CHAR" property="effect" />
-    <result column="figure" jdbcType="VARCHAR" property="figure" />
-    <result column="describe" jdbcType="VARCHAR" property="describe" />
-    <result column="term_of_validity" jdbcType="VARCHAR" property="termOfValidity" />
-    <result column="used" jdbcType="CHAR" property="used" />
+    <result column="game_name" jdbcType="VARCHAR" property="gameName" />
+    <result column="keywords" jdbcType="VARCHAR" property="keywords" />
+    <result column="status" jdbcType="CHAR" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, effect, figure, `describe`, term_of_validity, used
+    id, game_name, keywords, `status`
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from bot_base_goods
+    from bot_game
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from bot_base_goods
+    delete from bot_game
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.Game" useGeneratedKeys="true">
-    insert into bot_base_goods (`name`, effect, figure, 
-      `describe`, term_of_validity, used
+    insert into bot_game (game_name, keywords, `status`
       )
-    values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
+    values (#{gameName,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.Game" useGeneratedKeys="true">
-    insert into bot_base_goods
+    insert into bot_game
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        `name`,
+      <if test="gameName != null">
+        game_name,
       </if>
-      <if test="effect != null">
-        effect,
+      <if test="keywords != null">
+        keywords,
       </if>
-      <if test="figure != null">
-        figure,
-      </if>
-      <if test="describe != null">
-        `describe`,
-      </if>
-      <if test="termOfValidity != null">
-        term_of_validity,
-      </if>
-      <if test="used != null">
-        used,
+      <if test="status != null">
+        `status`,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="gameName != null">
+        #{gameName,jdbcType=VARCHAR},
       </if>
-      <if test="effect != null">
-        #{effect,jdbcType=CHAR},
+      <if test="keywords != null">
+        #{keywords,jdbcType=VARCHAR},
       </if>
-      <if test="figure != null">
-        #{figure,jdbcType=VARCHAR},
-      </if>
-      <if test="describe != null">
-        #{describe,jdbcType=VARCHAR},
-      </if>
-      <if test="termOfValidity != null">
-        #{termOfValidity,jdbcType=VARCHAR},
-      </if>
-      <if test="used != null">
-        #{used,jdbcType=CHAR},
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.Game">
-    update bot_base_goods
+    update bot_game
     <set>
-      <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+      <if test="gameName != null">
+        game_name = #{gameName,jdbcType=VARCHAR},
       </if>
-      <if test="effect != null">
-        effect = #{effect,jdbcType=CHAR},
+      <if test="keywords != null">
+        keywords = #{keywords,jdbcType=VARCHAR},
       </if>
-      <if test="figure != null">
-        figure = #{figure,jdbcType=VARCHAR},
-      </if>
-      <if test="describe != null">
-        `describe` = #{describe,jdbcType=VARCHAR},
-      </if>
-      <if test="termOfValidity != null">
-        term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      </if>
-      <if test="used != null">
-        used = #{used,jdbcType=CHAR},
+      <if test="status != null">
+        `status` = #{status,jdbcType=CHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.Game">
-    update bot_base_goods
-    set `name` = #{name,jdbcType=VARCHAR},
-      effect = #{effect,jdbcType=CHAR},
-      figure = #{figure,jdbcType=VARCHAR},
-      `describe` = #{describe,jdbcType=VARCHAR},
-      term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
-      used = #{used,jdbcType=CHAR}
+    update bot_game
+    set game_name = #{gameName,jdbcType=VARCHAR},
+      keywords = #{keywords,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

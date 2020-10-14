@@ -12,6 +12,7 @@ import com.bot.commom.enums.ENUserGameStatus;
 import com.bot.commom.enums.ENYesOrNo;
 import com.bot.commom.exception.BotException;
 import com.bot.base.commom.MessageSender;
+import com.bot.game.service.GameHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,9 @@ public class DistributorServiceImpl implements Distributor {
 
     @Autowired
     private SystemManager systemManager;
+
+    @Autowired
+    private GameHandler gameHandler;
 
     private final static Map<String, String> GAME_TOKENS = new HashMap<>();
 
@@ -91,16 +95,21 @@ public class DistributorServiceImpl implements Distributor {
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.JOINED.getValue()) && BaseConsts.SystemManager.EXIT_GAME.equals(reqContent)) {
                 // 退出游戏模式
                 GAME_TOKENS.remove(token);
-
+                return gameHandler.exit(token);
             }
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.WAIT_JOIN.getValue())) {
                 // 二次确认时不进入游戏模式
                 if (ENYesOrNo.NO.getValue().equals(reqContent.trim())) {
+                    GAME_TOKENS.remove(token);
                     return BaseConsts.SystemManager.SUCCESS;
+                }
+                // 进入
+                if (ENYesOrNo.YES.getValue().equals(reqContent.trim())) {
+                    GAME_TOKENS.replace(token, ENUserGameStatus.JOINED.getValue());
                 }
             }
             // 正常游戏模式调用
-
+            return gameHandler.play(reqContent, token);
         }
         // 是不是进入游戏模式
         if (BaseConsts.SystemManager.GAME.equals(reqContent)) {
