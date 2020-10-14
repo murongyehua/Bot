@@ -7,6 +7,7 @@
         <module>Boot</module>
         <module>Base</module>
         <module>Common</module>
+        <module>Game</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -27,6 +28,8 @@
         <hutool.version>4.5.10</hutool.version>
         <pinyin.version>2.5.1</pinyin.version>
         <http.version>4.5.5</http.version>
+        <druid.version>1.1.0</druid.version>
+        <spring.mybatis.version>1.2.0</spring.mybatis.version>
     </properties>
 
     <dependencies>
@@ -88,6 +91,21 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${http.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${spring.mybatis.version}</version>
         </dependency>
     </dependencies>
 

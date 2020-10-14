@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.game.dao.mapper.BasePhantomMapper">
+  <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.BasePhantom">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="effect" jdbcType="CHAR" property="effect" />
+    <result column="figure" jdbcType="VARCHAR" property="figure" />
+    <result column="describe" jdbcType="VARCHAR" property="describe" />
+    <result column="term_of_validity" jdbcType="VARCHAR" property="termOfValidity" />
+    <result column="used" jdbcType="CHAR" property="used" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, effect, figure, `describe`, term_of_validity, used
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bot_base_goods
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from bot_base_goods
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BasePhantom" useGeneratedKeys="true">
+    insert into bot_base_goods (`name`, effect, figure, 
+      `describe`, term_of_validity, used
+      )
+    values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
+      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BasePhantom" useGeneratedKeys="true">
+    insert into bot_base_goods
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="effect != null">
+        effect,
+      </if>
+      <if test="figure != null">
+        figure,
+      </if>
+      <if test="describe != null">
+        `describe`,
+      </if>
+      <if test="termOfValidity != null">
+        term_of_validity,
+      </if>
+      <if test="used != null">
+        used,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="effect != null">
+        #{effect,jdbcType=CHAR},
+      </if>
+      <if test="figure != null">
+        #{figure,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="termOfValidity != null">
+        #{termOfValidity,jdbcType=VARCHAR},
+      </if>
+      <if test="used != null">
+        #{used,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.BasePhantom">
+    update bot_base_goods
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="effect != null">
+        effect = #{effect,jdbcType=CHAR},
+      </if>
+      <if test="figure != null">
+        figure = #{figure,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        `describe` = #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="termOfValidity != null">
+        term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
+      </if>
+      <if test="used != null">
+        used = #{used,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.BasePhantom">
+    update bot_base_goods
+    set `name` = #{name,jdbcType=VARCHAR},
+      effect = #{effect,jdbcType=CHAR},
+      figure = #{figure,jdbcType=VARCHAR},
+      `describe` = #{describe,jdbcType=VARCHAR},
+      term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
+      used = #{used,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -8,12 +8,15 @@ import com.bot.base.service.CommonTextLoader;
 import com.bot.base.service.Distributor;
 import com.bot.base.service.SystemManager;
 import com.bot.commom.constant.BaseConsts;
+import com.bot.commom.enums.ENUserGameStatus;
+import com.bot.commom.enums.ENYesOrNo;
 import com.bot.commom.exception.BotException;
 import com.bot.base.commom.MessageSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +43,8 @@ public class DistributorServiceImpl implements Distributor {
 
     @Autowired
     private SystemManager systemManager;
+
+    private final static Map<String, String> GAME_TOKENS = new HashMap<>();
 
     @Override
     public void doDistribute(HttpServletResponse response, String reqContent, String token) {
@@ -80,6 +85,27 @@ public class DistributorServiceImpl implements Distributor {
         // 判断是不是处于管理模式
         if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
             return systemManager.managerDistribute(reqContent);
+        }
+        // 是不是处于游戏模式
+        if (GAME_TOKENS.keySet().contains(token)) {
+            if (GAME_TOKENS.get(token).equals(ENUserGameStatus.JOINED.getValue()) && BaseConsts.SystemManager.EXIT_GAME.equals(reqContent)) {
+                // 退出游戏模式
+                GAME_TOKENS.remove(token);
+
+            }
+            if (GAME_TOKENS.get(token).equals(ENUserGameStatus.WAIT_JOIN.getValue())) {
+                // 二次确认时不进入游戏模式
+                if (ENYesOrNo.NO.getValue().equals(reqContent.trim())) {
+                    return BaseConsts.SystemManager.SUCCESS;
+                }
+            }
+            // 正常游戏模式调用
+
+        }
+        // 是不是进入游戏模式
+        if (BaseConsts.SystemManager.GAME.equals(reqContent)) {
+            GAME_TOKENS.put(token, ENUserGameStatus.WAIT_JOIN.getValue());
+            return BaseConsts.SystemManager.JOIN_GAME_WARN;
         }
         // 固定回答最优先 完全一致才命中
         for (String keyword : CommonTextLoader.someResponseMap.keySet()) {
