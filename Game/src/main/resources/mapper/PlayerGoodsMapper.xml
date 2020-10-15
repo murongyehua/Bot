@@ -8,7 +8,7 @@
     <result column="number" jdbcType="INTEGER" property="number" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, player_id, good_id, `number`
+    id, player_id, good_id, number
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -21,7 +21,7 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerGoods" useGeneratedKeys="true">
-    insert into bot_player_goods (player_id, good_id, `number`
+    insert into bot_player_goods (player_id, good_id, number
       )
     values (#{playerId,jdbcType=VARCHAR}, #{goodId,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}
       )
@@ -36,7 +36,7 @@
         good_id,
       </if>
       <if test="number != null">
-        `number`,
+        number,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -61,7 +61,7 @@
         good_id = #{goodId,jdbcType=VARCHAR},
       </if>
       <if test="number != null">
-        `number` = #{number,jdbcType=INTEGER},
+        number = #{number,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -70,7 +70,7 @@
     update bot_player_goods
     set player_id = #{playerId,jdbcType=VARCHAR},
       good_id = #{goodId,jdbcType=VARCHAR},
-      `number` = #{number,jdbcType=INTEGER}
+      number = #{number,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

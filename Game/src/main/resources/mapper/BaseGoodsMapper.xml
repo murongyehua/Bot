@@ -11,7 +11,7 @@
     <result column="used" jdbcType="CHAR" property="used" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, effect, figure, `describe`, term_of_validity, used
+    id, name, effect, figure, describe, term_of_validity, used
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -24,8 +24,8 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
-    insert into bot_base_goods (`name`, effect, figure, 
-      `describe`, term_of_validity, used
+    insert into bot_base_goods (name, effect, figure,
+      describe, term_of_validity, used
       )
     values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
       #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
@@ -35,7 +35,7 @@
     insert into bot_base_goods
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">
-        `name`,
+        name,
       </if>
       <if test="effect != null">
         effect,
@@ -44,7 +44,7 @@
         figure,
       </if>
       <if test="describe != null">
-        `describe`,
+        describe,
       </if>
       <if test="termOfValidity != null">
         term_of_validity,
@@ -78,7 +78,7 @@
     update bot_base_goods
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="effect != null">
         effect = #{effect,jdbcType=CHAR},
@@ -87,7 +87,7 @@
         figure = #{figure,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
-        `describe` = #{describe,jdbcType=VARCHAR},
+        describe = #{describe,jdbcType=VARCHAR},
       </if>
       <if test="termOfValidity != null">
         term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
@@ -100,10 +100,10 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.BaseGoods">
     update bot_base_goods
-    set `name` = #{name,jdbcType=VARCHAR},
+    set name = #{name,jdbcType=VARCHAR},
       effect = #{effect,jdbcType=CHAR},
       figure = #{figure,jdbcType=VARCHAR},
-      `describe` = #{describe,jdbcType=VARCHAR},
+      describe = #{describe,jdbcType=VARCHAR},
       term_of_validity = #{termOfValidity,jdbcType=VARCHAR},
       used = #{used,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}

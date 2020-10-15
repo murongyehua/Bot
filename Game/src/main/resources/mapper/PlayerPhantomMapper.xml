@@ -20,8 +20,8 @@
     <result column="lines" jdbcType="VARCHAR" property="lines" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, player_id, `name`, `level`, appellation, rarity, `attribute`, camp, area, speed, 
-    attack, physique, grow, skills, `describe`, `lines`
+    id, player_id, name, level, appellation, rarity, attribute, camp, area, speed,
+    attack, physique, grow, skills, describe, lines
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -34,11 +34,11 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
-    insert into bot_player_phantom (player_id, `name`, `level`, 
-      appellation, rarity, `attribute`, 
+    insert into bot_player_phantom (player_id, name, level,
+      appellation, rarity, attribute,
       camp, area, speed, attack, 
       physique, grow, skills, 
-      `describe`, `lines`)
+      describe, lines)
     values (#{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
       #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, #{attribute,jdbcType=CHAR}, 
       #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, #{attack,jdbcType=INTEGER}, 
@@ -52,10 +52,10 @@
         player_id,
       </if>
       <if test="name != null">
-        `name`,
+        name,
       </if>
       <if test="level != null">
-        `level`,
+        level,
       </if>
       <if test="appellation != null">
         appellation,
@@ -64,7 +64,7 @@
         rarity,
       </if>
       <if test="attribute != null">
-        `attribute`,
+        attribute,
       </if>
       <if test="camp != null">
         camp,
@@ -88,10 +88,10 @@
         skills,
       </if>
       <if test="describe != null">
-        `describe`,
+        describe,
       </if>
       <if test="lines != null">
-        `lines`,
+        lines,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -149,10 +149,10 @@
         player_id = #{playerId,jdbcType=VARCHAR},
       </if>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="level != null">
-        `level` = #{level,jdbcType=INTEGER},
+        level = #{level,jdbcType=INTEGER},
       </if>
       <if test="appellation != null">
         appellation = #{appellation,jdbcType=VARCHAR},
@@ -161,7 +161,7 @@
         rarity = #{rarity,jdbcType=CHAR},
       </if>
       <if test="attribute != null">
-        `attribute` = #{attribute,jdbcType=CHAR},
+        attribute = #{attribute,jdbcType=CHAR},
       </if>
       <if test="camp != null">
         camp = #{camp,jdbcType=CHAR},
@@ -185,10 +185,10 @@
         skills = #{skills,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
-        `describe` = #{describe,jdbcType=VARCHAR},
+        describe = #{describe,jdbcType=VARCHAR},
       </if>
       <if test="lines != null">
-        `lines` = #{lines,jdbcType=VARCHAR},
+        lines = #{lines,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -196,11 +196,11 @@
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.PlayerPhantom">
     update bot_player_phantom
     set player_id = #{playerId,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
-      `level` = #{level,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      level = #{level,jdbcType=INTEGER},
       appellation = #{appellation,jdbcType=VARCHAR},
       rarity = #{rarity,jdbcType=CHAR},
-      `attribute` = #{attribute,jdbcType=CHAR},
+      attribute = #{attribute,jdbcType=CHAR},
       camp = #{camp,jdbcType=CHAR},
       area = #{area,jdbcType=CHAR},
       speed = #{speed,jdbcType=INTEGER},
@@ -208,8 +208,8 @@
       physique = #{physique,jdbcType=INTEGER},
       grow = #{grow,jdbcType=INTEGER},
       skills = #{skills,jdbcType=VARCHAR},
-      `describe` = #{describe,jdbcType=VARCHAR},
-      `lines` = #{lines,jdbcType=VARCHAR}
+      describe = #{describe,jdbcType=VARCHAR},
+      lines = #{lines,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

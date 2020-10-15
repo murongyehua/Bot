@@ -11,7 +11,7 @@
     <result column="soul_power" jdbcType="INTEGER" property="soulPower" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, game_id, nickname, reg_time, `status`, appellation, soul_power
+    id, game_id, nickname, reg_time, status, appellation, soul_power
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -23,11 +23,11 @@
     delete from bot_game_player
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.GamePlayer" useGeneratedKeys="true">
-    insert into bot_game_player (game_id, nickname, reg_time, 
-      `status`, appellation, soul_power
+  <insert id="insert" parameterType="com.bot.game.dao.entity.GamePlayer" useGeneratedKeys="true">
+    insert into bot_game_player (id, game_id, nickname, reg_time,
+      status, appellation, soul_power
       )
-    values (#{gameId,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP}, 
+    values (#{id, jdbcType=VARCHAR}, #{gameId,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP},
       #{status,jdbcType=CHAR}, #{appellation,jdbcType=VARCHAR}, #{soulPower,jdbcType=INTEGER}
       )
   </insert>
@@ -44,7 +44,7 @@
         reg_time,
       </if>
       <if test="status != null">
-        `status`,
+        status,
       </if>
       <if test="appellation != null">
         appellation,
@@ -87,7 +87,7 @@
         reg_time = #{regTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=CHAR},
+        status = #{status,jdbcType=CHAR},
       </if>
       <if test="appellation != null">
         appellation = #{appellation,jdbcType=VARCHAR},
@@ -103,9 +103,30 @@
     set game_id = #{gameId,jdbcType=VARCHAR},
       nickname = #{nickname,jdbcType=VARCHAR},
       reg_time = #{regTime,jdbcType=TIMESTAMP},
-      `status` = #{status,jdbcType=CHAR},
+      status = #{status,jdbcType=CHAR},
       appellation = #{appellation,jdbcType=VARCHAR},
       soul_power = #{soulPower,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_game_player
+    <where>
+      <if test="nickname != null">
+         nickname = #{nickname,jdbcType=VARCHAR}
+      </if>
+      <if test="regTime != null">
+        and reg_time = #{regTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="status != null">
+        and status = #{status,jdbcType=CHAR}
+      </if>
+      <if test="appellation != null">
+        and appellation = #{appellation,jdbcType=VARCHAR}
+      </if>
+      <if test="soulPower != null">
+        and soul_power = #{soulPower,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
 </mapper>

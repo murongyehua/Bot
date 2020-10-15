@@ -20,6 +20,7 @@ public class GameDemo extends Menu {
     public void initMenu() {
         this.menuName = BaseConsts.Menu.WEATHER_MENU_NAME;
         this.describe = BaseConsts.Weather.DESCRIBE;
+        this.menuChildrenMap.put("1", new PlayerInfoMenuPrinter());
     }
 
 }

@@ -8,7 +8,7 @@
     <result column="status" jdbcType="CHAR" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, game_name, keywords, `status`
+    id, game_name, keywords, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -21,7 +21,7 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.Game" useGeneratedKeys="true">
-    insert into bot_game (game_name, keywords, `status`
+    insert into bot_game (game_name, keywords, status
       )
     values (#{gameName,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}
       )
@@ -36,7 +36,7 @@
         keywords,
       </if>
       <if test="status != null">
-        `status`,
+        status,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -61,7 +61,7 @@
         keywords = #{keywords,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=CHAR},
+        status = #{status,jdbcType=CHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -70,7 +70,11 @@
     update bot_game
     set game_name = #{gameName,jdbcType=VARCHAR},
       keywords = #{keywords,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=CHAR}
+      status = #{status,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_game
+  </select>
 </mapper>

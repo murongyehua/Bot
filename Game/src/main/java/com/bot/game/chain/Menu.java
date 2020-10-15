@@ -27,8 +27,6 @@ public class Menu implements MenuPrinter{
     private String printMenuMap() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(StrUtil.BRACKET_START).append(menuName).append(StrUtil.BRACKET_END).append(StrUtil.CRLF);
-        // 标题与选项之间换一下行
-        stringBuilder.append(StrUtil.CRLF);
         stringBuilder.append(describe).append(StrUtil.CRLF);
         menuChildrenMap.keySet().forEach(sort ->
                 stringBuilder.append(sort).append(StrUtil.DOT).append(StrUtil.SPACE)

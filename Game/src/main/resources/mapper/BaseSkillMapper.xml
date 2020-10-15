@@ -12,7 +12,7 @@
     <result column="attribute" jdbcType="CHAR" property="attribute" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, `name`, `describe`, effect, debuff, round, figure, `attribute`
+    id, name, describe, effect, debuff, round, figure, attribute
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -25,9 +25,9 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseSkill" useGeneratedKeys="true">
-    insert into bot_base_skill (`name`, `describe`, effect, 
+    insert into bot_base_skill (name, describe, effect,
       debuff, round, figure, 
-      `attribute`)
+      attribute)
     values (#{name,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, 
       #{debuff,jdbcType=CHAR}, #{round,jdbcType=INTEGER}, #{figure,jdbcType=VARCHAR}, 
       #{attribute,jdbcType=CHAR})
@@ -36,10 +36,10 @@
     insert into bot_base_skill
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">
-        `name`,
+        name,
       </if>
       <if test="describe != null">
-        `describe`,
+        describe,
       </if>
       <if test="effect != null">
         effect,
@@ -54,7 +54,7 @@
         figure,
       </if>
       <if test="attribute != null">
-        `attribute`,
+        attribute,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -85,10 +85,10 @@
     update bot_base_skill
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
-        `describe` = #{describe,jdbcType=VARCHAR},
+        describe = #{describe,jdbcType=VARCHAR},
       </if>
       <if test="effect != null">
         effect = #{effect,jdbcType=CHAR},
@@ -103,20 +103,20 @@
         figure = #{figure,jdbcType=VARCHAR},
       </if>
       <if test="attribute != null">
-        `attribute` = #{attribute,jdbcType=CHAR},
+        attribute = #{attribute,jdbcType=CHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.BaseSkill">
     update bot_base_skill
-    set `name` = #{name,jdbcType=VARCHAR},
-      `describe` = #{describe,jdbcType=VARCHAR},
+    set name = #{name,jdbcType=VARCHAR},
+      describe = #{describe,jdbcType=VARCHAR},
       effect = #{effect,jdbcType=CHAR},
       debuff = #{debuff,jdbcType=CHAR},
       round = #{round,jdbcType=INTEGER},
       figure = #{figure,jdbcType=VARCHAR},
-      `attribute` = #{attribute,jdbcType=CHAR}
+      attribute = #{attribute,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
