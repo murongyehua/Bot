@@ -2,6 +2,8 @@ package com.bot.game.dao.mapper;
 
 import com.bot.game.dao.entity.PlayerPhantom;
 
+import java.util.List;
+
 public interface PlayerPhantomMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface PlayerPhantomMapper {
     int updateByPrimaryKeySelective(PlayerPhantom record);
 
     int updateByPrimaryKey(PlayerPhantom record);
+
+    List<PlayerPhantom> selectBySelective(PlayerPhantom record);
 }

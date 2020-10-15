@@ -1,5 +1,7 @@
 package com.bot.game.chain;
 
+import java.util.Map;
+
 /**
  * @author murongyehua
  * @version 1.0 2020/10/14
@@ -10,7 +12,7 @@ public interface Collector {
      * 构建调用链 在玩家进入时进行
      * @return
      */
-    String buildCollector(String token);
+    String buildCollector(String token, Map<String, Object> mapperMap);
 
     /**
      * 前往下一个或上一个菜单

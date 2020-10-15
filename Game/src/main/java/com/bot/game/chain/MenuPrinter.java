@@ -11,4 +11,9 @@ public interface MenuPrinter {
      */
     void initMenu();
 
+    /**
+     * 获取菜单内容 各菜单自己实现
+     */
+    void getDescribe(String token);
+
 }

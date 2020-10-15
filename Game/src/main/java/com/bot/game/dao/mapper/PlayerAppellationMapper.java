@@ -2,6 +2,8 @@ package com.bot.game.dao.mapper;
 
 import com.bot.game.dao.entity.PlayerAppellation;
 
+import java.util.List;
+
 public interface PlayerAppellationMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface PlayerAppellationMapper {
     int updateByPrimaryKeySelective(PlayerAppellation record);
 
     int updateByPrimaryKey(PlayerAppellation record);
+
+    List<PlayerAppellation> selectBySelective(PlayerAppellation record);
 }

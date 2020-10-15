@@ -14,10 +14,18 @@ public interface GameConsts {
         String LOGIN_TIP = "欢迎回来,[%s]，当前活动：1234567" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
         String UN_KNOW_POINT = "未知指令";
+        String EMPTY = "无";
+        String APPELLATION_EMPTY = "您还没有称号";
+        String APPELLATION_CHANGE = "输入称号前的编号以完成更换";
+        String PLAY_SUCCESS = "操作成功，目前菜单仍停留在上一层，可输入【0】返回，或继续操作";
     }
 
     interface PlayerInfo {
         String MENU_NAME = "个人信息";
+        String DESCRIBE = "昵称：[%s]" + StrUtil.CRLF
+                + "称号：[%s]" + StrUtil.CRLF
+                + "幻灵数：[%s]" + StrUtil.CRLF
+                + "战灵力：[%s]" + StrUtil.CRLF;
     }
 
     interface MyPhantom {
@@ -46,6 +54,22 @@ public interface GameConsts {
 
     interface RankList {
         String MENU_NAME = "排行榜";
+    }
+
+    interface MapperName {
+        String BASE_GOODS = "baseGoodsMapper";
+        String BASE_PHANTOM = "basePhantomMapper";
+        String BASE_SKILL = "baseSkillMapper";
+        String GAME = "gameMapper";
+        String GAME_PLAYER = "gamePlayerMapper";
+        String PLAYER_APPELLATION = "playerAppellationMapper";
+        String PLAYER_FRIENDS = "playerFriendsMapper";
+        String PLAYER_GOODS = "playerGoodsMapper";
+        String PLAYER_PHANTOM = "playerPhantomMapper";
+    }
+
+    interface LittlePrinter {
+        String CHANGE_APPELLATION = "更换称号";
     }
 
 }

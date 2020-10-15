@@ -6,7 +6,7 @@ import com.bot.commom.constant.GameConsts;
 import com.bot.commom.enums.ENStatus;
 import com.bot.game.chain.Collector;
 import com.bot.game.dao.entity.GamePlayer;
-import com.bot.game.dao.mapper.GamePlayerMapper;
+import com.bot.game.dao.mapper.*;
 import com.bot.game.service.GameCommonHolder;
 import com.bot.game.service.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,30 @@ public class GameHandlerServiceImpl implements GameHandler {
 
     @Autowired
     private GamePlayerMapper gamePlayerMapper;
+
+    @Autowired
+    private BaseGoodsMapper baseGoodsMapper;
+
+    @Autowired
+    private BasePhantomMapper basePhantomMapper;
+
+    @Autowired
+    private BaseSkillMapper baseSkillMapper;
+
+    @Autowired
+    private GameMapper gameMapper;
+
+    @Autowired
+    private PlayerAppellationMapper playerAppellationMapper;
+
+    @Autowired
+    private PlayerFriendsMapper playerFriendsMapper;
+
+    @Autowired
+    private PlayerGoodsMapper playerGoodsMapper;
+
+    @Autowired
+    private PlayerPhantomMapper playerPhantomMapper;
 
     private final static List<String> WAIT_REG = new LinkedList<>();
 
@@ -47,7 +71,7 @@ public class GameHandlerServiceImpl implements GameHandler {
         if (WAIT_LOGIN.contains(token)) {
             if (BaseConsts.Menu.ONE.equals(reqContent)) {
                 WAIT_LOGIN.remove(token);
-                return collector.buildCollector(token);
+                return collector.buildCollector(token, this.getMapperMap());
             }else {
                 return GameConsts.CommonTip.UN_KNOW_POINT;
             }
@@ -88,5 +112,19 @@ public class GameHandlerServiceImpl implements GameHandler {
         param.setNickname(nickName);
         List<GamePlayer> list = gamePlayerMapper.selectBySelective(param);
         return CollectionUtil.isNotEmpty(list);
+    }
+
+    private Map<String, Object> getMapperMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(GameConsts.MapperName.BASE_GOODS, baseGoodsMapper);
+        map.put(GameConsts.MapperName.BASE_PHANTOM, basePhantomMapper);
+        map.put(GameConsts.MapperName.BASE_SKILL, baseSkillMapper);
+        map.put(GameConsts.MapperName.GAME, gameMapper);
+        map.put(GameConsts.MapperName.GAME_PLAYER, gamePlayerMapper);
+        map.put(GameConsts.MapperName.PLAYER_APPELLATION, playerAppellationMapper);
+        map.put(GameConsts.MapperName.PLAYER_FRIENDS, playerFriendsMapper);
+        map.put(GameConsts.MapperName.PLAYER_GOODS, playerGoodsMapper);
+        map.put(GameConsts.MapperName.PLAYER_PHANTOM, playerPhantomMapper);
+        return map;
     }
 }

@@ -4,6 +4,8 @@ import com.bot.commom.constant.BaseConsts;
 import com.bot.game.chain.Menu;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * 主菜单执行者
  * @author murongyehua
@@ -12,7 +14,8 @@ import org.springframework.stereotype.Component;
 @Component("gameMainMenuPrinter")
 public class GameMainMenuPrinter extends Menu {
 
-    public GameMainMenuPrinter() {
+    public GameMainMenuPrinter(Map<String, Object> mapperMap) {
+        Menu.mapperMap = mapperMap;
         this.initMenu();
     }
 
@@ -32,5 +35,10 @@ public class GameMainMenuPrinter extends Menu {
     @Override
     public void appendTurnBack(StringBuilder stringBuilder) {
         // 主菜单无需添加返回选项 这里不做任何处理
+    }
+
+    @Override
+    public void getDescribe(String token) {
+
     }
 }

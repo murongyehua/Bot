@@ -87,7 +87,7 @@ public class PlayerPhantom implements Serializable {
     /**
      * 幻灵台词
      */
-    private String lines;
+    private String line;
 
     private static final long serialVersionUID = 1L;
 }

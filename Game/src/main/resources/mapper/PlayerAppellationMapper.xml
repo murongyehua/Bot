@@ -73,4 +73,19 @@
       get_time = #{getTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_player_appellation
+    <where>
+      <if test="playerId != null">
+        player_id = #{playerId,jdbcType=VARCHAR}
+      </if>
+      <if test="appellation != null">
+        and appellation = #{appellation,jdbcType=VARCHAR}
+      </if>
+      <if test="getTime != null">
+        and get_time = #{getTime,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </select>
 </mapper>

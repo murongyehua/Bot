@@ -15,11 +15,11 @@
     <result column="grow" jdbcType="INTEGER" property="grow" />
     <result column="skills" jdbcType="VARCHAR" property="skills" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
-    <result column="lines" jdbcType="VARCHAR" property="lines" />
+    <result column="line" jdbcType="VARCHAR" property="line" />
   </resultMap>
   <sql id="Base_Column_List">
     id, name, appellation, rarity, attribute, camp, area, speed, attack, physique,
-    grow, skills, describe, lines
+    grow, skills, describe, line
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -35,12 +35,12 @@
     insert into bot_base_phantom (name, appellation, rarity,
       attribute, camp, area, speed,
       attack, physique, grow, 
-      skills, describe, lines
+      skills, describe, line
       )
     values (#{name,jdbcType=VARCHAR}, #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, 
       #{attribute,jdbcType=CHAR}, #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, 
       #{attack,jdbcType=INTEGER}, #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, 
-      #{skills,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{lines,jdbcType=VARCHAR}
+      #{skills,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BasePhantom" useGeneratedKeys="true">
@@ -82,8 +82,8 @@
       <if test="describe != null">
         describe,
       </if>
-      <if test="lines != null">
-        lines,
+      <if test="line != null">
+        line,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -123,8 +123,8 @@
       <if test="describe != null">
         #{describe,jdbcType=VARCHAR},
       </if>
-      <if test="lines != null">
-        #{lines,jdbcType=VARCHAR},
+      <if test="line != null">
+        #{line,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -167,8 +167,8 @@
       <if test="describe != null">
         describe = #{describe,jdbcType=VARCHAR},
       </if>
-      <if test="lines != null">
-        lines = #{lines,jdbcType=VARCHAR},
+      <if test="line != null">
+        line = #{line,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -187,7 +187,7 @@
       grow = #{grow,jdbcType=INTEGER},
       skills = #{skills,jdbcType=VARCHAR},
       describe = #{describe,jdbcType=VARCHAR},
-      lines = #{lines,jdbcType=VARCHAR}
+      line = #{line,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

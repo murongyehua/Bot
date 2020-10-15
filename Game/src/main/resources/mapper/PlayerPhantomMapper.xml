@@ -17,11 +17,11 @@
     <result column="grow" jdbcType="INTEGER" property="grow" />
     <result column="skills" jdbcType="VARCHAR" property="skills" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
-    <result column="lines" jdbcType="VARCHAR" property="lines" />
+    <result column="line" jdbcType="VARCHAR" property="line" />
   </resultMap>
   <sql id="Base_Column_List">
     id, player_id, name, level, appellation, rarity, attribute, camp, area, speed,
-    attack, physique, grow, skills, describe, lines
+    attack, physique, grow, skills, `describe`, line
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -38,12 +38,12 @@
       appellation, rarity, attribute,
       camp, area, speed, attack, 
       physique, grow, skills, 
-      describe, lines)
+      describe, line)
     values (#{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
       #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, #{attribute,jdbcType=CHAR}, 
       #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, #{attack,jdbcType=INTEGER}, 
       #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{lines,jdbcType=VARCHAR})
+      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
     insert into bot_player_phantom
@@ -90,8 +90,8 @@
       <if test="describe != null">
         describe,
       </if>
-      <if test="lines != null">
-        lines,
+      <if test="line != null">
+        line,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -137,8 +137,8 @@
       <if test="describe != null">
         #{describe,jdbcType=VARCHAR},
       </if>
-      <if test="lines != null">
-        #{lines,jdbcType=VARCHAR},
+      <if test="line != null">
+        #{line,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -187,8 +187,8 @@
       <if test="describe != null">
         describe = #{describe,jdbcType=VARCHAR},
       </if>
-      <if test="lines != null">
-        lines = #{lines,jdbcType=VARCHAR},
+      <if test="line != null">
+        line = #{line,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -209,7 +209,58 @@
       grow = #{grow,jdbcType=INTEGER},
       skills = #{skills,jdbcType=VARCHAR},
       describe = #{describe,jdbcType=VARCHAR},
-      lines = #{lines,jdbcType=VARCHAR}
+      line = #{line,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_player_phantom
+    <where>
+      <if test="playerId != null">
+        player_id = #{playerId,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null">
+        and name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="level != null">
+        and level = #{level,jdbcType=INTEGER}
+      </if>
+      <if test="appellation != null">
+        and appellation = #{appellation,jdbcType=VARCHAR}
+      </if>
+      <if test="rarity != null">
+        and rarity = #{rarity,jdbcType=CHAR}
+      </if>
+      <if test="attribute != null">
+        and attribute = #{attribute,jdbcType=CHAR}
+      </if>
+      <if test="camp != null">
+        and camp = #{camp,jdbcType=CHAR}
+      </if>
+      <if test="area != null">
+        and area = #{area,jdbcType=CHAR}
+      </if>
+      <if test="speed != null">
+        and speed = #{speed,jdbcType=INTEGER}
+      </if>
+      <if test="attack != null">
+        and attack = #{attack,jdbcType=INTEGER}
+      </if>
+      <if test="physique != null">
+        and physique = #{physique,jdbcType=INTEGER}
+      </if>
+      <if test="grow != null">
+        and grow = #{grow,jdbcType=INTEGER}
+      </if>
+      <if test="skills != null">
+        and skills = #{skills,jdbcType=VARCHAR}
+      </if>
+      <if test="describe != null">
+        and describe = #{describe,jdbcType=VARCHAR}
+      </if>
+      <if test="line != null">
+        and line = #{line,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
 </mapper>

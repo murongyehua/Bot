@@ -77,7 +77,7 @@ public class BasePhantom implements Serializable {
     /**
      * 台词
      */
-    private String lines;
+    private String line;
 
     private static final long serialVersionUID = 1L;
 }
