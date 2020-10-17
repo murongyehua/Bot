@@ -3,9 +3,11 @@ package com.bot.game.chain;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
+import com.bot.game.chain.menu.FindFriendPrinter;
 import com.bot.game.chain.menu.GameMainMenuPrinter;
 import com.bot.game.service.Player;
 import com.bot.game.service.impl.CommonPlayer;
+import com.bot.game.service.impl.FindPlayerServiceImpl;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -56,6 +58,10 @@ public class GameChainCollector implements Collector{
             Player player = nowMenu.playServiceMap.get(point);
             if (player != null) {
                 return player.doPlay(token);
+            }
+            // service也没有 可能是添加好友
+            if (FindFriendPrinter.waitAddFriend.contains(token)) {
+                return FindPlayerServiceImpl.addFriend(token, point);
             }
             return GameConsts.CommonTip.UN_KNOW_POINT;
         }

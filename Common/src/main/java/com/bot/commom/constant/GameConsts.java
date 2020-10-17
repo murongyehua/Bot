@@ -78,6 +78,12 @@ public interface GameConsts {
 
     interface MyFriends {
         String MENU_NAME = "我的好友";
+        String EMPTY = "暂无好友";
+        String FIND_MENU_NAME = "添加好友";
+        String ADD_SUCCESS = "添加成功!回复数字【0】返回";
+        String NOT_FOUND = "目标玩家不存在，请确认名称正确后再次输入，或者回复数字【0】返回";
+        String ADD_TIP = "输入玩家名称进行添加：";
+        String REPEAT = "该玩家已经是你的好友，请勿重复添加，回复数字【0】返回";
     }
 
     interface FriendCompare {
