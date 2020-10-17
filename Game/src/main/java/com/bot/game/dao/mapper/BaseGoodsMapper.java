@@ -2,6 +2,8 @@ package com.bot.game.dao.mapper;
 
 import com.bot.game.dao.entity.BaseGoods;
 
+import java.util.List;
+
 public interface BaseGoodsMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface BaseGoodsMapper {
     int updateByPrimaryKeySelective(BaseGoods record);
 
     int updateByPrimaryKey(BaseGoods record);
+
+    List<BaseGoods> selectBySelective(BaseGoods record);
 }

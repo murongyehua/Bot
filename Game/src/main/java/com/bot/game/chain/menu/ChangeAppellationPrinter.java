@@ -1,7 +1,6 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerAppellation;
@@ -28,9 +27,9 @@ public class ChangeAppellationPrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         PlayerAppellationMapper playerAppellationMapper = (PlayerAppellationMapper) mapperMap.get(GameConsts.MapperName.PLAYER_APPELLATION);
-        PlayerAppellation param = new PlayerAppellation();
-        param.setPlayerId(token);
-        List<PlayerAppellation> list = playerAppellationMapper.selectBySelective(param);
+        PlayerAppellation queryParam = new PlayerAppellation();
+        queryParam.setPlayerId(token);
+        List<PlayerAppellation> list = playerAppellationMapper.selectBySelective(queryParam);
         if (CollectionUtil.isEmpty(list)) {
             this.describe = GameConsts.CommonTip.APPELLATION_EMPTY;
         }else {

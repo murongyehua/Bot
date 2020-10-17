@@ -19,7 +19,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, name, appellation, rarity, attribute, camp, area, speed, attack, physique,
-    grow, skills, describe, line
+    grow, skills, `describe`, line
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -190,4 +190,49 @@
       line = #{line,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_base_phantom
+    <where>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="appellation != null">
+        and appellation = #{appellation,jdbcType=VARCHAR}
+      </if>
+      <if test="rarity != null">
+        and rarity = #{rarity,jdbcType=CHAR}
+      </if>
+      <if test="attribute != null">
+        and attribute = #{attribute,jdbcType=CHAR}
+      </if>
+      <if test="camp != null">
+        and camp = #{camp,jdbcType=CHAR}
+      </if>
+      <if test="area != null">
+        and area = #{area,jdbcType=CHAR}
+      </if>
+      <if test="speed != null">
+        and speed = #{speed,jdbcType=INTEGER}
+      </if>
+      <if test="attack != null">
+        and attack = #{attack,jdbcType=INTEGER}
+      </if>
+      <if test="physique != null">
+        and physique = #{physique,jdbcType=INTEGER}
+      </if>
+      <if test="grow != null">
+        and grow = #{grow,jdbcType=INTEGER}
+      </if>
+      <if test="skills != null">
+        and skills = #{skills,jdbcType=VARCHAR}
+      </if>
+      <if test="describe != null">
+        and describe = #{describe,jdbcType=VARCHAR}
+      </if>
+      <if test="line != null">
+        and line = #{line,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
 </mapper>

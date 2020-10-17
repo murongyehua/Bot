@@ -13,6 +13,7 @@ public interface MenuPrinter {
 
     /**
      * 获取菜单内容 各菜单自己实现
+     * @param token
      */
     void getDescribe(String token);
 

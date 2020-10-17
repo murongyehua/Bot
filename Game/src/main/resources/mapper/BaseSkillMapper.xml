@@ -10,9 +10,10 @@
     <result column="round" jdbcType="INTEGER" property="round" />
     <result column="figure" jdbcType="VARCHAR" property="figure" />
     <result column="attribute" jdbcType="CHAR" property="attribute" />
+    <result column="wait_round" jdbcType="INTEGER" property="waitRound"/>
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, describe, effect, debuff, round, figure, attribute
+    id, name, `describe`, effect, debuff, round, figure, attribute, wait_round
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -24,13 +25,13 @@
     delete from bot_base_skill
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseSkill" useGeneratedKeys="true">
-    insert into bot_base_skill (name, describe, effect,
+  <insert id="insert" parameterType="com.bot.game.dao.entity.BaseSkill" useGeneratedKeys="true">
+    insert into bot_base_skill (id, name, describe, effect,
       debuff, round, figure, 
-      attribute)
-    values (#{name,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, 
+      attribute, wait_round)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR},
       #{debuff,jdbcType=CHAR}, #{round,jdbcType=INTEGER}, #{figure,jdbcType=VARCHAR}, 
-      #{attribute,jdbcType=CHAR})
+      #{attribute,jdbcType=CHAR}, #{waitRound, jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseSkill" useGeneratedKeys="true">
     insert into bot_base_skill
@@ -119,4 +120,13 @@
       attribute = #{attribute,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="getByIds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from bot_base_skill
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </select>
 </mapper>

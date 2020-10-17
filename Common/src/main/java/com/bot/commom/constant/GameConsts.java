@@ -13,11 +13,18 @@ public interface GameConsts {
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
         String LOGIN_TIP = "欢迎回来,[%s]，当前活动：1234567" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
-        String UN_KNOW_POINT = "未知指令";
+        String UN_KNOW_POINT = "未知指令，回复【0】返回";
         String EMPTY = "无";
         String APPELLATION_EMPTY = "您还没有称号";
         String APPELLATION_CHANGE = "输入称号前的编号以完成更换";
         String PLAY_SUCCESS = "操作成功，目前菜单仍停留在上一层，可输入【0】返回，或继续操作";
+        String GOODS_EMPTY = "啊哦，这里什么也没有哦~";
+        String GOODS_UES = "输入物品前的编号查看详情或使用";
+        String PHANTOM_LOOK = "输入幻灵前的编号查看详细信息";
+        String PHANTOM_EMPTY = "您还没有幻灵，赶紧去唤灵仪式吧~";
+        String SKILL_DESCRIBE = "【%s】";
+        String SKILL_WAIT_ROUND = "冷却时间%s回合";
+        String SKILL_ROUNT = "效果持续%s回合";
     }
 
     interface PlayerInfo {
@@ -26,6 +33,20 @@ public interface GameConsts {
                 + "称号：[%s]" + StrUtil.CRLF
                 + "幻灵数：[%s]" + StrUtil.CRLF
                 + "战灵力：[%s]" + StrUtil.CRLF;
+    }
+
+    interface GoodsDetail {
+        String DESCRIBE = "名称：%s" + StrUtil.CRLF + "数量：%s" + StrUtil.CRLF + "用途：%s";
+        String USE = "使用";
+    }
+
+    interface PhantomDetail {
+        String MENU_NAME = "[%s]%s(%s级)";
+        String DESCRIBE = "名称：%s" + StrUtil.CRLF + "等级：%s" + "稀有度：%s" + StrUtil.CRLF
+                + "称号：%s" + StrUtil.CRLF + "属性：%s" + StrUtil.CRLF +"阵营：%s" + StrUtil.CRLF
+                +"家乡：%s" +  StrUtil.CRLF +"速度：%s" + StrUtil.CRLF + "攻击：%s" + StrUtil.CRLF
+                + "体质：%s" + StrUtil.CRLF + "成长：%s" + StrUtil.CRLF + "简介：%s" + StrUtil.CRLF
+                + "技能：%s";
     }
 
     interface MyPhantom {
@@ -38,6 +59,17 @@ public interface GameConsts {
 
     interface GetPhantom {
         String MENU_NAME = "唤灵仪式";
+        String WAIT_GET_1 = "灵符燃尽，有四位幻灵表示了兴趣，却不愿露面";
+        String WAIT_GET_2 = "请跟随您的直觉，输入代号前面的数字";
+        String SUCCESS = "唤灵成功，当前唤灵符数量: %s，此时返回不会消耗唤灵符!";
+        String GET_1 = "【%s】幻灵，[%s]%s，觐见!";
+        String GET_2 = "详细资料可前往[我的幻灵]菜单查看";
+        String REPEAT = "该幻灵已拥有，自动转为成长值+1";
+        String WAIT_1 = "天";
+        String WAIT_2 = "地";
+        String WAIT_3 = "玄";
+        String WAIT_4 = "黄";
+        String CAN_GET_TIME = "当前拥有唤灵符数量为0，无法唤灵";
     }
 
     interface Explore {

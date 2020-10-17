@@ -9,9 +9,11 @@
     <result column="describe" jdbcType="VARCHAR" property="describe" />
     <result column="term_of_validity" jdbcType="VARCHAR" property="termOfValidity" />
     <result column="used" jdbcType="CHAR" property="used" />
+    <result column="origin" jdbcType="CHAR" property="origin" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, effect, figure, describe, term_of_validity, used
+    id, name, effect, figure, `describe`, term_of_validity, used, origin, weight
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -23,12 +25,12 @@
     delete from bot_base_goods
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
-    insert into bot_base_goods (name, effect, figure,
-      describe, term_of_validity, used
+  <insert id="insert" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
+    insert into bot_base_goods (id, name, effect, figure,
+      describe, term_of_validity, used, origin, weight
       )
-    values (#{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}
+    values (#{id, jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR},
+      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}, #{origin,jdbcType=CHAR}, #{weight,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
@@ -108,4 +110,28 @@
       used = #{used,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_base_goods
+    <where>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="effect != null">
+        and effect = #{effect,jdbcType=CHAR}
+      </if>
+      <if test="figure != null">
+        and figure = #{figure,jdbcType=VARCHAR}
+      </if>
+      <if test="describe != null">
+        and describe = #{describe,jdbcType=VARCHAR}
+      </if>
+      <if test="termOfValidity != null">
+        and term_of_validity = #{termOfValidity,jdbcType=VARCHAR}
+      </if>
+      <if test="used != null">
+        and used = #{used,jdbcType=CHAR}
+      </if>
+    </where>
+  </select>
 </mapper>

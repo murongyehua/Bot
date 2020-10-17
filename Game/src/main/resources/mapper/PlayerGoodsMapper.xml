@@ -73,4 +73,19 @@
       number = #{number,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_player_goods
+    <where>
+      <if test="playerId != null">
+        player_id = #{playerId,jdbcType=VARCHAR}
+      </if>
+      <if test="goodId != null">
+        and good_id = #{goodId,jdbcType=VARCHAR}
+      </if>
+      <if test="number != null">
+        and number = #{number,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
 </mapper>

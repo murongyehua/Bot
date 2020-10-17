@@ -49,5 +49,10 @@ public class BaseSkill implements Serializable {
      */
     private String attribute;
 
+    /**
+     * 冷却时间
+     */
+    private Integer waitRound;
+
     private static final long serialVersionUID = 1L;
 }

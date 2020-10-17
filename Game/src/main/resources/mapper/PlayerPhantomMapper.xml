@@ -33,13 +33,13 @@
     delete from bot_player_phantom
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
-    insert into bot_player_phantom (player_id, name, level,
+  <insert id="insert" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
+    insert into bot_player_phantom (id, player_id, name, level,
       appellation, rarity, attribute,
       camp, area, speed, attack, 
       physique, grow, skills, 
-      describe, line)
-    values (#{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
+      `describe`, line)
+    values (#{id,jdbcType=VARCHAR}, #{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER},
       #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, #{attribute,jdbcType=CHAR}, 
       #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, #{attack,jdbcType=INTEGER}, 
       #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
@@ -208,7 +208,7 @@
       physique = #{physique,jdbcType=INTEGER},
       grow = #{grow,jdbcType=INTEGER},
       skills = #{skills,jdbcType=VARCHAR},
-      describe = #{describe,jdbcType=VARCHAR},
+      `describe` = #{describe,jdbcType=VARCHAR},
       line = #{line,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
