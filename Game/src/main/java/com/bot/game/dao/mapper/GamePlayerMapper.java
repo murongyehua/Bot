@@ -21,4 +21,6 @@ public interface GamePlayerMapper {
     List<GamePlayer> selectBySelective(GamePlayer gamePlayer);
 
     List<GamePlayer> getByIds(@Param("ids") List<String> ids);
+
+    List<GamePlayer> getBySoulPowerDesc();
 }

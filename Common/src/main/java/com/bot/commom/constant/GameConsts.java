@@ -92,6 +92,10 @@ public interface GameConsts {
 
     interface RankList {
         String MENU_NAME = "排行榜";
+        String MY_POSITION = "我的名次：%s";
+        String ELEMENT_WITH_APPELLATION = "%s.[%s]%s 战灵力：%s";
+        String ELEMENT_APPELLATION = "%s.%s 战灵力：%s";
+        Integer SHOW_NUMBER = 10;
     }
 
     interface MapperName {

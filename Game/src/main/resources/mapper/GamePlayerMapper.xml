@@ -138,4 +138,10 @@
       #{id}
     </foreach>
   </select>
+
+  <select id="getBySoulPowerDesc" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_game_player
+    order by soul_power desc
+  </select>
 </mapper>
