@@ -10,6 +10,7 @@ import com.bot.game.dao.mapper.BaseSkillMapper;
 import com.bot.game.dto.BattleMonsterDTO;
 import com.bot.game.dto.BattlePhantomDTO;
 import com.bot.game.dto.BattleSkillDTO;
+import com.bot.game.enums.ENAttribute;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -49,7 +50,7 @@ public class BattleServiceImpl extends CommonPlayer {
     @Override
     public String doPlay(String token) {
         BattleMonsterDTO battleMonsterDTO = getBattleMonster();
-        BattlePhantomDTO battlePhantomDTO = getBattlePhantom(playerPhantom);
+        BattlePhantomDTO battlePhantomDTO = getBattlePhantom();
 
         if (StrUtil.isNotEmpty(battleMonsterDTO.getSkills())) {
             targetSkills = this.getBattleSkill(battleMonsterDTO.getSkills());
@@ -66,8 +67,17 @@ public class BattleServiceImpl extends CommonPlayer {
         BeanUtil.copyProperties(baseMonster, battleMonsterDTO);
         int canAddPoint = baseMonster.getGrow() * baseMonster.getLevel();
         List<Integer> list = spiltNumber(canAddPoint);
-        battleMonsterDTO.setFinalAttack((baseMonster.getAttack() + list.get(0)) * GameConsts.BaseFigure.ATTACK_POINT +
-                baseMonster.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL);
+        int intAttack = (baseMonster.getAttack() + list.get(0)) * GameConsts.BaseFigure.ATTACK_POINT +
+                baseMonster.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL;
+        Double figure = GameConsts.BaseFigure.BASE_ONE_NUMBER;
+        if (ENAttribute.isBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+            figure = GameConsts.BaseFigure.BASE_BUFF_FIGURE;
+        }
+        if (ENAttribute.isDeBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+            figure = GameConsts.BaseFigure.BASE_DE_BUFF_FIGURE;
+        }
+        Double doubleAttack = intAttack * figure;
+        battleMonsterDTO.setFinalAttack(doubleAttack.intValue());
         battleMonsterDTO.setFinalSpeed((baseMonster.getSpeed() + list.get(1)) * GameConsts.BaseFigure.SPEED_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL);
         battleMonsterDTO.setFinalDefense((baseMonster.getPhysique() + list.get(2)) * GameConsts.BaseFigure.DEFENSE_POINT +
@@ -75,6 +85,27 @@ public class BattleServiceImpl extends CommonPlayer {
         battleMonsterDTO.setFinalDefense(baseMonster.getPhysique() * GameConsts.BaseFigure.HP_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.HP_FOR_EVERY_LEVEL);
         return battleMonsterDTO;
+    }
+
+    private BattlePhantomDTO getBattlePhantom() {
+        BattlePhantomDTO battlePhantomDTO = new BattlePhantomDTO();
+        BeanUtil.copyProperties(playerPhantom, battlePhantomDTO);
+        Double figure = GameConsts.BaseFigure.BASE_ONE_NUMBER;
+        if (ENAttribute.isBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+            figure = GameConsts.BaseFigure.BASE_BUFF_FIGURE;
+        }
+        if (ENAttribute.isDeBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+            figure = GameConsts.BaseFigure.BASE_DE_BUFF_FIGURE;
+        }
+        int intAttack = playerPhantom.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL +
+                playerPhantom.getAttack() * GameConsts.BaseFigure.ATTACK_POINT;
+        Double doubleAttack = intAttack * figure;
+        battlePhantomDTO.setFinalAttack(doubleAttack.intValue());
+        battlePhantomDTO.setFinalSpeed(playerPhantom.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL +
+                playerPhantom.getSpeed() + GameConsts.BaseFigure.SPEED_POINT);
+        battlePhantomDTO.setFinalDefense(playerPhantom.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL +
+                playerPhantom.getPhysique() * GameConsts.BaseFigure.DEFENSE_POINT);
+        return battlePhantomDTO;
     }
 
     private String doBattle(BattleMonsterDTO battleMonsterDTO, BattlePhantomDTO battlePhantomDTO) {

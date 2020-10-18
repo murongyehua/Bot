@@ -128,6 +128,9 @@ public interface GameConsts {
         Integer HP_POINT = 10;
         Integer DEFENSE_POINT = 2;
         Integer UP_LEVEL_NEED_EXP = 150;
+        Double BASE_BUFF_FIGURE = 1.2;
+        Double BASE_DE_BUFF_FIGURE = 0.8;
+        Double BASE_ONE_NUMBER = 1.0;
     }
 
     interface Battle {

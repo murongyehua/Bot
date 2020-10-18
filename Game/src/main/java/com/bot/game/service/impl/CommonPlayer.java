@@ -55,18 +55,6 @@ public class CommonPlayer implements Player {
         return list.get(0);
     }
 
-    public static BattlePhantomDTO getBattlePhantom(PlayerPhantom playerPhantom) {
-        BattlePhantomDTO battlePhantomDTO = new BattlePhantomDTO();
-        BeanUtil.copyProperties(playerPhantom, battlePhantomDTO);
-        battlePhantomDTO.setFinalAttack(playerPhantom.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL +
-                playerPhantom.getAttack() * GameConsts.BaseFigure.ATTACK_POINT);
-        battlePhantomDTO.setFinalSpeed(playerPhantom.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL +
-                playerPhantom.getSpeed() + GameConsts.BaseFigure.SPEED_POINT);
-        battlePhantomDTO.setFinalDefense(playerPhantom.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL +
-                playerPhantom.getPhysique() * GameConsts.BaseFigure.DEFENSE_POINT);
-        return battlePhantomDTO;
-    }
-
     static Integer getInitHp(PlayerPhantom playerPhantom) {
         return playerPhantom.getLevel() * GameConsts.BaseFigure.HP_FOR_EVERY_LEVEL +
                 playerPhantom.getPhysique() * GameConsts.BaseFigure.HP_POINT;
