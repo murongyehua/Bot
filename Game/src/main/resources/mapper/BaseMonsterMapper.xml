@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.game.dao.mapper.BaseMonsterMapper">
+  <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.BaseMonster">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="attribute" jdbcType="CHAR" property="attribute" />
+    <result column="area" jdbcType="CHAR" property="area" />
+    <result column="attack" jdbcType="INTEGER" property="attack" />
+    <result column="speed" jdbcType="INTEGER" property="speed" />
+    <result column="physique" jdbcType="INTEGER" property="physique" />
+    <result column="grow" jdbcType="INTEGER" property="grow" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="skills" jdbcType="VARCHAR" property="skills" />
+    <result column="describe" jdbcType="VARCHAR" property="describe" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, `attribute`, area, attack, speed, physique, grow, `level`, skills, `describe`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bot_base_monster
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from bot_base_monster
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="generator.BaseMonster">
+    insert into bot_base_monster (id, `name`, `attribute`, 
+      area, attack, speed, physique, 
+      grow, `level`, skills, 
+      `describe`)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{attribute,jdbcType=CHAR}, 
+      #{area,jdbcType=CHAR}, #{attack,jdbcType=INTEGER}, #{speed,jdbcType=INTEGER}, #{physique,jdbcType=INTEGER}, 
+      #{grow,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
+      #{describe,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="generator.BaseMonster">
+    insert into bot_base_monster
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="attribute != null">
+        `attribute`,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="attack != null">
+        attack,
+      </if>
+      <if test="speed != null">
+        speed,
+      </if>
+      <if test="physique != null">
+        physique,
+      </if>
+      <if test="grow != null">
+        grow,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+      <if test="skills != null">
+        skills,
+      </if>
+      <if test="describe != null">
+        `describe`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute != null">
+        #{attribute,jdbcType=CHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=CHAR},
+      </if>
+      <if test="attack != null">
+        #{attack,jdbcType=INTEGER},
+      </if>
+      <if test="speed != null">
+        #{speed,jdbcType=INTEGER},
+      </if>
+      <if test="physique != null">
+        #{physique,jdbcType=INTEGER},
+      </if>
+      <if test="grow != null">
+        #{grow,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="skills != null">
+        #{skills,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="generator.BaseMonster">
+    update bot_base_monster
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute != null">
+        `attribute` = #{attribute,jdbcType=CHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+      <if test="attack != null">
+        attack = #{attack,jdbcType=INTEGER},
+      </if>
+      <if test="speed != null">
+        speed = #{speed,jdbcType=INTEGER},
+      </if>
+      <if test="physique != null">
+        physique = #{physique,jdbcType=INTEGER},
+      </if>
+      <if test="grow != null">
+        grow = #{grow,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="skills != null">
+        skills = #{skills,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        `describe` = #{describe,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="generator.BaseMonster">
+    update bot_base_monster
+    set `name` = #{name,jdbcType=VARCHAR},
+      `attribute` = #{attribute,jdbcType=CHAR},
+      area = #{area,jdbcType=CHAR},
+      attack = #{attack,jdbcType=INTEGER},
+      speed = #{speed,jdbcType=INTEGER},
+      physique = #{physique,jdbcType=INTEGER},
+      grow = #{grow,jdbcType=INTEGER},
+      `level` = #{level,jdbcType=INTEGER},
+      skills = #{skills,jdbcType=VARCHAR},
+      `describe` = #{describe,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_base_monster
+    <where>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR}
+      </if>
+    </where>
+  </select>
+</mapper>
