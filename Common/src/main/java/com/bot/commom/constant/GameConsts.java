@@ -131,6 +131,6 @@ public interface GameConsts {
     }
 
     interface Battle {
-        String TITLE = "战斗结果";
+        String TITLE = "[%s]%s[%s]级";
     }
 }

@@ -40,7 +40,8 @@ public class BattleServiceImpl extends CommonPlayer {
     private List<String> targetDeBuffs;
 
     public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom) {
-        this.title = GameConsts.Battle.TITLE;
+        this.title = String.format(GameConsts.Battle.TITLE,
+                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
         this.baseMonster = baseMonster;
         this.playerPhantom = playerPhantom;
     }
