@@ -14,10 +14,10 @@ import java.util.List;
 public enum  ENRarity {
 
     //
-    NORMAL("0", "普通", 7),
-    GOOD("1", "精英", 9),
-    GREAT("2", "珍稀", 11),
-    BEST("3", "绝世", 15);
+    NORMAL("0", "普通", 11),
+    GOOD("1", "精英", 13),
+    GREAT("2", "珍稀", 15),
+    BEST("3", "绝世", 18);
 
 
     private String value;
