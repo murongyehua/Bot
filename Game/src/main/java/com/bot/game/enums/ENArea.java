@@ -11,7 +11,10 @@ import lombok.Getter;
 public enum ENArea {
 
     //
-    EAST_SEA("S01", "东海");
+    EAST_SEA("S01", "东海"),
+    ZY_M("M01", "招摇山"),
+    JYZZ_Z("Z01", "即翼之泽"),
+    FY_M("M02", "浮玉山");
 
     private String value;
 
@@ -30,6 +33,15 @@ public enum ENArea {
             }
         }
         return StrUtil.EMPTY;
+    }
+
+    public static ENArea getByValue(String value) {
+        for (ENArea enArea : ENArea.values()) {
+            if (enArea.value.equals(value)) {
+                return enArea;
+            }
+        }
+        return null;
     }
 
 }

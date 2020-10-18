@@ -64,7 +64,7 @@ public interface GameConsts {
         String SUCCESS = "唤灵成功，当前唤灵符数量: %s，此时返回不会消耗唤灵符!";
         String GET_1 = "【%s】幻灵，[%s]%s，觐见!";
         String GET_2 = "详细资料可前往[我的幻灵]菜单查看";
-        String REPEAT = "该幻灵已拥有，自动转为成长值+1";
+        String REPEAT = "该幻灵已拥有，自动转为成长值+1，若已达到该稀有度所能承受的成长上限，则不会再增加!";
         String WAIT_1 = "天";
         String WAIT_2 = "地";
         String WAIT_3 = "玄";
@@ -74,6 +74,9 @@ public interface GameConsts {
 
     interface Explore {
         String MENU_NAME = "外出探索";
+        String TIP = "输入所要探索的地区前的编号：";
+        String MEET = "你遭遇了%s[%s][%s级]，请选择你要出战的幻灵";
+        String RUN = "逃跑";
     }
 
     interface MyFriends {
@@ -108,10 +111,26 @@ public interface GameConsts {
         String PLAYER_FRIENDS = "playerFriendsMapper";
         String PLAYER_GOODS = "playerGoodsMapper";
         String PLAYER_PHANTOM = "playerPhantomMapper";
+        String BASE_MONSTER = "baseMonsterMapper";
     }
 
     interface LittlePrinter {
         String CHANGE_APPELLATION = "更换称号";
     }
 
+    interface BaseFigure {
+        Integer SPEED_FOR_EVERY_LEVEL = 2;
+        Integer ATTACK_FOR_EVERY_LEVEL = 10;
+        Integer HP_FOR_EVERY_LEVEL = 100;
+        Integer DEFENSE_FOR_EVERY_LEVEL = 1;
+        Integer SPEED_POINT = 1;
+        Integer ATTACK_POINT = 3;
+        Integer HP_POINT = 10;
+        Integer DEFENSE_POINT = 2;
+        Integer UP_LEVEL_NEED_EXP = 150;
+    }
+
+    interface Battle {
+        String TITLE = "战斗结果";
+    }
 }

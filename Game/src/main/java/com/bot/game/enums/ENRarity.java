@@ -14,19 +14,22 @@ import java.util.List;
 public enum  ENRarity {
 
     //
-    NORMAL("0", "普通"),
-    GOOD("1", "精英"),
-    GREAT("2", "珍稀"),
-    BEST("3", "绝世");
+    NORMAL("0", "普通", 7),
+    GOOD("1", "精英", 9),
+    GREAT("2", "珍稀", 11),
+    BEST("3", "绝世", 15);
 
 
     private String value;
 
     private String label;
 
-    ENRarity(String value, String label) {
+    private Integer maxGrow;
+
+    ENRarity(String value, String label, Integer maxGrow) {
         this.value = value;
         this.label = label;
+        this.maxGrow = maxGrow;
     }
 
     public static String getLabelByValue(String value) {

@@ -80,6 +80,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             PlayerPhantom hasPhantom = list.get(0);
             hasPhantom.setGrow(hasPhantom.getGrow() + 1);
             playerPhantomMapper.updateByPrimaryKey(hasPhantom);
+            CommonPlayer.afterAddGrow(hasPhantom);
             stringBuilder.append(GameConsts.GetPhantom.REPEAT).append(StrUtil.CRLF);
         }else {
             // 存入
@@ -88,6 +89,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             newPhantom.setPlayerId(token);
             newPhantom.setId(IdUtil.simpleUUID());
             newPhantom.setLevel(1);
+            newPhantom.setHp(CommonPlayer.getInitHp(newPhantom));
             playerPhantomMapper.insert(newPhantom);
             stringBuilder.append(GameConsts.GetPhantom.GET_2).append(StrUtil.CRLF);
         }

@@ -89,5 +89,15 @@ public class PlayerPhantom implements Serializable {
      */
     private String line;
 
+    /**
+     * 血量
+     */
+    private Integer hp;
+
+    /**
+     * 当前经验值
+     */
+    private Integer exp;
+
     private static final long serialVersionUID = 1L;
 }
