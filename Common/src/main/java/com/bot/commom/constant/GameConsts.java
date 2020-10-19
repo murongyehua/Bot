@@ -14,6 +14,7 @@ public interface GameConsts {
         String LOGIN_TIP = "欢迎回来,[%s]，当前活动：1234567" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
         String UN_KNOW_POINT = "未知指令，回复【0】返回";
+        String ERROR_POINT = "指令错误，请输入正确的指令";
         String EMPTY = "无";
         String APPELLATION_EMPTY = "您还没有称号";
         String APPELLATION_CHANGE = "输入称号前的编号以完成更换";
@@ -26,6 +27,7 @@ public interface GameConsts {
         String SKILL_WAIT_ROUND = "冷却时间%s回合";
         String SKILL_ROUNT = "效果持续%s回合";
         String SEE_BATTLE_DETAIL = "Q";
+        String TRUN_BACK = "0.返回";
     }
 
     interface PlayerInfo {
@@ -141,7 +143,7 @@ public interface GameConsts {
 
     interface Battle {
         String TITLE = "[%s]%s[%s]级";
-        String FAIL = "战败了...赶紧去提升自己吧!";
+        String FAIL = "战败了...赶紧去提升自己吧!输入【Q】可查看战斗详情";
         String BUFF = "buff";
         String BATTLE_RECORD_FORMAT = "[战斗详情]" + StrUtil.CRLF;
         String BATTLE_RECORD_START = "战斗开始，%s血量%s，%s血量%s" + StrUtil.CRLF;

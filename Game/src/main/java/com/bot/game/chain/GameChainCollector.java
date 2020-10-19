@@ -25,6 +25,11 @@ public class GameChainCollector implements Collector{
 
     private static Map<String, List<Menu>> userChainMap = new HashMap<>();
 
+    /**
+     * 当前支持指令，若有值，则只能输入存在的指令，该指令只会生效一次
+     */
+    public static Map<String, List<String>> supportPoint = new HashMap<>();
+
 
     @Override
     public String buildCollector(String token, Map<String, Object> mapperMap) {
@@ -44,6 +49,13 @@ public class GameChainCollector implements Collector{
         List<Menu> chain = userChainMap.get(token);
         if (chain == null) {
             return null;
+        }
+        List<String> supports = supportPoint.get(token);
+        if (supports != null) {
+            if (!supports.contains(point)) {
+                return GameConsts.CommonTip.ERROR_POINT;
+            }
+            supportPoint.remove(token);
         }
         if (BaseConsts.Menu.ZERO.equals(point)) {
             // 返回

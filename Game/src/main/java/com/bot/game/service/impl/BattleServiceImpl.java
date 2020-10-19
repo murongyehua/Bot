@@ -3,7 +3,9 @@ package com.bot.game.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
+import com.bot.game.chain.GameChainCollector;
 import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerPhantom;
@@ -16,10 +18,7 @@ import com.bot.game.enums.ENAttribute;
 import com.bot.game.enums.ENEffectType;
 import com.bot.game.enums.ENSkillEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author liul
@@ -45,6 +44,8 @@ public class BattleServiceImpl extends CommonPlayer {
 
     @Override
     public String doPlay(String token) {
+        // 控制下一次的指令只能输入【0】指令
+        GameChainCollector.supportPoint.put(token, Collections.singletonList(BaseConsts.Menu.ZERO));
         battleRecord.append(GameConsts.Battle.BATTLE_RECORD_FORMAT);
         BattleMonsterDTO battleMonsterDTO = getBattleMonster();
         BattlePhantomDTO playerDTO = getBattlePhantom();
@@ -65,6 +66,7 @@ public class BattleServiceImpl extends CommonPlayer {
             result = this.doBattle(targetDTO, playerDTO);
         }
         battleRecord.append(GameConsts.Battle.END);
+        battleRecord.append(GameConsts.CommonTip.TRUN_BACK);
         battleDetail.put(token, battleRecord.toString());
         return result;
     }
@@ -246,9 +248,9 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private String getResult(BattlePhantomDTO targetDTO) {
         if (targetDTO.getFinalHp() <= 0) {
-            return GameConsts.Battle.SUCCESS;
+            return GameConsts.Battle.SUCCESS + StrUtil.CRLF + GameConsts.CommonTip.TRUN_BACK;
         }else {
-            return GameConsts.Battle.FAIL;
+            return GameConsts.Battle.FAIL + StrUtil.CRLF + GameConsts.CommonTip.TRUN_BACK;
         }
     }
 
