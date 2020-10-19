@@ -11,9 +11,10 @@
     <result column="used" jdbcType="CHAR" property="used" />
     <result column="origin" jdbcType="CHAR" property="origin" />
     <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="target_id" jdbcType="INTEGER" property="targetId" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, effect, figure, `describe`, term_of_validity, used, origin, weight
+    id, name, effect, figure, `describe`, term_of_validity, used, origin, weight, target_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -27,13 +28,13 @@
   </delete>
   <insert id="insert" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
     insert into bot_base_goods (id, name, effect, figure,
-      describe, term_of_validity, used, origin, weight
+      describe, term_of_validity, used, origin, weight, target_id
       )
-    values (#{id, jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR},
-      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}, #{origin,jdbcType=CHAR}, #{weight,jdbcType=INTEGER}
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{effect,jdbcType=CHAR}, #{figure,jdbcType=VARCHAR},
+      #{describe,jdbcType=VARCHAR}, #{termOfValidity,jdbcType=VARCHAR}, #{used,jdbcType=CHAR}, #{origin,jdbcType=CHAR}, #{weight,jdbcType=INTEGER}, #{targetId,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
+  <insert id="insertSelective" parameterType="com.bot.game.dao.entity.BaseGoods" useGeneratedKeys="true">
     insert into bot_base_goods
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">
@@ -128,6 +129,12 @@
       </if>
       <if test="termOfValidity != null">
         and term_of_validity = #{termOfValidity,jdbcType=VARCHAR}
+      </if>
+      <if test="origin != null">
+        and origin = #{origin,jdbcType=CHAR}
+      </if>
+      <if test="targetId != null">
+        and target_id = #{targetId,jdbcType=VARCHAR}
       </if>
       <if test="used != null">
         and used = #{used,jdbcType=CHAR}

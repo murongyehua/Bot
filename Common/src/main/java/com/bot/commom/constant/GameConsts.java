@@ -153,5 +153,11 @@ public interface GameConsts {
         String ATTACK = "普通攻击";
         String SUCCESS = "恭喜你，战斗胜利，输入【Q】可查看战斗详情";
         String END = "战斗结束";
+
+
+        Integer LEVEL_NUMBER_1 = 3;
+        String GET_RESULT_EXP = "出战幻灵经验值：+%s";
+        String GET_RESULT_GOOD = "获得%s：%s";
+        String GET_RESULT_GOOD_EMTPY = "此次战斗无物品掉落";
     }
 }

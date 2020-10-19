@@ -2,23 +2,29 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.GameChainCollector;
+import com.bot.game.dao.entity.BaseGoods;
 import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerPhantom;
+import com.bot.game.dao.mapper.BaseGoodsMapper;
 import com.bot.game.dao.mapper.BaseSkillMapper;
+import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.BattleEffectDTO;
 import com.bot.game.dto.BattleMonsterDTO;
 import com.bot.game.dto.BattlePhantomDTO;
 import com.bot.game.dto.BattleSkillDTO;
 import com.bot.game.enums.ENAttribute;
 import com.bot.game.enums.ENEffectType;
+import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.enums.ENSkillEffect;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author liul
@@ -78,13 +84,7 @@ public class BattleServiceImpl extends CommonPlayer {
         List<Integer> list = spiltNumber(canAddPoint);
         int intAttack = (baseMonster.getAttack() + list.get(0)) * GameConsts.BaseFigure.ATTACK_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL;
-        Double figure = GameConsts.BaseFigure.BASE_ONE_NUMBER;
-        if (ENAttribute.isBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
-            figure = GameConsts.BaseFigure.BASE_BUFF_FIGURE;
-        }
-        if (ENAttribute.isDeBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
-            figure = GameConsts.BaseFigure.BASE_DE_BUFF_FIGURE;
-        }
+        Double figure = this.getFigure();
         Double doubleAttack = intAttack * figure;
         battleMonsterDTO.setFinalAttack(doubleAttack.intValue());
         battleMonsterDTO.setFinalSpeed((baseMonster.getSpeed() + list.get(1)) * GameConsts.BaseFigure.SPEED_POINT +
@@ -101,13 +101,7 @@ public class BattleServiceImpl extends CommonPlayer {
     private BattlePhantomDTO getBattlePhantom() {
         BattlePhantomDTO battlePhantomDTO = new BattlePhantomDTO();
         BeanUtil.copyProperties(playerPhantom, battlePhantomDTO);
-        Double figure = GameConsts.BaseFigure.BASE_ONE_NUMBER;
-        if (ENAttribute.isBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
-            figure = GameConsts.BaseFigure.BASE_BUFF_FIGURE;
-        }
-        if (ENAttribute.isDeBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
-            figure = GameConsts.BaseFigure.BASE_DE_BUFF_FIGURE;
-        }
+        Double figure = this.getFigure();
         int intAttack = playerPhantom.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL +
                 playerPhantom.getAttack() * GameConsts.BaseFigure.ATTACK_POINT;
         Double doubleAttack = intAttack * figure;
@@ -120,10 +114,21 @@ public class BattleServiceImpl extends CommonPlayer {
         return battlePhantomDTO;
     }
 
+    private Double getFigure() {
+        Double figure = GameConsts.BaseFigure.BASE_ONE_NUMBER;
+        if (ENAttribute.isBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+            figure = GameConsts.BaseFigure.BASE_BUFF_FIGURE;
+        }
+        if (ENAttribute.isDeBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+            figure = GameConsts.BaseFigure.BASE_DE_BUFF_FIGURE;
+        }
+        return figure;
+    }
+
     private String doBattle(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
         roundStart(targetDTO, playerDTO);
         if (targetDTO.getFinalHp() <= 0 || playerDTO.getFinalHp() <= 0) {
-            return this.getResult(targetDTO);
+            return this.getResult(playerDTO, targetDTO);
         }
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_ROUND, round));
         // 对比速度
@@ -246,9 +251,10 @@ public class BattleServiceImpl extends CommonPlayer {
         this.normalAttack(nowAttackPhantom, another, null);
     }
 
-    private String getResult(BattlePhantomDTO targetDTO) {
-        if (targetDTO.getFinalHp() <= 0) {
-            return GameConsts.Battle.SUCCESS + StrUtil.CRLF + GameConsts.CommonTip.TRUN_BACK;
+    private String getResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto) {
+        if (targetDto.getFinalHp() <= 0) {
+            return GameConsts.Battle.SUCCESS + StrUtil.CRLF +
+                    this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TRUN_BACK;
         }else {
             return GameConsts.Battle.FAIL + StrUtil.CRLF + GameConsts.CommonTip.TRUN_BACK;
         }
@@ -368,5 +374,82 @@ public class BattleServiceImpl extends CommonPlayer {
                 default:
                     break;
         }
+    }
+
+    private String afterBattleSuccessResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto, String area) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int exp;
+        int playerLevel = playerDto.getLevel();
+        int targetLevel = targetDto.getLevel();
+        if (playerLevel >= targetLevel) {
+            int num = playerLevel - targetLevel;
+            if (num <= 3) {
+                exp = 6;
+            }else if (num == 4) {
+                exp = 4;
+            }else if (num == 5) {
+                exp = 3;
+            }else{
+                exp = 1;
+            }
+        }else {
+            int num = targetLevel - playerLevel;
+            exp = 6 + num;
+        }
+        stringBuilder.append(String.format(GameConsts.Battle.GET_RESULT_EXP, exp)).append(StrUtil.CRLF);
+        int afterAddExp = playerDto.getExp() + exp;
+        if (afterAddExp >= GameConsts.BaseFigure.UP_LEVEL_NEED_EXP) {
+            playerDto.setLevel(playerDto.getLevel() + 1);
+            playerDto.setExp(afterAddExp - GameConsts.BaseFigure.UP_LEVEL_NEED_EXP);
+        }else {
+            playerDto.setExp(afterAddExp);
+        }
+        PlayerPhantom playerPhantom = new PlayerPhantom();
+        BeanUtil.copyProperties(playerDto, playerPhantom);
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        playerPhantomMapper.updateByPrimaryKey(playerPhantom);
+        BaseGoods baseGoods = this.getResultGoods(area);
+        if (baseGoods == null) {
+            stringBuilder.append(GameConsts.Battle.GET_RESULT_GOOD_EMTPY).append(StrUtil.CRLF);
+        }else {
+            stringBuilder.append(String.format(GameConsts.Battle.GET_RESULT_GOOD, baseGoods.getName(),
+                    ENGoodEffect.getByValue(baseGoods.getEffect()))).append(StrUtil.CRLF);
+            CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId());
+        }
+        return stringBuilder.toString();
+    }
+
+    private BaseGoods getResultGoods(String area) {
+        BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
+        BaseGoods param = new BaseGoods();
+        param.setOrigin(area);
+        List<BaseGoods> list = baseGoodsMapper.selectBySelective(param);
+        List<BaseGoods> tempList = list.stream().filter(baseGoods -> {
+            if (Integer.valueOf(baseGoods.getWeight()) != 0) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        List<String> weights = tempList.stream().map(BaseGoods::getWeight).distinct().collect(Collectors.toList());
+        String needWeight = null;
+        for (String weight : weights) {
+            int number = RandomUtil.randomInt(0, 100);
+            int range = Integer.valueOf(weight) * 10;
+            if ( number < range) {
+                needWeight = weight;
+                break;
+            }
+        }
+        if (needWeight == null) {
+            return null;
+        }
+        String finalWeight = needWeight;
+        List<BaseGoods> finalList = tempList.stream().filter(baseGoods -> {
+            if (finalWeight.equals(baseGoods.getWeight())) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        return finalList.get(RandomUtil.randomInt(finalList.size()));
     }
 }

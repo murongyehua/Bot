@@ -54,5 +54,10 @@ public class BaseGoods implements Serializable {
      */
     private String weight;
 
+    /**
+     * 目标对象Id，可为空
+     */
+    private String targetId;
+
     private static final long serialVersionUID = 1L;
 }

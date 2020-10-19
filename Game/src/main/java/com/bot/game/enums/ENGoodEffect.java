@@ -1,5 +1,6 @@
 package com.bot.game.enums;
 
+import com.bot.commom.exception.BotException;
 import lombok.Getter;
 
 /**
@@ -18,6 +19,15 @@ public enum  ENGoodEffect {
     ENGoodEffect(String value, String label) {
         this.value = value;
         this.label = label;
+    }
+
+    public static ENGoodEffect getByValue(String value) {
+        for (ENGoodEffect enGoodEffect : ENGoodEffect.values()) {
+            if (enGoodEffect.value.equals(value)) {
+                return enGoodEffect;
+            }
+        }
+        throw new BotException("未知枚举值");
     }
 
 }

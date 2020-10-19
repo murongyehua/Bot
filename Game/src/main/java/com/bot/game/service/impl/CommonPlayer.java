@@ -116,4 +116,20 @@ public class CommonPlayer implements Player {
         return list;
     }
 
+    public static void addPlayerGoods(String goodsId, String token) {
+        PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
+        PlayerGoods param = new PlayerGoods();
+        param.setPlayerId(token);
+        param.setGoodId(goodsId);
+        List<PlayerGoods> list = playerGoodsMapper.selectBySelective(param);
+        if (CollectionUtil.isNotEmpty(list)) {
+            PlayerGoods playerGoods = list.get(0);
+            playerGoods.setNumber(playerGoods.getNumber() + 1);
+            playerGoodsMapper.updateByPrimaryKey(playerGoods);
+            return;
+        }
+        param.setNumber(1);
+        playerGoodsMapper.insert(param);
+    }
+
 }
