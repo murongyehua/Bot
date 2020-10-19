@@ -63,6 +63,13 @@ public class GameChainCollector implements Collector{
             if (FindFriendPrinter.waitAddFriend.contains(token)) {
                 return FindPlayerServiceImpl.addFriend(token, point);
             }
+            // Q查看最近一次战斗详情
+            if (GameConsts.CommonTip.SEE_BATTLE_DETAIL.equals(point)) {
+                String result = CommonPlayer.battleDetail.get(token);
+                if (result != null) {
+                    return CommonPlayer.battleDetail.get(token);
+                }
+            }
             return GameConsts.CommonTip.UN_KNOW_POINT;
         }
         chain.add(targetMenu);

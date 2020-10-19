@@ -27,7 +27,7 @@
     delete from bot_base_monster
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="generator.BaseMonster">
+  <insert id="insert" parameterType="com.bot.game.dao.entity.BaseMonster">
     insert into bot_base_monster (id, `name`, `attribute`, 
       area, attack, speed, physique, 
       grow, `level`, skills, 
@@ -37,7 +37,7 @@
       #{grow,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
       #{describe,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="generator.BaseMonster">
+  <insert id="insertSelective" parameterType="com.bot.game.dao.entity.BaseMonster">
     insert into bot_base_monster
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -110,7 +110,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="generator.BaseMonster">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.BaseMonster">
     update bot_base_monster
     <set>
       <if test="name != null">
@@ -146,7 +146,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="generator.BaseMonster">
+  <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.BaseMonster">
     update bot_base_monster
     set `name` = #{name,jdbcType=VARCHAR},
       `attribute` = #{attribute,jdbcType=CHAR},

@@ -11,5 +11,5 @@ import lombok.Data;
 public class BattleSkillDTO extends BaseSkill {
     private static final long serialVersionUID = -7674827774696669891L;
 
-    private Integer waitRound;
+    private Integer nowWaitRound;
 }

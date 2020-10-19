@@ -6,19 +6,20 @@ import cn.hutool.core.util.RandomUtil;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.exception.BotException;
 import com.bot.game.dao.entity.BaseGoods;
+import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.BaseGoodsMapper;
+import com.bot.game.dao.mapper.GamePlayerMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.BattlePhantomDTO;
 import com.bot.game.enums.ENGoodEffect;
+import com.bot.game.enums.ENRarity;
 import com.bot.game.service.Player;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -32,7 +33,7 @@ public class CommonPlayer implements Player {
 
     public static Map<String, Object> mapperMap;
 
-    public static Map<String, String> battleDetail;
+    public static Map<String, String> battleDetail = new HashMap<>();
 
     @Override
     public String doPlay(String token) {
@@ -60,12 +61,30 @@ public class CommonPlayer implements Player {
                 playerPhantom.getPhysique() * GameConsts.BaseFigure.HP_POINT;
     }
 
+    public static void computeAndUpdateSoulPower(String token) {
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerPhantom param = new PlayerPhantom();
+        param.setPlayerId(token);
+        List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
+        int power = 0;
+        for (PlayerPhantom playerPhantom : list) {
+            power += Objects.requireNonNull(ENRarity.getByValue(playerPhantom.getRarity())).getPower();
+            power += playerPhantom.getAttack() * GameConsts.BaseFigure.POWER_ATTACK;
+            power += playerPhantom.getSpeed() * GameConsts.BaseFigure.POWER_SPEED;
+            power += playerPhantom.getPhysique() * GameConsts.BaseFigure.POWER_PHYSIQUE;
+        }
+        GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
+        GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
+        gamePlayer.setSoulPower(power);
+        gamePlayerMapper.updateByPrimaryKey(gamePlayer);
+    }
+
     public static void afterAddGrow(PlayerPhantom playerPhantom) {
         int waitAdd = playerPhantom.getLevel() - 1;
         List<Integer> list = spiltNumber(waitAdd);
         playerPhantom.setAttack(playerPhantom.getAttack() + list.get(0));
         playerPhantom.setSpeed(playerPhantom.getSpeed() + list.get(1));
-        playerPhantom.setPhysique(playerPhantom.getPhysique() + list.get(3));
+        playerPhantom.setPhysique(playerPhantom.getPhysique() + list.get(2));
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
     }

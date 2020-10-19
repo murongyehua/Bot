@@ -25,6 +25,7 @@ public interface GameConsts {
         String SKILL_DESCRIBE = "【%s】";
         String SKILL_WAIT_ROUND = "冷却时间%s回合";
         String SKILL_ROUNT = "效果持续%s回合";
+        String SEE_BATTLE_DETAIL = "Q";
     }
 
     interface PlayerInfo {
@@ -131,9 +132,24 @@ public interface GameConsts {
         Double BASE_BUFF_FIGURE = 1.2;
         Double BASE_DE_BUFF_FIGURE = 0.8;
         Double BASE_ONE_NUMBER = 1.0;
+
+
+        Integer POWER_ATTACK = 10;
+        Integer POWER_SPEED = 3;
+        Integer POWER_PHYSIQUE = 8;
     }
 
     interface Battle {
         String TITLE = "[%s]%s[%s]级";
+        String FAIL = "战败了...赶紧去提升自己吧!";
+        String BUFF = "buff";
+        String BATTLE_RECORD_FORMAT = "[战斗详情]" + StrUtil.CRLF;
+        String BATTLE_RECORD_START = "战斗开始，%s血量%s，%s血量%s" + StrUtil.CRLF;
+        String BATTLE_RECORD_ROUND = "第%s回合" + StrUtil.CRLF;
+        String BATTLE_RECORD_PHANTOM = "%s使用了%s" + StrUtil.CRLF;
+        String BATTLE_RECORD_ROUND_RESULT = "回合结束，%s剩余血量%s，%s剩余血量%s" + StrUtil.CRLF;
+        String ATTACK = "普通攻击";
+        String SUCCESS = "恭喜你，战斗胜利，输入【Q】可查看战斗详情";
+        String END = "战斗结束";
     }
 }

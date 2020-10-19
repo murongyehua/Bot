@@ -14,10 +14,10 @@ import java.util.List;
 public enum  ENRarity {
 
     //
-    NORMAL("0", "普通", 11),
-    GOOD("1", "精英", 13),
-    GREAT("2", "珍稀", 15),
-    BEST("3", "绝世", 18);
+    NORMAL("0", "普通", 11, 10),
+    GOOD("1", "精英", 13, 15),
+    GREAT("2", "珍稀", 15, 20),
+    BEST("3", "绝世", 18, 25);
 
 
     private String value;
@@ -26,10 +26,13 @@ public enum  ENRarity {
 
     private Integer maxGrow;
 
-    ENRarity(String value, String label, Integer maxGrow) {
+    private Integer power;
+
+    ENRarity(String value, String label, Integer maxGrow, Integer power) {
         this.value = value;
         this.label = label;
         this.maxGrow = maxGrow;
+        this.power = power;
     }
 
     public static String getLabelByValue(String value) {
@@ -40,6 +43,15 @@ public enum  ENRarity {
             }
         }
         return StrUtil.EMPTY;
+    }
+
+    public static ENRarity getByValue(String value) {
+        for (ENRarity enRarity : ENRarity.values()) {
+            if (enRarity.getValue().equals(value)) {
+                return enRarity;
+            }
+        }
+        return null;
     }
 
 }

@@ -90,9 +90,11 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             newPhantom.setId(IdUtil.simpleUUID());
             newPhantom.setLevel(1);
             newPhantom.setHp(CommonPlayer.getInitHp(newPhantom));
+            newPhantom.setExp(0);
             playerPhantomMapper.insert(newPhantom);
             stringBuilder.append(GameConsts.GetPhantom.GET_2).append(StrUtil.CRLF);
         }
+        CommonPlayer.computeAndUpdateSoulPower(token);
         // 扣除唤灵符
         this.subTimes();
         return stringBuilder.toString();

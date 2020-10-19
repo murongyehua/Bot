@@ -19,4 +19,6 @@ public class BattleMonsterDTO extends BaseMonster {
 
     private Integer finalHp;
 
+    private Integer hp;
+
 }

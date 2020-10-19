@@ -1,17 +1,22 @@
 package com.bot.game.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.BaseSkillMapper;
+import com.bot.game.dto.BattleEffectDTO;
 import com.bot.game.dto.BattleMonsterDTO;
 import com.bot.game.dto.BattlePhantomDTO;
 import com.bot.game.dto.BattleSkillDTO;
 import com.bot.game.enums.ENAttribute;
+import com.bot.game.enums.ENEffectType;
+import com.bot.game.enums.ENSkillEffect;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,17 +33,8 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private int round = 0;
 
-    private List<BattleSkillDTO> playerSkills;
+    private StringBuilder battleRecord = new StringBuilder();
 
-    private List<BattleSkillDTO> targetSkills;
-
-    private List<String> playerBuffs;
-
-    private List<String> playerDeBuffs;
-
-    private List<String> targetBuffs;
-
-    private List<String> targetDeBuffs;
 
     public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom) {
         this.title = String.format(GameConsts.Battle.TITLE,
@@ -49,17 +45,28 @@ public class BattleServiceImpl extends CommonPlayer {
 
     @Override
     public String doPlay(String token) {
+        battleRecord.append(GameConsts.Battle.BATTLE_RECORD_FORMAT);
         BattleMonsterDTO battleMonsterDTO = getBattleMonster();
-        BattlePhantomDTO battlePhantomDTO = getBattlePhantom();
-
-        if (StrUtil.isNotEmpty(battleMonsterDTO.getSkills())) {
-            targetSkills = this.getBattleSkill(battleMonsterDTO.getSkills());
+        BattlePhantomDTO playerDTO = getBattlePhantom();
+        BattlePhantomDTO targetDTO = new BattlePhantomDTO();
+        BeanUtil.copyProperties(battleMonsterDTO, targetDTO);
+        playerDTO.setStop(false);
+        targetDTO.setStop(false);
+        if (StrUtil.isNotEmpty(targetDTO.getSkills())) {
+            targetDTO.setSkillList(this.getBattleSkill(targetDTO.getSkills()));
         }
-        if (StrUtil.isNotEmpty(battlePhantomDTO.getSkills())) {
-            targetSkills = this.getBattleSkill(battlePhantomDTO.getSkills());
+        if (StrUtil.isNotEmpty(playerDTO.getSkills())) {
+            playerDTO.setSkillList(this.getBattleSkill(playerDTO.getSkills()));
         }
-
-        return null;
+        String result = null;
+        battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_START,
+                playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
+        while (result == null) {
+            result = this.doBattle(targetDTO, playerDTO);
+        }
+        battleRecord.append(GameConsts.Battle.END);
+        battleDetail.put(token, battleRecord.toString());
+        return result;
     }
 
     private BattleMonsterDTO getBattleMonster() {
@@ -82,8 +89,10 @@ public class BattleServiceImpl extends CommonPlayer {
                 baseMonster.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL);
         battleMonsterDTO.setFinalDefense((baseMonster.getPhysique() + list.get(2)) * GameConsts.BaseFigure.DEFENSE_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL);
-        battleMonsterDTO.setFinalDefense(baseMonster.getPhysique() * GameConsts.BaseFigure.HP_POINT +
-                baseMonster.getLevel() * GameConsts.BaseFigure.HP_FOR_EVERY_LEVEL);
+        Integer hp = baseMonster.getPhysique() * GameConsts.BaseFigure.HP_POINT +
+                baseMonster.getLevel() * GameConsts.BaseFigure.HP_FOR_EVERY_LEVEL;
+        battleMonsterDTO.setFinalHp(hp);
+        battleMonsterDTO.setHp(hp);
         return battleMonsterDTO;
     }
 
@@ -105,12 +114,27 @@ public class BattleServiceImpl extends CommonPlayer {
                 playerPhantom.getSpeed() + GameConsts.BaseFigure.SPEED_POINT);
         battlePhantomDTO.setFinalDefense(playerPhantom.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL +
                 playerPhantom.getPhysique() * GameConsts.BaseFigure.DEFENSE_POINT);
+        battlePhantomDTO.setFinalHp(battlePhantomDTO.getHp());
         return battlePhantomDTO;
     }
 
-    private String doBattle(BattleMonsterDTO battleMonsterDTO, BattlePhantomDTO battlePhantomDTO) {
-        round++;
+    private String doBattle(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
+        roundStart(targetDTO, playerDTO);
+        if (targetDTO.getFinalHp() <= 0 || playerDTO.getFinalHp() <= 0) {
+            return this.getResult(targetDTO);
+        }
+        battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_ROUND, round));
         // 对比速度
+        if (targetDTO.getSpeed() > playerPhantom.getSpeed()) {
+            doSingleBattle(targetDTO, playerDTO);
+            doSingleBattle(playerDTO, targetDTO);
+        }else {
+            doSingleBattle(playerDTO, targetDTO);
+            doSingleBattle(targetDTO, playerDTO);
+        }
+        battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_ROUND_RESULT,
+                playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
+        // 返回null 以继续
         return null;
     }
 
@@ -121,10 +145,226 @@ public class BattleServiceImpl extends CommonPlayer {
         monsterSkill.forEach(x -> {
             BattleSkillDTO battleSkillDTO = new BattleSkillDTO();
             BeanUtil.copyProperties(x, battleSkillDTO);
+            battleSkillDTO.setNowWaitRound(0);
             list.add(battleSkillDTO);
         });
         return list;
     }
 
+    private void roundStart(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
+        round++;
+        playerDTO.getSkillList().forEach(skill -> {
+            if (skill.getNowWaitRound() != 0) {
+                skill.setNowWaitRound(skill.getNowWaitRound() - 1);
+            }
+        });
+        targetDTO.getSkillList().forEach(skill -> {
+            if (skill.getNowWaitRound() != 0) {
+                skill.setNowWaitRound(skill.getNowWaitRound() - 1);
+            }
+        });
+    }
 
+    private void useSkill(BattlePhantomDTO nowAttackPhantom, BattlePhantomDTO another, BattleSkillDTO skill) {
+        battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_PHANTOM, nowAttackPhantom.getName(), skill.getName()));
+        ENSkillEffect enSkillEffect = ENSkillEffect.getByValue(skill.getEffect());
+        if (enSkillEffect.getBuffStatus() == null) {
+            this.normalAttack(nowAttackPhantom, another, skill);
+            return;
+        }
+        BattleEffectDTO battleEffectDTO = new BattleEffectDTO();
+        battleEffectDTO.setEffect(enSkillEffect);
+        battleEffectDTO.setLiveRound(skill.getRound());
+        if (GameConsts.Battle.BUFF.equals(enSkillEffect.getBuffStatus())) {
+            boolean hasEffect = false;
+            for (BattleEffectDTO battleEffect : nowAttackPhantom.getBuffs()) {
+                if (battleEffect.getEffect().equals(battleEffectDTO.getEffect())) {
+                    battleEffect.setLiveRound(battleEffectDTO.getLiveRound());
+                    hasEffect = true;
+                    break;
+                }
+            }
+            if (!hasEffect) {
+                nowAttackPhantom.getBuffs().add(battleEffectDTO);
+            }
+        }else {
+            boolean hasEffect = false;
+            for (BattleEffectDTO battleEffect : another.getDeBuffs()) {
+                if (battleEffect.getEffect().equals(battleEffectDTO.getEffect())) {
+                    battleEffect.setLiveRound(battleEffectDTO.getLiveRound());
+                    hasEffect = true;
+                    break;
+                }
+            }
+            if (!hasEffect) {
+                another.getDeBuffs().add(battleEffectDTO);
+            }
+        }
+        this.normalAttack(nowAttackPhantom, another, null);
+    }
+
+    private void normalAttack(BattlePhantomDTO nowAttackPhantom, BattlePhantomDTO another, BattleSkillDTO skill) {
+        BattlePhantomDTO tempPhantom = new BattlePhantomDTO();
+        BeanUtil.copyProperties(nowAttackPhantom, tempPhantom);
+        BattlePhantomDTO tempAnother = new BattlePhantomDTO();
+        BeanUtil.copyProperties(another, tempAnother);
+        this.buffDone(tempPhantom, tempAnother, skill, ENEffectType.PRE, 0);
+        this.finalAttack(tempPhantom, tempAnother);
+        nowAttackPhantom.setFinalHp(tempPhantom.getFinalHp());
+        another.setFinalHp(tempAnother.getFinalHp());
+    }
+
+    private void finalAttack(BattlePhantomDTO tempPhantom, BattlePhantomDTO tempAnother) {
+        int hurt = tempPhantom.getFinalAttack() - tempAnother.getFinalDefense();
+        if (hurt < 1) {
+            hurt = 1;
+        }
+        tempAnother.setFinalHp(tempAnother.getFinalHp() - hurt);
+        this.buffDone(tempAnother, tempPhantom, null, ENEffectType.DEFENSE, hurt);
+        this.buffDone(tempPhantom, tempAnother, null, ENEffectType.END, hurt);
+    }
+
+
+    private void doSingleBattle(BattlePhantomDTO nowAttackPhantom, BattlePhantomDTO another) {
+        if (nowAttackPhantom.getFinalHp() <= 0 || another.getFinalHp() <= 0) {
+            return;
+        }
+        if (nowAttackPhantom.getStop()) {
+            nowAttackPhantom.setStop(false);
+            return;
+        }
+        for (BattleSkillDTO skill : nowAttackPhantom.getSkillList()) {
+            if (skill.getNowWaitRound() == 0) {
+                this.useSkill(nowAttackPhantom, another, skill);
+                skill.setNowWaitRound(skill.getWaitRound());
+                return;
+            }
+        }
+        battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_PHANTOM, nowAttackPhantom.getName(), GameConsts.Battle.ATTACK));
+        this.normalAttack(nowAttackPhantom, another, null);
+    }
+
+    private String getResult(BattlePhantomDTO targetDTO) {
+        if (targetDTO.getFinalHp() <= 0) {
+            return GameConsts.Battle.SUCCESS;
+        }else {
+            return GameConsts.Battle.FAIL;
+        }
+    }
+
+    private void buffDone(BattlePhantomDTO tempPhantom, BattlePhantomDTO another, BattleSkillDTO skill, ENEffectType enEffectType, Integer hurt) {
+        if (skill == null && CollectionUtil.isEmpty(tempPhantom.getBuffs()) && CollectionUtil.isEmpty(tempPhantom.getDeBuffs())) {
+            return;
+        }
+        String skillValue;
+        if (skill != null) {
+            skillValue = skill.getEffect();
+            this.finalBuffDone(tempPhantom, another, ENSkillEffect.getByValue(skillValue), hurt);
+        }else if (CollectionUtil.isNotEmpty(tempPhantom.getBuffs())){
+            List<BattleEffectDTO> needRemoveList = new ArrayList<>();
+            for (BattleEffectDTO effectDTO : tempPhantom.getBuffs()) {
+                if (effectDTO.getEffect().getEnEffectType().equals(enEffectType)) {
+                    this.finalBuffDone(tempPhantom, another, effectDTO.getEffect(), hurt);
+                    effectDTO.setLiveRound(effectDTO.getLiveRound() - 1);
+                    if (effectDTO.getLiveRound() < 1) {
+                        needRemoveList.add(effectDTO);
+                    }
+                }
+            }
+            tempPhantom.getBuffs().removeAll(needRemoveList);
+        }
+
+        if (CollectionUtil.isNotEmpty(tempPhantom.getDeBuffs())) {
+            List<BattleEffectDTO> needRemoveList = new ArrayList<>();
+            for (BattleEffectDTO effectDTO : tempPhantom.getDeBuffs()) {
+                if (effectDTO.getEffect().getEnEffectType().equals(enEffectType)) {
+                    this.finalBuffDone(tempPhantom, another, effectDTO.getEffect(), hurt);
+                    effectDTO.setLiveRound(effectDTO.getLiveRound() - 1);
+                    if (effectDTO.getLiveRound() < 1) {
+                        needRemoveList.add(effectDTO);
+                    }
+                }
+            }
+            tempPhantom.getDeBuffs().removeAll(needRemoveList);
+        }
+    }
+
+    /**
+     * 触发
+     * @param phantom
+     * @param another
+     * @param enSkillEffect
+     * @param hurt
+     */
+    private void finalBuffDone(BattlePhantomDTO phantom, BattlePhantomDTO another, ENSkillEffect enSkillEffect, Integer hurt) {
+        switch (enSkillEffect) {
+            case A01:
+                phantom.setFinalAttack(phantom.getFinalAttack() * 2);
+                break;
+            case A02:
+                Double tempA02 = phantom.getFinalAttack() * 1.5;
+                phantom.setFinalAttack(tempA02.intValue());
+                break;
+            case A03:
+                Double tempA03 = phantom.getFinalDefense() * 0.7;
+                phantom.setFinalDefense(tempA03.intValue());
+                phantom.setFinalAttack(phantom.getFinalAttack() * 3);
+                break;
+            case B01:
+                Double tempB01 = phantom.getFinalHp() * 0.05;
+                phantom.setFinalHp(phantom.getFinalHp() - tempB01.intValue());
+                another.setFinalHp(another.getFinalHp() - tempB01.intValue());
+                break;
+            case B02:
+                Double tempB02 = phantom.getFinalHp() * 0.10;
+                phantom.setFinalHp(phantom.getFinalHp() - tempB02.intValue());
+                another.setFinalHp(another.getFinalHp() - tempB02.intValue());
+                break;
+            case C01:
+                Double tempC01 = another.getFinalAttack() * 0.1;
+                another.setFinalAttack(another.getFinalAttack() - tempC01.intValue());
+                break;
+            case C02:
+                Double tempC02 = another.getFinalAttack() * 0.2;
+                another.setFinalAttack(another.getFinalAttack() - tempC02.intValue());
+                break;
+            case C03:
+                Double tempC03 = another.getFinalDefense() * 0.1;
+                another.setFinalDefense(another.getFinalDefense() - tempC03.intValue());
+                break;
+            case C04:
+                Double tempC04 = another.getFinalDefense() * 0.1;
+                another.setFinalDefense(another.getFinalDefense() - tempC04.intValue());
+                break;
+            case C05:
+                another.setStop(true);
+                break;
+            case C06:
+                Double tempC06 = another.getHp() * 0.02;
+                another.setFinalHp(another.getFinalHp() - tempC06.intValue());
+                break;
+            case C07:
+                Double tempC07 = another.getFinalHp() * 0.05;
+                another.setFinalHp(another.getFinalHp() - tempC07.intValue());
+                break;
+            case C08:
+                Double tempC08 = hurt * 0.3;
+                another.setFinalHp(another.getFinalHp() - tempC08.intValue());
+                break;
+            case C09:
+                if (phantom.getFinalHp() > 0) {
+                    Double tempC09 = (phantom.getHp() - phantom.getFinalHp()) * 0.1;
+                    phantom.setFinalHp(phantom.getFinalHp() + tempC09.intValue());
+                }
+                break;
+            case C10:
+                Double tempC10 = another.getFinalSpeed() * 0.05;
+                another.setFinalSpeed(another.getFinalSpeed() - tempC10.intValue());
+                break;
+            case D01:
+
+                default:
+                    break;
+        }
+    }
 }
