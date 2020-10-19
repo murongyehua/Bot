@@ -40,7 +40,7 @@ public class PhantomDetailMenuPrinter extends Menu {
                 playerPhantom.getLevel(), ENRarity.getLabelByValue(playerPhantom.getRarity()),
                 playerPhantom.getAppellation(), playerPhantom.getAttribute(), ENCamp.getLabelByValue(playerPhantom.getCamp()),
                 ENArea.getLabelByValue(playerPhantom.getArea()), playerPhantom.getSpeed(), playerPhantom.getAttack(),
-                playerPhantom.getPhysique(), playerPhantom.getGrow(), playerPhantom.getDescribe(), this.getSkillDescribe(playerPhantom.getSkills()));
+                playerPhantom.getPhysique(), playerPhantom.getGrow(), playerPhantom.getDescribe(), playerPhantom.getHp(), playerPhantom.getExp(), this.getSkillDescribe(playerPhantom.getSkills()));
     }
 
     private String getSkillDescribe(String skills) {
@@ -63,7 +63,7 @@ public class PhantomDetailMenuPrinter extends Menu {
                 stringBuilder.append(ENSkillEffect.getLabelByValue(x.getDebuff())).append(StrUtil.COMMA);
             }
             if (x.getRound() != 0) {
-                stringBuilder.append(String.format(GameConsts.CommonTip.SKILL_ROUNT, x.getRound())).append(StrUtil.COMMA);
+                stringBuilder.append(String.format(GameConsts.CommonTip.SKILL_ROUND, x.getRound())).append(StrUtil.COMMA);
             }
             stringBuilder.append(String.format(GameConsts.CommonTip.SKILL_WAIT_ROUND, x.getWaitRound()));
         });

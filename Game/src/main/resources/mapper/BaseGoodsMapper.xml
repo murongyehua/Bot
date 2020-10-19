@@ -131,7 +131,7 @@
         and term_of_validity = #{termOfValidity,jdbcType=VARCHAR}
       </if>
       <if test="origin != null">
-        and origin = #{origin,jdbcType=CHAR}
+        and origin like concat('%',#{origin,jdbcType=CHAR},'%')
       </if>
       <if test="targetId != null">
         and target_id = #{targetId,jdbcType=VARCHAR}

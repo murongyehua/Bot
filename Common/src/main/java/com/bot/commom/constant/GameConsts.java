@@ -11,7 +11,8 @@ public interface GameConsts {
     interface CommonTip {
         String EXIT_SUCCESS = "退出成功";
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
-        String LOGIN_TIP = "欢迎回来,[%s]，当前活动：1234567" + StrUtil.CRLF + "回复数字【1】进入游戏";
+        String LOGIN_TIP = "欢迎回来,[%s]，当前活动："+ StrUtil.CRLF +"2020年10月21日--2020年20月24日为删档灰度测试阶段" + StrUtil.CRLF +  "在此期间注册登录即送3张唤灵符" +
+                StrUtil.CRLF + "另外，只要在灰度测试期间战灵力达到500，即可在游戏正式上线时自动获得永久绝版称号【山海行者】哦~" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
         String UN_KNOW_POINT = "未知指令，回复【0】返回";
         String ERROR_POINT = "指令错误，请输入正确的指令";
@@ -25,9 +26,9 @@ public interface GameConsts {
         String PHANTOM_EMPTY = "您还没有幻灵，赶紧去唤灵仪式吧~";
         String SKILL_DESCRIBE = "【%s】";
         String SKILL_WAIT_ROUND = "冷却时间%s回合";
-        String SKILL_ROUNT = "效果持续%s回合";
+        String SKILL_ROUND = "效果持续%s回合";
         String SEE_BATTLE_DETAIL = "Q";
-        String TRUN_BACK = "0.返回";
+        String TURN_BACK = "0.返回";
     }
 
     interface PlayerInfo {
@@ -45,11 +46,11 @@ public interface GameConsts {
 
     interface PhantomDetail {
         String MENU_NAME = "[%s]%s(%s级)";
-        String DESCRIBE = "名称：%s" + StrUtil.CRLF + "等级：%s" + "稀有度：%s" + StrUtil.CRLF
+        String DESCRIBE = "名称：%s" + StrUtil.CRLF + "等级：%s" + StrUtil.CRLF + "稀有度：%s" + StrUtil.CRLF
                 + "称号：%s" + StrUtil.CRLF + "属性：%s" + StrUtil.CRLF +"阵营：%s" + StrUtil.CRLF
                 +"家乡：%s" +  StrUtil.CRLF +"速度：%s" + StrUtil.CRLF + "攻击：%s" + StrUtil.CRLF
                 + "体质：%s" + StrUtil.CRLF + "成长：%s" + StrUtil.CRLF + "简介：%s" + StrUtil.CRLF
-                + "技能：%s";
+                + "血量：%s" + StrUtil.CRLF + "经验值：%s" + StrUtil.CRLF + "技能：%s";
     }
 
     interface MyPhantom {
@@ -60,7 +61,7 @@ public interface GameConsts {
         String MENU_NAME = "我的背包";
         String USE_GOODS_MENU = "使用道具";
         String GET_PHANTOM = "请前往【唤灵仪式】使用唤灵符";
-        String USE_SKILL_CARD = "请选择需要使用的幻灵" + StrUtil.CRLF + "已自动过滤掉学满3个技能的幻灵和已学会该技能的幻灵";
+        String USE_SKILL_CARD = "请选择需要使用的幻灵" + StrUtil.CRLF + "已自动过滤掉与此技能属性不符的幻灵、学满3个技能的幻灵和已学会该技能的幻灵";
         String USE_SKILL_NO_PHANTOM = "没有满足使用条件的幻灵";
         String BUFF_REPEAT = "已有类似功能的道具生效中，请勿重复使用";
         String BUFF_USE = "使用成功!快去试试效果吧~";
@@ -163,7 +164,7 @@ public interface GameConsts {
 
         Integer LEVEL_NUMBER_1 = 3;
         String GET_RESULT_EXP = "出战幻灵经验值：+%s";
-        String GET_RESULT_GOOD = "获得%s：%s";
+        String GET_RESULT_GOOD = "获得%s：%s，可前往背包查看详情";
         String GET_RESULT_GOOD_EMTPY = "此次战斗无物品掉落";
     }
 }

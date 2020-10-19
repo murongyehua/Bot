@@ -20,10 +20,10 @@
     delete from bot_player_goods
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerGoods" useGeneratedKeys="true">
-    insert into bot_player_goods (player_id, good_id, number
+  <insert id="insert" parameterType="com.bot.game.dao.entity.PlayerGoods" useGeneratedKeys="true">
+    insert into bot_player_goods (id, player_id, good_id, number
       )
-    values (#{playerId,jdbcType=VARCHAR}, #{goodId,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}
+    values (#{id,jdbcType=VARCHAR},#{playerId,jdbcType=VARCHAR}, #{goodId,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerGoods" useGeneratedKeys="true">

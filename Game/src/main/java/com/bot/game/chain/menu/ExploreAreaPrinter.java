@@ -15,6 +15,7 @@ import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.service.impl.BattleServiceImpl;
 import com.bot.game.service.impl.CommonPlayer;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class ExploreAreaPrinter extends Menu {
         param.setArea(area.getValue());
         List<BaseMonster> list = baseMonsterMapper.selectBySelective(param);
         ExploreBuffDTO exploreBuffDTO = CommonPlayer.exploreBuffMap.get(token);
-        List<BaseMonster> finalList;
+        List<BaseMonster> finalList = new LinkedList<>();
         if (exploreBuffDTO != null && System.currentTimeMillis() <= exploreBuffDTO.getOutTime().getTime()) {
             int levelRange = 100;
             switch (exploreBuffDTO.getEnGoodEffect()) {
@@ -57,12 +58,19 @@ public class ExploreAreaPrinter extends Menu {
                     default:
                         break;
             }
-            final int finalLevelRange = levelRange;
-
+            Integer level = playerPhantomMapper.getMaxLevel(token);
+            final Integer max = level + levelRange;
+            final Integer min = level - levelRange;
+            finalList = list.stream().filter(x -> {
+                if (x.getLevel() >= min && x.getLevel() <= max) {
+                    return true;
+                }
+                return false;
+            }).collect(Collectors.toList());
         }else {
             finalList = list;
         }
-        BaseMonster baseMonster = list.get(RandomUtil.randomInt(list.size()));
+        BaseMonster baseMonster = finalList.get(RandomUtil.randomInt(finalList.size()));
         this.describe = String.format(GameConsts.Explore.MEET,
                 baseMonster.getName(), baseMonster.getAttribute(), baseMonster.getLevel());
         PlayerPhantom phantomParam = new PlayerPhantom();

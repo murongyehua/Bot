@@ -273,4 +273,9 @@
       </if>
     </where>
   </select>
+  <select id="getMaxLevel" resultType="java.lang.Integer">
+    select max (evel)
+    from bot_player_phantom
+    where player_id = playerId
+  </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.exception.BotException;
@@ -81,8 +82,11 @@ public class CommonPlayer implements Player {
         gamePlayerMapper.updateByPrimaryKey(gamePlayer);
     }
 
-    public static void afterAddGrow(PlayerPhantom playerPhantom) {
+    public static void afterAddGrow(PlayerPhantom playerPhantom, Integer needAddGrow) {
         int waitAdd = playerPhantom.getLevel() - 1;
+        if (needAddGrow != null) {
+            waitAdd = needAddGrow;
+        }
         List<Integer> list = spiltNumber(waitAdd);
         playerPhantom.setAttack(playerPhantom.getAttack() + list.get(0));
         playerPhantom.setSpeed(playerPhantom.getSpeed() + list.get(1));
@@ -130,6 +134,7 @@ public class CommonPlayer implements Player {
             playerGoodsMapper.updateByPrimaryKey(playerGoods);
             return;
         }
+        param.setId(IdUtil.simpleUUID());
         param.setNumber(1);
         playerGoodsMapper.insert(param);
     }

@@ -3,6 +3,7 @@ package com.bot.game.dto;
 import com.bot.game.dao.entity.PlayerPhantom;
 import lombok.Data;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,11 +23,11 @@ public class BattlePhantomDTO extends PlayerPhantom {
 
     private Integer finalHp;
 
-    private List<BattleEffectDTO> buffs;
+    private List<BattleEffectDTO> buffs = new LinkedList<>();;
 
-    private List<BattleEffectDTO> deBuffs;
+    private List<BattleEffectDTO> deBuffs = new LinkedList<>();
 
-    private List<BattleSkillDTO> skillList;
+    private List<BattleSkillDTO> skillList = new LinkedList<>();;
 
     private Boolean stop;
 }

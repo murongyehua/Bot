@@ -71,6 +71,9 @@ public class UseGoodsPrinter extends Menu {
                 if (skills.length >= 3) {
                     return false;
                 }
+                if (!x.getAttribute().equals(goodsDetailDTO.getAttribute())) {
+                    return false;
+                }
                 List<String> tempList = Arrays.asList(skills);
                 return !tempList.contains(goodsDetailDTO.getTargetId());
             }

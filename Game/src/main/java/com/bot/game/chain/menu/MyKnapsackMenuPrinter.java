@@ -1,11 +1,14 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.BaseGoods;
+import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.BaseGoodsMapper;
+import com.bot.game.dao.mapper.BaseSkillMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dto.GoodsDetailDTO;
 import org.springframework.stereotype.Component;
@@ -56,6 +59,11 @@ public class MyKnapsackMenuPrinter extends Menu {
         goodsDetailDTO.setEffect(baseGoods.getEffect());
         goodsDetailDTO.setTargetId(baseGoods.getTargetId());
         goodsDetailDTO.setPlayerGoodsId(playerGoods.getId());
+        if (StrUtil.isNotEmpty(baseGoods.getTargetId())) {
+            BaseSkillMapper baseSkillMapper = (BaseSkillMapper) mapperMap.get(GameConsts.MapperName.BASE_SKILL);
+            BaseSkill baseSkill = baseSkillMapper.selectByPrimaryKey(baseGoods.getTargetId());
+            goodsDetailDTO.setAttribute(baseSkill.getAttribute());
+        }
         return goodsDetailDTO;
     }
 

@@ -80,7 +80,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             PlayerPhantom hasPhantom = list.get(0);
             hasPhantom.setGrow(hasPhantom.getGrow() + 1);
             playerPhantomMapper.updateByPrimaryKey(hasPhantom);
-            CommonPlayer.afterAddGrow(hasPhantom);
+            CommonPlayer.afterAddGrow(hasPhantom, null);
             stringBuilder.append(GameConsts.GetPhantom.REPEAT).append(StrUtil.CRLF);
         }else {
             // 存入

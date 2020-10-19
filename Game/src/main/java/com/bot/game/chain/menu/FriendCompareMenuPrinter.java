@@ -20,4 +20,9 @@ public class FriendCompareMenuPrinter extends Menu {
         this.menuName = GameConsts.FriendCompare.MENU_NAME;
     }
 
+    @Override
+    public void getDescribe(String token) {
+        this.describe = "即将上线，敬请期待!";
+    }
+
 }

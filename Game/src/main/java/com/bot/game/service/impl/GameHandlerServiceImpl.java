@@ -1,11 +1,13 @@
 package com.bot.game.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.IdUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.enums.ENStatus;
 import com.bot.game.chain.Collector;
 import com.bot.game.dao.entity.GamePlayer;
+import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.*;
 import com.bot.game.service.GameCommonHolder;
 import com.bot.game.service.GameHandler;
@@ -85,6 +87,13 @@ public class GameHandlerServiceImpl implements GameHandler {
                 return GameConsts.CommonTip.REPEAT_REG;
             }
             gamePlayerMapper.insert(this.getGamePlayer(token, reqContent));
+            // 赠送唤灵符
+            PlayerGoods playerGoods = new PlayerGoods();
+            playerGoods.setGoodId("1");
+            playerGoods.setId(IdUtil.simpleUUID());
+            playerGoods.setNumber(3);
+            playerGoods.setPlayerId(token);
+            playerGoodsMapper.insert(playerGoods);
             WAIT_REG.remove(token);
             return String.format(GameConsts.CommonTip.LOGIN_TIP, reqContent);
         }

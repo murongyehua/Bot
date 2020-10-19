@@ -1,6 +1,7 @@
 package com.bot.game.dao.mapper;
 
 import com.bot.game.dao.entity.PlayerPhantom;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface PlayerPhantomMapper {
     int updateByPrimaryKey(PlayerPhantom record);
 
     List<PlayerPhantom> selectBySelective(PlayerPhantom record);
+
+    Integer getMaxLevel(@Param("playerId") String token);
 }

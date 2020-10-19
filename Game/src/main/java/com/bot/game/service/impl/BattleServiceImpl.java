@@ -72,7 +72,7 @@ public class BattleServiceImpl extends CommonPlayer {
             result = this.doBattle(targetDTO, playerDTO);
         }
         battleRecord.append(GameConsts.Battle.END);
-        battleRecord.append(GameConsts.CommonTip.TRUN_BACK);
+        battleRecord.append(GameConsts.CommonTip.TURN_BACK);
         battleDetailMap.put(token, battleRecord.toString());
         return result;
     }
@@ -254,9 +254,9 @@ public class BattleServiceImpl extends CommonPlayer {
     private String getResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto) {
         if (targetDto.getFinalHp() <= 0) {
             return GameConsts.Battle.SUCCESS + StrUtil.CRLF +
-                    this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TRUN_BACK;
+                    this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TURN_BACK;
         }else {
-            return GameConsts.Battle.FAIL + StrUtil.CRLF + GameConsts.CommonTip.TRUN_BACK;
+            return GameConsts.Battle.FAIL + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
         }
     }
 
@@ -310,64 +310,64 @@ public class BattleServiceImpl extends CommonPlayer {
                 phantom.setFinalAttack(phantom.getFinalAttack() * 2);
                 break;
             case A02:
-                Double tempA02 = phantom.getFinalAttack() * 1.5;
-                phantom.setFinalAttack(tempA02.intValue());
+                double tempA02 = phantom.getFinalAttack() * 1.5;
+                phantom.setFinalAttack((int) tempA02);
                 break;
             case A03:
-                Double tempA03 = phantom.getFinalDefense() * 0.7;
-                phantom.setFinalDefense(tempA03.intValue());
+                double tempA03 = phantom.getFinalDefense() * 0.7;
+                phantom.setFinalDefense((int) tempA03);
                 phantom.setFinalAttack(phantom.getFinalAttack() * 3);
                 break;
             case B01:
-                Double tempB01 = phantom.getFinalHp() * 0.05;
-                phantom.setFinalHp(phantom.getFinalHp() - tempB01.intValue());
-                another.setFinalHp(another.getFinalHp() - tempB01.intValue());
+                double tempB01 = phantom.getFinalHp() * 0.05;
+                phantom.setFinalHp(phantom.getFinalHp() - (int) tempB01);
+                another.setFinalHp(another.getFinalHp() - (int) tempB01);
                 break;
             case B02:
-                Double tempB02 = phantom.getFinalHp() * 0.10;
-                phantom.setFinalHp(phantom.getFinalHp() - tempB02.intValue());
-                another.setFinalHp(another.getFinalHp() - tempB02.intValue());
+                double tempB02 = phantom.getFinalHp() * 0.10;
+                phantom.setFinalHp(phantom.getFinalHp() - (int) tempB02);
+                another.setFinalHp(another.getFinalHp() - (int) tempB02);
                 break;
             case C01:
-                Double tempC01 = another.getFinalAttack() * 0.1;
-                another.setFinalAttack(another.getFinalAttack() - tempC01.intValue());
+                double tempC01 = another.getFinalAttack() * 0.1;
+                another.setFinalAttack(another.getFinalAttack() - (int) tempC01);
                 break;
             case C02:
-                Double tempC02 = another.getFinalAttack() * 0.2;
-                another.setFinalAttack(another.getFinalAttack() - tempC02.intValue());
+                double tempC02 = another.getFinalAttack() * 0.2;
+                another.setFinalAttack(another.getFinalAttack() - (int) tempC02);
                 break;
             case C03:
-                Double tempC03 = another.getFinalDefense() * 0.1;
-                another.setFinalDefense(another.getFinalDefense() - tempC03.intValue());
+                double tempC03 = another.getFinalDefense() * 0.1;
+                another.setFinalDefense(another.getFinalDefense() - (int) tempC03);
                 break;
             case C04:
-                Double tempC04 = another.getFinalDefense() * 0.1;
-                another.setFinalDefense(another.getFinalDefense() - tempC04.intValue());
+                double tempC04 = another.getFinalDefense() * 0.2;
+                another.setFinalDefense(another.getFinalDefense() - (int) tempC04);
                 break;
             case C05:
                 another.setStop(true);
                 break;
             case C06:
-                Double tempC06 = another.getHp() * 0.02;
-                another.setFinalHp(another.getFinalHp() - tempC06.intValue());
+                double tempC06 = another.getHp() * 0.02;
+                another.setFinalHp(another.getFinalHp() - (int) tempC06);
                 break;
             case C07:
-                Double tempC07 = another.getFinalHp() * 0.05;
-                another.setFinalHp(another.getFinalHp() - tempC07.intValue());
+                double tempC07 = another.getFinalHp() * 0.05;
+                another.setFinalHp(another.getFinalHp() - (int) tempC07);
                 break;
             case C08:
-                Double tempC08 = hurt * 0.3;
-                another.setFinalHp(another.getFinalHp() - tempC08.intValue());
+                double tempC08 = hurt * 0.3;
+                another.setFinalHp(another.getFinalHp() - (int) tempC08);
                 break;
             case C09:
                 if (phantom.getFinalHp() > 0) {
-                    Double tempC09 = (phantom.getHp() - phantom.getFinalHp()) * 0.1;
-                    phantom.setFinalHp(phantom.getFinalHp() + tempC09.intValue());
+                    double tempC09 = (phantom.getHp() - phantom.getFinalHp()) * 0.1;
+                    phantom.setFinalHp(phantom.getFinalHp() + (int) tempC09);
                 }
                 break;
             case C10:
-                Double tempC10 = another.getFinalSpeed() * 0.05;
-                another.setFinalSpeed(another.getFinalSpeed() - tempC10.intValue());
+                double tempC10 = another.getFinalSpeed() * 0.05;
+                another.setFinalSpeed(another.getFinalSpeed() - (int) tempC10);
                 break;
             case D01:
 
@@ -376,6 +376,13 @@ public class BattleServiceImpl extends CommonPlayer {
         }
     }
 
+    /**
+     * 战斗胜利后获取物品
+     * @param playerDto
+     * @param targetDto
+     * @param area
+     * @return
+     */
     private String afterBattleSuccessResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto, String area) {
         StringBuilder stringBuilder = new StringBuilder();
         int exp;
@@ -401,6 +408,7 @@ public class BattleServiceImpl extends CommonPlayer {
         if (afterAddExp >= GameConsts.BaseFigure.UP_LEVEL_NEED_EXP) {
             playerDto.setLevel(playerDto.getLevel() + 1);
             playerDto.setExp(afterAddExp - GameConsts.BaseFigure.UP_LEVEL_NEED_EXP);
+            CommonPlayer.afterAddGrow(playerDto, playerDto.getGrow());
         }else {
             playerDto.setExp(afterAddExp);
         }
@@ -413,19 +421,24 @@ public class BattleServiceImpl extends CommonPlayer {
             stringBuilder.append(GameConsts.Battle.GET_RESULT_GOOD_EMTPY).append(StrUtil.CRLF);
         }else {
             stringBuilder.append(String.format(GameConsts.Battle.GET_RESULT_GOOD, baseGoods.getName(),
-                    ENGoodEffect.getByValue(baseGoods.getEffect()))).append(StrUtil.CRLF);
+                    ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel())).append(StrUtil.CRLF);
             CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId());
         }
         return stringBuilder.toString();
     }
 
+    /**
+     * 按区域获取物品
+     * @param area
+     * @return
+     */
     private BaseGoods getResultGoods(String area) {
         BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
         BaseGoods param = new BaseGoods();
         param.setOrigin(area);
         List<BaseGoods> list = baseGoodsMapper.selectBySelective(param);
         List<BaseGoods> tempList = list.stream().filter(baseGoods -> {
-            if (Integer.valueOf(baseGoods.getWeight()) != 0) {
+            if (Integer.parseInt(baseGoods.getWeight()) != 0) {
                 return true;
             }
             return false;
@@ -434,7 +447,7 @@ public class BattleServiceImpl extends CommonPlayer {
         String needWeight = null;
         for (String weight : weights) {
             int number = RandomUtil.randomInt(0, 100);
-            int range = Integer.valueOf(weight) * 10;
+            int range = Integer.parseInt(weight) * 10;
             if ( number < range) {
                 needWeight = weight;
                 break;
