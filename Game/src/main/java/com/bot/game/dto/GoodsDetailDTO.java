@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class GoodsDetailDTO {
 
+    private String playerGoodsId;
+
     private String token;
 
     private String goodsId;
@@ -18,6 +20,10 @@ public class GoodsDetailDTO {
     private Integer number;
 
     private String describe;
+
+    private String effect;
+
+    private String targetId;
 
 
 }

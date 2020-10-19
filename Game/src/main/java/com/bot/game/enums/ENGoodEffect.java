@@ -11,7 +11,9 @@ import lombok.Getter;
 public enum  ENGoodEffect {
     //
     GET_PHANTOM("0", "唤灵"),
-    SKILL("1", "技能卡");
+    SKILL("1", "技能卡"),
+    WAN_1("2", "避灵丹"),
+    WAN_2("3", "大蕴丸");
 
     private String value;
     private String label;

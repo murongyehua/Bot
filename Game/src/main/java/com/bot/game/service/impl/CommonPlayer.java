@@ -13,7 +13,7 @@ import com.bot.game.dao.mapper.BaseGoodsMapper;
 import com.bot.game.dao.mapper.GamePlayerMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
-import com.bot.game.dto.BattlePhantomDTO;
+import com.bot.game.dto.ExploreBuffDTO;
 import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.enums.ENRarity;
 import com.bot.game.service.Player;
@@ -33,7 +33,9 @@ public class CommonPlayer implements Player {
 
     public static Map<String, Object> mapperMap;
 
-    public static Map<String, String> battleDetail = new HashMap<>();
+    public static Map<String, String> battleDetailMap = new HashMap<>();
+
+    public static Map<String, ExploreBuffDTO> exploreBuffMap = new HashMap<>();
 
     @Override
     public String doPlay(String token) {
@@ -130,6 +132,16 @@ public class CommonPlayer implements Player {
         }
         param.setNumber(1);
         playerGoodsMapper.insert(param);
+    }
+
+    public static void afterUseGoods(PlayerGoods playerGoods) {
+        PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
+        if (playerGoods.getNumber() == 1) {
+            playerGoodsMapper.deleteByPrimaryKey(playerGoods.getId());
+        }else {
+            playerGoods.setNumber(playerGoods.getNumber() - 1);
+            playerGoodsMapper.updateByPrimaryKeySelective(playerGoods);
+        }
     }
 
 }

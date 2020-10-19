@@ -77,9 +77,9 @@ public class GameChainCollector implements Collector{
             }
             // Q查看最近一次战斗详情
             if (GameConsts.CommonTip.SEE_BATTLE_DETAIL.equals(point)) {
-                String result = CommonPlayer.battleDetail.get(token);
+                String result = CommonPlayer.battleDetailMap.get(token);
                 if (result != null) {
-                    return CommonPlayer.battleDetail.get(token);
+                    return CommonPlayer.battleDetailMap.get(token);
                 }
             }
             return GameConsts.CommonTip.UN_KNOW_POINT;

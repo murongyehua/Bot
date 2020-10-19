@@ -9,10 +9,14 @@ import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.BaseMonsterMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
+import com.bot.game.dto.ExploreBuffDTO;
 import com.bot.game.enums.ENArea;
+import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.service.impl.BattleServiceImpl;
+import com.bot.game.service.impl.CommonPlayer;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author liul
@@ -39,6 +43,25 @@ public class ExploreAreaPrinter extends Menu {
         BaseMonster param = new BaseMonster();
         param.setArea(area.getValue());
         List<BaseMonster> list = baseMonsterMapper.selectBySelective(param);
+        ExploreBuffDTO exploreBuffDTO = CommonPlayer.exploreBuffMap.get(token);
+        List<BaseMonster> finalList;
+        if (exploreBuffDTO != null && System.currentTimeMillis() <= exploreBuffDTO.getOutTime().getTime()) {
+            int levelRange = 100;
+            switch (exploreBuffDTO.getEnGoodEffect()) {
+                case WAN_1:
+                    levelRange = 5;
+                    break;
+                case WAN_2:
+                    levelRange = 3;
+                    break;
+                    default:
+                        break;
+            }
+            final int finalLevelRange = levelRange;
+
+        }else {
+            finalList = list;
+        }
         BaseMonster baseMonster = list.get(RandomUtil.randomInt(list.size()));
         this.describe = String.format(GameConsts.Explore.MEET,
                 baseMonster.getName(), baseMonster.getAttribute(), baseMonster.getLevel());

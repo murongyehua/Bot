@@ -73,7 +73,7 @@ public class BattleServiceImpl extends CommonPlayer {
         }
         battleRecord.append(GameConsts.Battle.END);
         battleRecord.append(GameConsts.CommonTip.TRUN_BACK);
-        battleDetail.put(token, battleRecord.toString());
+        battleDetailMap.put(token, battleRecord.toString());
         return result;
     }
 

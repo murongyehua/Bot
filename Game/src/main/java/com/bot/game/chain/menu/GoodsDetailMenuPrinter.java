@@ -4,8 +4,6 @@ import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dto.GoodsDetailDTO;
-import com.bot.game.dto.UseGoodsDTO;
-import com.bot.game.service.impl.UseGoodsServiceImpl;
 
 /**
  * @author liul
@@ -29,14 +27,6 @@ public class GoodsDetailMenuPrinter extends Menu {
     public void getDescribe(String token) {
         this.describe = String.format(GameConsts.GoodsDetail.DESCRIBE,
                 goodsDetailDTO.getName(), goodsDetailDTO.getNumber(), goodsDetailDTO.getDescribe());
-        this.playServiceMap.put(BaseConsts.Menu.ONE, new UseGoodsServiceImpl(this.getUseGoodsDTO(token, goodsDetailDTO.getGoodsId())));
-    }
-
-    private UseGoodsDTO getUseGoodsDTO(String token, String goodsId) {
-        UseGoodsDTO useGoodsDTO = new UseGoodsDTO();
-        useGoodsDTO.setToken(token);
-        useGoodsDTO.setGoodsId(goodsId);
-        useGoodsDTO.setTitle(GameConsts.GoodsDetail.USE);
-        return useGoodsDTO;
+        this.menuChildrenMap.put(BaseConsts.Menu.ONE, new UseGoodsPrinter(goodsDetailDTO));
     }
 }

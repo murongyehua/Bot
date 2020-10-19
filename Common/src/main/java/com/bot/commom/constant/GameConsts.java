@@ -58,6 +58,12 @@ public interface GameConsts {
 
     interface MyKnapsack {
         String MENU_NAME = "我的背包";
+        String USE_GOODS_MENU = "使用道具";
+        String GET_PHANTOM = "请前往【唤灵仪式】使用唤灵符";
+        String USE_SKILL_CARD = "请选择需要使用的幻灵" + StrUtil.CRLF + "已自动过滤掉学满3个技能的幻灵和已学会该技能的幻灵";
+        String USE_SKILL_NO_PHANTOM = "没有满足使用条件的幻灵";
+        String BUFF_REPEAT = "已有类似功能的道具生效中，请勿重复使用";
+        String BUFF_USE = "使用成功!快去试试效果吧~";
     }
 
     interface GetPhantom {

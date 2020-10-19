@@ -53,6 +53,9 @@ public class MyKnapsackMenuPrinter extends Menu {
         goodsDetailDTO.setGoodsId(baseGoods.getId());
         goodsDetailDTO.setNumber(playerGoods.getNumber());
         goodsDetailDTO.setDescribe(baseGoods.getDescribe());
+        goodsDetailDTO.setEffect(baseGoods.getEffect());
+        goodsDetailDTO.setTargetId(baseGoods.getTargetId());
+        goodsDetailDTO.setPlayerGoodsId(playerGoods.getId());
         return goodsDetailDTO;
     }
 
