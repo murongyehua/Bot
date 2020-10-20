@@ -69,6 +69,7 @@ public interface GameConsts {
         String USE_SKILL_NO_PHANTOM = "没有满足使用条件的幻灵";
         String BUFF_REPEAT = "已有类似功能的道具生效中，请勿重复使用";
         String BUFF_USE = "使用成功!快去试试效果吧~";
+        String EMPTY = "该道具数量为0，无法使用";
     }
 
     interface GetPhantom {

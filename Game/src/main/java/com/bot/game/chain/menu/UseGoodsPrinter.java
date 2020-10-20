@@ -39,6 +39,10 @@ public class UseGoodsPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
+        if (goodsDetailDTO.getNumber() == 0) {
+            this.describe = GameConsts.MyKnapsack.EMPTY;
+            return;
+        }
         ENGoodEffect enGoodEffect = ENGoodEffect.getByValue(goodsDetailDTO.getEffect());
         StringBuilder stringBuilder = new StringBuilder();
         switch (enGoodEffect) {
