@@ -274,7 +274,7 @@
     </where>
   </select>
   <select id="getMaxLevel" resultType="java.lang.Integer">
-    select max (level)
+    select max(level)
     from bot_player_phantom
     where player_id = playerId
   </select>
