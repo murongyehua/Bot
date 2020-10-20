@@ -23,6 +23,7 @@ public class GameMainMenuPrinter extends Menu {
     @Override
     public void initMenu() {
         this.menuName = BaseConsts.Menu.MAIN_MENU_NAME;
+        this.menuChildrenMap.put(BaseConsts.Menu.ZERO, new SignMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.ONE, new PlayerInfoMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.TWO, new MyPhantomMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.THREE, new MyKnapsackMenuPrinter());

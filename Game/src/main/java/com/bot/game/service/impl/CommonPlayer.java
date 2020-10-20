@@ -16,6 +16,7 @@ import com.bot.game.service.Player;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -156,6 +157,45 @@ public class CommonPlayer implements Player {
             param.setGetTime(new Date());
             playerAppellationMapper.insert(param);
         }
+    }
+
+    /**
+     * 按区域获取物品
+     * @param area
+     * @return
+     */
+    public static BaseGoods getResultGoods(String area) {
+        BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
+        BaseGoods param = new BaseGoods();
+        param.setOrigin(area);
+        List<BaseGoods> list = baseGoodsMapper.selectBySelective(param);
+        List<BaseGoods> tempList = list.stream().filter(baseGoods -> {
+            if (Integer.parseInt(baseGoods.getWeight()) != 0) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        List<String> weights = tempList.stream().map(BaseGoods::getWeight).distinct().collect(Collectors.toList());
+        String needWeight = null;
+        for (String weight : weights) {
+            int number = RandomUtil.randomInt(0, 100);
+            int range = Integer.parseInt(weight) * 10;
+            if ( number < range) {
+                needWeight = weight;
+                break;
+            }
+        }
+        if (needWeight == null) {
+            return null;
+        }
+        String finalWeight = needWeight;
+        List<BaseGoods> finalList = tempList.stream().filter(baseGoods -> {
+            if (finalWeight.equals(baseGoods.getWeight())) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        return finalList.get(RandomUtil.randomInt(finalList.size()));
     }
 
 }

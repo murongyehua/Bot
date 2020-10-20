@@ -119,9 +119,8 @@ public interface BaseConsts {
         String GAME = "山海见闻";
         String JOIN_GAME_WARN = "即将进入游戏模式" + StrUtil.CRLF
                 + "一旦进入后，您所有的消息都会默认作为游戏指令" + StrUtil.CRLF
-                + "只有当您发送【退出】时才会退出游戏模式，回到正常的聊天模式" + StrUtil.CRLF
-                + "（此模式按玩家分隔，不用担心别人操作您的游戏角色哦~）" + StrUtil.CRLF
-                + "回复数字1进入，数字0返回";
+                + "只有当您发送【退出】时才会退出并回到正常的聊天模式" + StrUtil.CRLF
+                + "回复数字【1】进入，数字【0】返回";
         String EXIT_GAME = "退出";
     }
 

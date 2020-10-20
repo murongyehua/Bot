@@ -420,7 +420,7 @@ public class BattleServiceImpl extends CommonPlayer {
         BeanUtil.copyProperties(playerDto, playerPhantom);
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
-        BaseGoods baseGoods = this.getResultGoods(area);
+        BaseGoods baseGoods = getResultGoods(area);
         if (baseGoods == null) {
             stringBuilder.append(GameConsts.Battle.GET_RESULT_GOOD_EMTPY).append(StrUtil.CRLF);
         }else {
@@ -429,44 +429,5 @@ public class BattleServiceImpl extends CommonPlayer {
             CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId());
         }
         return stringBuilder.toString();
-    }
-
-    /**
-     * 按区域获取物品
-     * @param area
-     * @return
-     */
-    private BaseGoods getResultGoods(String area) {
-        BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
-        BaseGoods param = new BaseGoods();
-        param.setOrigin(area);
-        List<BaseGoods> list = baseGoodsMapper.selectBySelective(param);
-        List<BaseGoods> tempList = list.stream().filter(baseGoods -> {
-            if (Integer.parseInt(baseGoods.getWeight()) != 0) {
-                return true;
-            }
-            return false;
-        }).collect(Collectors.toList());
-        List<String> weights = tempList.stream().map(BaseGoods::getWeight).distinct().collect(Collectors.toList());
-        String needWeight = null;
-        for (String weight : weights) {
-            int number = RandomUtil.randomInt(0, 100);
-            int range = Integer.parseInt(weight) * 10;
-            if ( number < range) {
-                needWeight = weight;
-                break;
-            }
-        }
-        if (needWeight == null) {
-            return null;
-        }
-        String finalWeight = needWeight;
-        List<BaseGoods> finalList = tempList.stream().filter(baseGoods -> {
-            if (finalWeight.equals(baseGoods.getWeight())) {
-                return true;
-            }
-            return false;
-        }).collect(Collectors.toList());
-        return finalList.get(RandomUtil.randomInt(finalList.size()));
     }
 }
