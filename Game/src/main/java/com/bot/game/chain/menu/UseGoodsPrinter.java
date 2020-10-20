@@ -70,12 +70,12 @@ public class UseGoodsPrinter extends Menu {
         param.setPlayerId(goodsDetailDTO.getToken());
         List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
         List<PlayerPhantom> finalList = list.stream().filter(x -> {
+            if (!x.getAttribute().equals(goodsDetailDTO.getAttribute())) {
+                return false;
+            }
             if (StrUtil.isNotEmpty(x.getSkills())) {
                 String[] skills = x.getSkills().split(StrUtil.COMMA);
                 if (skills.length >= 3) {
-                    return false;
-                }
-                if (!x.getAttribute().equals(goodsDetailDTO.getAttribute())) {
                     return false;
                 }
                 List<String> tempList = Arrays.asList(skills);
