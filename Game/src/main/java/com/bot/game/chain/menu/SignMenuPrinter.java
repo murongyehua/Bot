@@ -37,6 +37,7 @@ public class SignMenuPrinter extends Menu {
             this.describe =  GameConsts.Sign.SIGN_REPEAT;
             return;
         }
+        signMap.put(token, new Date());
         String result = this.randomGetGoods(token);
         if (result == null) {
             this.describe = GameConsts.Sign.SIGN_NOTHING;
