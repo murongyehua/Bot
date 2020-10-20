@@ -74,7 +74,7 @@ public class BattleServiceImpl extends CommonPlayer {
         while (result == null) {
             result = this.doBattle(targetDTO, playerDTO);
         }
-        battleRecord.append(GameConsts.Battle.END);
+        battleRecord.append(GameConsts.Battle.END).append(StrUtil.CRLF);
         battleRecord.append(GameConsts.CommonTip.TURN_BACK);
         battleDetailMap.put(token, battleRecord.toString());
         return result;
@@ -412,6 +412,7 @@ public class BattleServiceImpl extends CommonPlayer {
             playerDto.setLevel(playerDto.getLevel() + 1);
             playerDto.setExp(afterAddExp - GameConsts.BaseFigure.UP_LEVEL_NEED_EXP);
             CommonPlayer.afterAddGrow(playerDto, playerDto.getGrow());
+            CommonPlayer.computeAndUpdateSoulPower(playerDto.getPlayerId());
         }else {
             playerDto.setExp(afterAddExp);
         }

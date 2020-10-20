@@ -86,6 +86,7 @@ public class CommonPlayer implements Player {
         playerPhantom.setAttack(playerPhantom.getAttack() + list.get(0));
         playerPhantom.setSpeed(playerPhantom.getSpeed() + list.get(1));
         playerPhantom.setPhysique(playerPhantom.getPhysique() + list.get(2));
+        playerPhantom.setHp(getInitHp(playerPhantom));
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
     }

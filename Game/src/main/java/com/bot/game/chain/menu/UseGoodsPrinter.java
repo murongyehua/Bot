@@ -131,6 +131,8 @@ public class UseGoodsPrinter extends Menu {
         playerGoods.setId(goodsDetailDTO.getPlayerGoodsId());
         playerGoods.setNumber(goodsDetailDTO.getNumber());
         CommonPlayer.afterUseGoods(playerGoods);
+        int nowNumber = goodsDetailDTO.getNumber() - 1;
+        goodsDetailDTO.setNumber(nowNumber < 0 ? 0 : nowNumber);
         stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE);
     }
 

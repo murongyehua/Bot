@@ -82,6 +82,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             hasPhantom.setGrow(hasPhantom.getGrow() + 1);
             playerPhantomMapper.updateByPrimaryKey(hasPhantom);
             CommonPlayer.afterAddGrow(hasPhantom, null);
+            CommonPlayer.computeAndUpdateSoulPower(token);
             stringBuilder.append(GameConsts.GetPhantom.REPEAT).append(StrUtil.CRLF);
         }else {
             // 存入
@@ -95,7 +96,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             playerPhantomMapper.insert(newPhantom);
             PlayerPhantom param = new PlayerPhantom();
             param.setPlayerId(token);
-            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectBySelective(playerPhantom);
+            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectBySelective(param);
             if (CollectionUtil.isEmpty(allPhantom)) {
                 // 获得称号
                 CommonPlayer.addAppellation(ENAppellation.A01, token);
@@ -107,6 +108,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
                 stringBuilder.append(String.format(GameConsts.CommonTip.GET_APPELLATION, ENAppellation.A02.getAppellation())).append(StrUtil.CRLF);
             }
             stringBuilder.append(GameConsts.GetPhantom.GET_2).append(StrUtil.CRLF);
+            stringBuilder.append(GameConsts.CommonTip.TURN_BACK_ORCONTINU);
         }
         CommonPlayer.computeAndUpdateSoulPower(token);
         // 扣除唤灵符
