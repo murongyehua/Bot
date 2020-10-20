@@ -40,6 +40,7 @@ public class SignMenuPrinter extends Menu {
         String result = this.randomGetGoods(token);
         if (result == null) {
             this.describe = GameConsts.Sign.SIGN_NOTHING;
+            return;
         }
         this.describe = String.format(GameConsts.Sign.SIGN_SUCCESS, result);
     }
