@@ -50,8 +50,11 @@ public class BattleServiceImpl extends CommonPlayer {
 
     @Override
     public String doPlay(String token) {
-        // 控制下一次的指令只能输入【0】指令
-        GameChainCollector.supportPoint.put(token, Collections.singletonList(BaseConsts.Menu.ZERO));
+        // 控制下一次的指令只能输入【0】和【Q】指令
+        List<String> points = new LinkedList<>();
+        points.add(BaseConsts.Menu.ZERO);
+        points.add(GameConsts.CommonTip.SEE_BATTLE_DETAIL);
+        GameChainCollector.supportPoint.put(token, points);
         battleRecord.append(GameConsts.Battle.BATTLE_RECORD_FORMAT);
         BattleMonsterDTO battleMonsterDTO = getBattleMonster();
         BattlePhantomDTO playerDTO = getBattlePhantom();

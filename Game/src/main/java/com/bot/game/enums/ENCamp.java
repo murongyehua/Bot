@@ -10,7 +10,10 @@ import lombok.Getter;
 @Getter
 public enum ENCamp {
     //
-    EAST_SEA("S01", "东海");
+    EAST_SEA("S01", "东海"),
+    ZY_M("M01", "招摇山"),
+    JYZZ_Z("Z01", "即翼之泽"),
+    FY_M("M02", "浮玉山");
 
     private String value;
 

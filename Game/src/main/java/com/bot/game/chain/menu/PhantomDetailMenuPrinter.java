@@ -40,7 +40,9 @@ public class PhantomDetailMenuPrinter extends Menu {
                 playerPhantom.getLevel(), ENRarity.getLabelByValue(playerPhantom.getRarity()),
                 playerPhantom.getAppellation(), playerPhantom.getAttribute(), ENCamp.getLabelByValue(playerPhantom.getCamp()),
                 ENArea.getLabelByValue(playerPhantom.getArea()), playerPhantom.getSpeed(), playerPhantom.getAttack(),
-                playerPhantom.getPhysique(), playerPhantom.getGrow(), playerPhantom.getDescribe(), playerPhantom.getHp(), playerPhantom.getExp(), this.getSkillDescribe(playerPhantom.getSkills()));
+                playerPhantom.getPhysique(), playerPhantom.getGrow(),
+                StrUtil.isEmpty(playerPhantom.getDescribe()) ? "暂无" : playerPhantom.getDescribe(),
+                playerPhantom.getHp(), playerPhantom.getExp(), this.getSkillDescribe(playerPhantom.getSkills()));
     }
 
     private String getSkillDescribe(String skills) {
