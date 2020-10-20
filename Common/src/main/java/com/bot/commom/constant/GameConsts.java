@@ -29,6 +29,8 @@ public interface GameConsts {
         String SKILL_ROUND = "效果持续%s回合";
         String SEE_BATTLE_DETAIL = "Q";
         String TURN_BACK = "0.返回";
+        String LOCK = "当前游戏维护中，请输入【退出】以回到聊天模式，稍后再来尝试哦~";
+        String GET_APPELLATION = "获得称号[%s],若已获得过请无视这条提示";
     }
 
     interface PlayerInfo {

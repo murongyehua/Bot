@@ -6,15 +6,10 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.exception.BotException;
-import com.bot.game.dao.entity.BaseGoods;
-import com.bot.game.dao.entity.GamePlayer;
-import com.bot.game.dao.entity.PlayerGoods;
-import com.bot.game.dao.entity.PlayerPhantom;
-import com.bot.game.dao.mapper.BaseGoodsMapper;
-import com.bot.game.dao.mapper.GamePlayerMapper;
-import com.bot.game.dao.mapper.PlayerGoodsMapper;
-import com.bot.game.dao.mapper.PlayerPhantomMapper;
+import com.bot.game.dao.entity.*;
+import com.bot.game.dao.mapper.*;
 import com.bot.game.dto.ExploreBuffDTO;
+import com.bot.game.enums.ENAppellation;
 import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.enums.ENRarity;
 import com.bot.game.service.Player;
@@ -146,6 +141,19 @@ public class CommonPlayer implements Player {
         }else {
             playerGoods.setNumber(playerGoods.getNumber() - 1);
             playerGoodsMapper.updateByPrimaryKeySelective(playerGoods);
+        }
+    }
+
+    public static void addAppellation(ENAppellation enAppellation, String token) {
+        PlayerAppellationMapper playerAppellationMapper = (PlayerAppellationMapper) mapperMap.get(GameConsts.MapperName.PLAYER_APPELLATION);
+        PlayerAppellation param = new PlayerAppellation();
+        param.setPlayerId(token);
+        param.setAppellation(enAppellation.getAppellation());
+        List<PlayerAppellation> list = playerAppellationMapper.selectBySelective(param);
+        if (CollectionUtil.isEmpty(list)) {
+            param.setId(IdUtil.simpleUUID());
+            param.setGetTime(new Date());
+            playerAppellationMapper.insert(param);
         }
     }
 

@@ -12,6 +12,7 @@ import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.BasePhantomMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
+import com.bot.game.enums.ENAppellation;
 import com.bot.game.enums.ENRarity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +93,19 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             newPhantom.setHp(CommonPlayer.getInitHp(newPhantom));
             newPhantom.setExp(0);
             playerPhantomMapper.insert(newPhantom);
+            PlayerPhantom param = new PlayerPhantom();
+            param.setPlayerId(token);
+            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectBySelective(playerPhantom);
+            if (CollectionUtil.isEmpty(allPhantom)) {
+                // 获得称号
+                CommonPlayer.addAppellation(ENAppellation.A01, token);
+                stringBuilder.append(String.format(GameConsts.CommonTip.GET_APPELLATION, ENAppellation.A01.getAppellation())).append(StrUtil.CRLF);
+            }
+            if (ENRarity.BEST.getValue().equals(basePhantom.getRarity())) {
+                // 获得称号
+                CommonPlayer.addAppellation(ENAppellation.A02, token);
+                stringBuilder.append(String.format(GameConsts.CommonTip.GET_APPELLATION, ENAppellation.A02.getAppellation())).append(StrUtil.CRLF);
+            }
             stringBuilder.append(GameConsts.GetPhantom.GET_2).append(StrUtil.CRLF);
         }
         CommonPlayer.computeAndUpdateSoulPower(token);

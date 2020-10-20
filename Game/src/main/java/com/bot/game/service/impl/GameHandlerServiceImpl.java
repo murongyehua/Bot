@@ -6,6 +6,7 @@ import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.enums.ENStatus;
 import com.bot.game.chain.Collector;
+import com.bot.game.dao.entity.Game;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.*;
@@ -68,6 +69,11 @@ public class GameHandlerServiceImpl implements GameHandler {
 
     @Override
     public String play(String reqContent, String token) {
+        // 游戏是否维护
+        Game game = gameMapper.selectAll().get(0);
+        if (ENStatus.LOCK.equals(game.getStatus())) {
+            return GameConsts.CommonTip.LOCK;
+        }
         // 先查是否已处于在线状态
         if (collector.isOnLine(token)) {
             return collector.toNextOrPrevious(token, reqContent.trim());
