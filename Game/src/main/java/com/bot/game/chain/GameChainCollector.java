@@ -57,15 +57,15 @@ public class GameChainCollector implements Collector{
             }
             supportPoint.remove(token);
         }
-        if (BaseConsts.Menu.ZERO.equals(point)) {
-            // 返回
-            chain.remove(chain.size() - 1);
-            Menu targetMenu = chain.get(chain.size() -1);
-            return targetMenu.print(token);
-        }
         Menu nowMenu = chain.get(chain.size() - 1);
         Menu targetMenu = nowMenu.menuChildrenMap.get(point);
         if (targetMenu == null) {
+            if (BaseConsts.Menu.ZERO.equals(point)) {
+                // 返回
+                chain.remove(chain.size() - 1);
+                Menu preMenu = chain.get(chain.size() -1);
+                return preMenu.print(token);
+            }
             // 非正确链路调用,尝试调用service
             Player player = nowMenu.playServiceMap.get(point);
             if (player != null) {
