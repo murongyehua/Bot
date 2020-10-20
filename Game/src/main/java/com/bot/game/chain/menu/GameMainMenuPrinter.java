@@ -30,6 +30,7 @@ public class GameMainMenuPrinter extends Menu {
         this.menuChildrenMap.put(BaseConsts.Menu.SIX, new MyFriendsMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.SEVEN, new FriendCompareMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.EIGHT, new RankListMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.NINE, new HelpMenuPrinter());
     }
 
     @Override
