@@ -1,6 +1,7 @@
 package com.bot.game.chain.menu;
 
 import com.bot.commom.constant.BaseConsts;
+import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,6 @@ public class GameMainMenuPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
-
+        this.describe = GameConsts.CommonTip.MENU_TIP;
     }
 }

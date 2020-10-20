@@ -32,6 +32,7 @@ public interface GameConsts {
         String TURN_BACK_ORCONTINU = "输入【0】返回或者输入数字1-4继续召唤";
         String LOCK = "当前游戏维护中，请输入【退出】以回到聊天模式，稍后再来尝试哦~";
         String GET_APPELLATION = "获得称号[%s],若已获得过请无视这条提示";
+        String MENU_TIP = "回复菜单前的数字，进入相应功能";
     }
 
     interface PlayerInfo {
