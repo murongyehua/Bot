@@ -26,6 +26,7 @@ public class Menu implements MenuPrinter{
     protected static Map<String, Object> mapperMap;
 
     public String print(String token) {
+        this.reInitMenu(token);
         return this.printMenuMap(token);
     }
 
@@ -59,5 +60,10 @@ public class Menu implements MenuPrinter{
     @Override
     public void getDescribe(String token) {
         throw new BotException("子类实现");
+    }
+
+    @Override
+    public void reInitMenu(String token) {
+        // 默认什么也不干
     }
 }

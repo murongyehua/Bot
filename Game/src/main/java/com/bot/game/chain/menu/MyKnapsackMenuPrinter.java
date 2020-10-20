@@ -67,4 +67,9 @@ public class MyKnapsackMenuPrinter extends Menu {
         return goodsDetailDTO;
     }
 
+    @Override
+    public void reInitMenu(String token) {
+        this.getDescribe(token);
+    }
+
 }

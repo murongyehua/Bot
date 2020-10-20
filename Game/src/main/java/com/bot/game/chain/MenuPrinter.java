@@ -17,4 +17,9 @@ public interface MenuPrinter {
      */
     void getDescribe(String token);
 
+    /**
+     * 有必要的话，重新初始化
+     */
+    void reInitMenu(String token);
+
 }
