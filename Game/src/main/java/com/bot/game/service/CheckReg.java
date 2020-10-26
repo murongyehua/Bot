@@ -1,5 +1,7 @@
 package com.bot.game.service;
 
+import com.bot.game.dto.ResultContext;
+
 /**
  * @author liul
  * @version 1.0 2020/10/26
@@ -11,5 +13,12 @@ public interface CheckReg {
      * @return
      */
     boolean checkReg(String token);
+
+    /**
+     * 注册
+     * @param nickName
+     * @return
+     */
+    ResultContext reg(String nickName);
 
 }

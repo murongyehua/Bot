@@ -6,6 +6,7 @@ import com.bot.base.dto.WeChatResp;
 import com.bot.base.dto.WeChatRespData;
 import com.bot.base.service.Distributor;
 import com.bot.commom.util.TextUtil;
+import com.bot.game.dto.ResultContext;
 import com.bot.game.service.CheckReg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,16 @@ public class InstructDistributor {
     public String checkReg(String token) {
         boolean isReg = checkReg.checkReg(token);
         return String.valueOf(isReg);
+    }
+
+    @PostMapping("/reg")
+    public ResultContext reg(String nickName) {
+        return checkReg.reg(nickName);
+    }
+
+    @PostMapping("/client")
+    public String clientGame(String token, String msg) {
+        return distributor.doDistributeWithString(msg, token);
     }
 
 }
