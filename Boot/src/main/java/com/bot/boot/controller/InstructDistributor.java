@@ -6,6 +6,7 @@ import com.bot.base.dto.WeChatResp;
 import com.bot.base.dto.WeChatRespData;
 import com.bot.base.service.Distributor;
 import com.bot.commom.util.TextUtil;
+import com.bot.game.service.CheckReg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,9 @@ public class InstructDistributor {
 
     @Autowired
     private Distributor distributor;
+
+    @Autowired
+    private CheckReg checkReg;
 
     @PostMapping("/listener")
     public void listener(HttpServletRequest request, HttpServletResponse response) {
@@ -99,6 +103,12 @@ public class InstructDistributor {
     public String test(String msg) {
         String token = "test123";
         return distributor.doDistributeWithString(msg, token);
+    }
+
+    @PostMapping("/checkReg")
+    public String checkReg(String token) {
+        boolean isReg = checkReg.checkReg(token);
+        return String.valueOf(isReg);
     }
 
 }

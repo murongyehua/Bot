@@ -11,8 +11,7 @@ public interface GameConsts {
     interface CommonTip {
         String EXIT_SUCCESS = "退出成功";
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
-        String LOGIN_TIP = "欢迎回来,[%s],当前活动："+ StrUtil.CRLF +"2020年10月21日--2020年20月24日为不删档内测阶段" + StrUtil.CRLF +  "在此期间注册登录即送3张唤灵符" +
-                StrUtil.CRLF + "另外,只要在灰度测试期间战灵力达到1000" + StrUtil.CRLF + "即可在游戏正式上线时自动获得永久绝版称号【山海行者】哦~" + StrUtil.CRLF + "回复数字【1】进入游戏";
+        String LOGIN_TIP = "欢迎回来,[%s],当前活动："+ StrUtil.CRLF + "新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
         String UN_KNOW_POINT = "未知指令，回复【0】返回";
         String ERROR_POINT = "指令错误，请输入正确的指令";
