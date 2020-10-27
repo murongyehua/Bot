@@ -22,6 +22,7 @@ import com.bot.game.enums.ENAttribute;
 import com.bot.game.enums.ENEffectType;
 import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.enums.ENSkillEffect;
+import sun.nio.cs.ext.ISCII91;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,16 +37,19 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private PlayerPhantom playerPhantom;
 
+    private boolean isCompare;
+
     private int round = 0;
 
     private StringBuilder battleRecord = new StringBuilder();
 
 
-    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom) {
+    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isCompare) {
         this.title = String.format(GameConsts.Battle.TITLE,
                 playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
         this.baseMonster = baseMonster;
         this.playerPhantom = playerPhantom;
+        this.isCompare = isCompare;
     }
 
     @Override
@@ -256,6 +260,9 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private String getResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto) {
         if (targetDto.getFinalHp() <= 0) {
+            if (isCompare) {
+                return GameConsts.Battle.SUCCESS + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
+            }
             return GameConsts.Battle.SUCCESS + StrUtil.CRLF +
                     this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TURN_BACK;
         }else {

@@ -105,6 +105,13 @@ public interface GameConsts {
 
     interface FriendCompare {
         String MENU_NAME = "好友切磋";
+        String DESCRIBE = "选择要切磋的好友";
+        String PICK = "选择要出战的幻灵";
+        String EMPTY = "你没有好友，赶紧去添加吧!";
+        String TITLE_1 = "[%s]%s,战灵力: %s";
+        String TITLE_2 = "%s,战灵力: %s";
+        String FRIEND_EMPTY = "对方没有可出战的幻灵，换个好友试试吧";
+        String PLAYER_EMPTY = "你没有可出战的幻灵，快去唤灵吧";
     }
 
     interface RankList {

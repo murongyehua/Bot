@@ -77,7 +77,7 @@ public class ExploreAreaPrinter extends Menu {
         phantomParam.setPlayerId(token);
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
         for (int index=0; index < playerPhantoms.size(); index++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new BattleServiceImpl(baseMonster, playerPhantoms.get(index)));
+            this.playServiceMap.put(String.valueOf(index + 1), new BattleServiceImpl(baseMonster, playerPhantoms.get(index), false));
         }
     }
 
