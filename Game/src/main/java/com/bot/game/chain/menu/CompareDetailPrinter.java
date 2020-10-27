@@ -53,7 +53,7 @@ public class CompareDetailPrinter extends Menu {
         List<PlayerPhantom> newList = listFriend.stream().sorted(Comparator.comparing(PlayerPhantom::getLevel).reversed()).collect(Collectors.toList());
         this.describe = GameConsts.FriendCompare.PICK;
         for (int index=0; index < list.size(); index ++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new FriendCompareServiceImpl(newList.get(0), list.get(index)));
+            this.playServiceMap.put(String.valueOf(index + 1), new FriendCompareServiceImpl(list.get(index), newList.get(0)));
         }
     }
 
