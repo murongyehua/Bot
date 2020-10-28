@@ -11,7 +11,7 @@ public interface GameConsts {
     interface CommonTip {
         String EXIT_SUCCESS = "退出成功";
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
-        String LOGIN_TIP = "欢迎回来,[%s],当前活动："+ StrUtil.CRLF + "新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "金系技能卡掉落几率翻倍，唤灵符掉落几率翻倍" + StrUtil.CRLF + "回复数字【1】进入游戏";
+        String LOGIN_TIP = "欢迎回来,[%s],当前活动："+ StrUtil.CRLF + "1.新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "2.金系技能卡掉落几率翻倍，唤灵符掉落几率翻倍" + StrUtil.CRLF + "3.每日11:00-13:00、17:00-19:00将会有强大的异兽来袭，可在探索菜单进入挑战，海量唤灵符掉落哦~" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
         String UN_KNOW_POINT = "未知指令，回复【0】返回";
         String ERROR_POINT = "指令错误，请输入正确的指令";
