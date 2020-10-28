@@ -4,7 +4,7 @@ import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/20
  */
 public class HelpMenuPrinter extends Menu {

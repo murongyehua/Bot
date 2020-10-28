@@ -3,7 +3,7 @@ package com.bot.commom.enums;
 import lombok.Getter;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/14
  */
 @Getter

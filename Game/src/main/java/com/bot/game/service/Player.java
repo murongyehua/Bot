@@ -1,7 +1,7 @@
 package com.bot.game.service;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 public interface Player {

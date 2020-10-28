@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/18
  */
 @Data
@@ -23,11 +23,11 @@ public class BattlePhantomDTO extends PlayerPhantom {
 
     private Integer finalHp;
 
-    private List<BattleEffectDTO> buffs = new LinkedList<>();;
+    private List<BattleEffectDTO> buffs = new LinkedList<>();
 
     private List<BattleEffectDTO> deBuffs = new LinkedList<>();
 
-    private List<BattleSkillDTO> skillList = new LinkedList<>();;
+    private List<BattleSkillDTO> skillList = new LinkedList<>();
 
     private Boolean stop;
 }

@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/17
  */
 @Getter
@@ -13,7 +13,8 @@ public enum ENCamp {
     EAST_SEA("S01", "东海"),
     ZY_M("M01", "招摇山"),
     JYZZ_Z("Z01", "即翼之泽"),
-    FY_M("M02", "浮玉山");
+    FY_M("M02", "浮玉山"),
+    BOOS("B01", "世界Boos");
 
     private String value;
 

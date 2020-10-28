@@ -3,7 +3,7 @@ package com.bot.game.dto;
 import lombok.Data;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/26
  */
 @Data

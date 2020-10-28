@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 @Component("playerInfoMenuPrinter")

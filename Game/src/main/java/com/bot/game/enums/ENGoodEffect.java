@@ -4,7 +4,7 @@ import com.bot.commom.exception.BotException;
 import lombok.Getter;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 @Getter
@@ -13,7 +13,8 @@ public enum  ENGoodEffect {
     GET_PHANTOM("0", "唤灵"),
     SKILL("1", "技能卡"),
     WAN_1("2", "避灵丹"),
-    WAN_2("3", "大蕴丸");
+    WAN_2("3", "大蕴丸"),
+    WAN_3("4", "天命散");
 
     private String value;
     private String label;

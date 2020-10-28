@@ -1,6 +1,5 @@
 package com.bot.game.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 @Service
@@ -119,7 +118,7 @@ public class CommonPlayer implements Player {
         return list;
     }
 
-    public static void addPlayerGoods(String goodsId, String token) {
+    public static void addPlayerGoods(String goodsId, String token, int number) {
         PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
         PlayerGoods param = new PlayerGoods();
         param.setPlayerId(token);
@@ -127,12 +126,12 @@ public class CommonPlayer implements Player {
         List<PlayerGoods> list = playerGoodsMapper.selectBySelective(param);
         if (CollectionUtil.isNotEmpty(list)) {
             PlayerGoods playerGoods = list.get(0);
-            playerGoods.setNumber(playerGoods.getNumber() + 1);
+            playerGoods.setNumber(playerGoods.getNumber() + number);
             playerGoodsMapper.updateByPrimaryKey(playerGoods);
             return;
         }
         param.setId(IdUtil.simpleUUID());
-        param.setNumber(1);
+        param.setNumber(number);
         playerGoodsMapper.insert(param);
     }
 
@@ -196,6 +195,22 @@ public class CommonPlayer implements Player {
             return false;
         }).collect(Collectors.toList());
         return finalList.get(RandomUtil.randomInt(finalList.size()));
+    }
+
+    public static BaseGoods getBoosGoods(int hurt) {
+        BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
+        BaseGoods param = new BaseGoods();
+        if (hurt < 100) {
+            param.setEffect(ENGoodEffect.WAN_2.getValue());
+        }else if (hurt < 300) {
+            param.setEffect(ENGoodEffect.WAN_3.getValue());
+        }else if (hurt < 3000) {
+            param.setEffect(ENGoodEffect.GET_PHANTOM.getValue());
+        }else {
+            param.setEffect(ENGoodEffect.GET_PHANTOM.getValue());
+        }
+        List<BaseGoods> list = baseGoodsMapper.selectBySelective(param);
+        return list.get(0);
     }
 
 }

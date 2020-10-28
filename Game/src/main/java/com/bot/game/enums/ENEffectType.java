@@ -3,7 +3,7 @@ package com.bot.game.enums;
 import lombok.Getter;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/19
  */
 @Getter

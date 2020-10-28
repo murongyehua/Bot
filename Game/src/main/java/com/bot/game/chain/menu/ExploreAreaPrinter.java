@@ -11,16 +11,13 @@ import com.bot.game.dao.mapper.BaseMonsterMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.ExploreBuffDTO;
 import com.bot.game.enums.ENArea;
-import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.service.impl.BattleServiceImpl;
 import com.bot.game.service.impl.CommonPlayer;
-
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/18
  */
 public class ExploreAreaPrinter extends Menu {
@@ -45,7 +42,7 @@ public class ExploreAreaPrinter extends Menu {
         param.setArea(area.getValue());
         List<BaseMonster> list = baseMonsterMapper.selectBySelective(param);
         ExploreBuffDTO exploreBuffDTO = CommonPlayer.exploreBuffMap.get(token);
-        List<BaseMonster> finalList = new LinkedList<>();
+        List<BaseMonster> finalList;
         if (exploreBuffDTO != null && System.currentTimeMillis() <= exploreBuffDTO.getOutTime().getTime()) {
             int levelRange = 100;
             switch (exploreBuffDTO.getEnGoodEffect()) {
@@ -77,7 +74,7 @@ public class ExploreAreaPrinter extends Menu {
         phantomParam.setPlayerId(token);
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
         for (int index=0; index < playerPhantoms.size(); index++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new BattleServiceImpl(baseMonster, playerPhantoms.get(index), false));
+            this.playServiceMap.put(String.valueOf(index + 1), new BattleServiceImpl(baseMonster, playerPhantoms.get(index), false, false));
         }
     }
 

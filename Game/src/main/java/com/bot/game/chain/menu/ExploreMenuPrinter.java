@@ -6,7 +6,7 @@ import com.bot.game.enums.ENArea;
 import org.springframework.stereotype.Component;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 @Component("exploreMenuPrinter")
@@ -28,6 +28,7 @@ public class ExploreMenuPrinter extends Menu {
         for (int index=0; index < enAreas.length; index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new ExploreAreaPrinter(ENArea.getByValue(enAreas[index].getValue())));
         }
+        this.menuChildrenMap.put(String.valueOf(enAreas.length + 1), new WordBoosPrinter());
     }
 
 }

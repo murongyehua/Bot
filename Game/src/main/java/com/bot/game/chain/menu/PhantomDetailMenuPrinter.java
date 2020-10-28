@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/16
  */
 public class PhantomDetailMenuPrinter extends Menu {
@@ -42,7 +42,7 @@ public class PhantomDetailMenuPrinter extends Menu {
                 ENArea.getLabelByValue(playerPhantom.getArea()), playerPhantom.getSpeed(), playerPhantom.getAttack(),
                 playerPhantom.getPhysique(), playerPhantom.getGrow(),
                 StrUtil.isEmpty(playerPhantom.getDescribe()) ? "暂无" : playerPhantom.getDescribe(),
-                playerPhantom.getHp(), playerPhantom.getExp(), this.getSkillDescribe(playerPhantom.getSkills()));
+                playerPhantom.getHp(), playerPhantom.getExp(), GameConsts.BaseFigure.UP_LEVEL_NEED_EXP + GameConsts.BaseFigure.MAX_EXP_GROW * playerPhantom.getLevel(), this.getSkillDescribe(playerPhantom.getSkills()));
     }
 
     private String getSkillDescribe(String skills) {

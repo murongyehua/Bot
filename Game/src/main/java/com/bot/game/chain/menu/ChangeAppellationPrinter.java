@@ -10,7 +10,7 @@ import com.bot.game.service.impl.ChangeAppellationServiceImpl;
 import java.util.List;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 public class ChangeAppellationPrinter extends Menu {

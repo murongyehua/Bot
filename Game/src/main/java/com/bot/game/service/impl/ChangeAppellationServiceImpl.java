@@ -5,7 +5,7 @@ import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.mapper.GamePlayerMapper;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 public class ChangeAppellationServiceImpl extends CommonPlayer {

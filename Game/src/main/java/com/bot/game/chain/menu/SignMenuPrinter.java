@@ -15,7 +15,7 @@ import com.bot.game.service.impl.CommonPlayer;
 import java.util.*;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/20
  */
 public class SignMenuPrinter extends Menu {

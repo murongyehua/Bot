@@ -4,7 +4,7 @@ import com.bot.game.enums.ENSkillEffect;
 import lombok.Data;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/19
  */
 @Data

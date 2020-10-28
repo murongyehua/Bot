@@ -2,7 +2,6 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
@@ -11,7 +10,6 @@ import com.bot.game.dao.entity.BaseGoods;
 import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerPhantom;
-import com.bot.game.dao.mapper.BaseGoodsMapper;
 import com.bot.game.dao.mapper.BaseSkillMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.BattleEffectDTO;
@@ -22,13 +20,11 @@ import com.bot.game.enums.ENAttribute;
 import com.bot.game.enums.ENEffectType;
 import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.enums.ENSkillEffect;
-import sun.nio.cs.ext.ISCII91;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/18
  */
 public class BattleServiceImpl extends CommonPlayer {
@@ -39,17 +35,22 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private boolean isCompare;
 
+    private boolean isBoos;
+
     private int round = 0;
+
+    private int allHurt = 0;
 
     private StringBuilder battleRecord = new StringBuilder();
 
 
-    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isCompare) {
+    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isCompare, boolean isBoos) {
         this.title = String.format(GameConsts.Battle.TITLE,
                 playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
         this.baseMonster = baseMonster;
         this.playerPhantom = playerPhantom;
         this.isCompare = isCompare;
+        this.isBoos = isBoos;
     }
 
     @Override
@@ -75,19 +76,33 @@ public class BattleServiceImpl extends CommonPlayer {
         String result = null;
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_START,
                 playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
+        int startBoosHp = WorldBossServiceImpl.boos.getFinalHp();
         while (result == null) {
             result = this.doBattle(targetDTO, playerDTO);
         }
+        int endBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+        allHurt = endBoosHp - startBoosHp;
         battleRecord.append(GameConsts.Battle.END).append(StrUtil.CRLF);
         battleRecord.append(GameConsts.CommonTip.TURN_BACK);
         battleDetailMap.put(token, battleRecord.toString());
+        if (this.isBoos) {
+            if (targetDTO.getFinalHp() < 0) {
+                WorldBossServiceImpl.boos.setFinalHp(0);
+            }else {
+                WorldBossServiceImpl.boos.setFinalHp(targetDTO.getFinalHp());
+            }
+
+        }
         return result;
     }
 
     private BattleMonsterDTO getBattleMonster() {
         BattleMonsterDTO battleMonsterDTO = new BattleMonsterDTO();
         BeanUtil.copyProperties(baseMonster, battleMonsterDTO);
-        int canAddPoint = baseMonster.getGrow() * baseMonster.getLevel();
+        int canAddPoint = 0;
+        if (!isCompare && !isBoos) {
+            canAddPoint = baseMonster.getGrow() * baseMonster.getLevel();
+        }
         List<Integer> list = spiltNumber(canAddPoint);
         int intAttack = (baseMonster.getAttack() + list.get(0)) * GameConsts.BaseFigure.ATTACK_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL;
@@ -98,10 +113,16 @@ public class BattleServiceImpl extends CommonPlayer {
                 baseMonster.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL);
         battleMonsterDTO.setFinalDefense((baseMonster.getPhysique() + list.get(2)) * GameConsts.BaseFigure.DEFENSE_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL);
-        Integer hp = baseMonster.getPhysique() * GameConsts.BaseFigure.HP_POINT +
-                baseMonster.getLevel() * GameConsts.BaseFigure.HP_FOR_EVERY_LEVEL;
-        battleMonsterDTO.setFinalHp(hp);
-        battleMonsterDTO.setHp(hp);
+        if (!isBoos) {
+            Integer hp = baseMonster.getPhysique() * GameConsts.BaseFigure.HP_POINT +
+                    baseMonster.getLevel() * GameConsts.BaseFigure.HP_FOR_EVERY_LEVEL;
+            battleMonsterDTO.setFinalHp(hp);
+            battleMonsterDTO.setHp(hp);
+        }
+        if (isBoos) {
+            battleMonsterDTO.setHp(WorldBossServiceImpl.boos.getFinalHp());
+            battleMonsterDTO.setFinalHp(WorldBossServiceImpl.boos.getFinalHp());
+        }
         return battleMonsterDTO;
     }
 
@@ -226,6 +247,7 @@ public class BattleServiceImpl extends CommonPlayer {
         this.finalAttack(tempPhantom, tempAnother);
         nowAttackPhantom.setFinalHp(tempPhantom.getFinalHp());
         another.setFinalHp(tempAnother.getFinalHp());
+        another.setStop(tempAnother.getStop());
     }
 
     private void finalAttack(BattlePhantomDTO tempPhantom, BattlePhantomDTO tempAnother) {
@@ -266,6 +288,11 @@ public class BattleServiceImpl extends CommonPlayer {
             return GameConsts.Battle.SUCCESS + StrUtil.CRLF +
                     this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TURN_BACK;
         }else {
+            if (isBoos) {
+                StringBuilder stringBuilder = new StringBuilder();
+                this.doGetBoosGoods(stringBuilder, playerDto);
+                return stringBuilder.toString();
+            }
             return GameConsts.Battle.FAIL + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
         }
     }
@@ -413,9 +440,18 @@ public class BattleServiceImpl extends CommonPlayer {
             int num = targetLevel - playerLevel;
             exp = 6 + num;
         }
-        stringBuilder.append(String.format(GameConsts.Battle.GET_RESULT_EXP, exp)).append(StrUtil.CRLF);
+        if (this.isBoos) {
+            exp = 0;
+        }
+        if (exp !=0 && GameConsts.CommonTip.MAX_LEVEL.equals(playerDto.getLevel())) {
+            exp = 0;
+            stringBuilder.append(GameConsts.Battle.EXP_MAX).append(StrUtil.CRLF);
+        }
+        if (exp != 0) {
+            stringBuilder.append(String.format(GameConsts.Battle.GET_RESULT_EXP, exp)).append(StrUtil.CRLF);
+        }
         int afterAddExp = playerDto.getExp() + exp;
-        if (afterAddExp >= GameConsts.BaseFigure.UP_LEVEL_NEED_EXP) {
+        if (afterAddExp >= GameConsts.BaseFigure.UP_LEVEL_NEED_EXP + GameConsts.BaseFigure.MAX_EXP_GROW * playerDto.getLevel()) {
             playerDto.setLevel(playerDto.getLevel() + 1);
             playerDto.setExp(afterAddExp - GameConsts.BaseFigure.UP_LEVEL_NEED_EXP);
             CommonPlayer.afterAddGrow(playerDto, playerDto.getGrow());
@@ -427,14 +463,29 @@ public class BattleServiceImpl extends CommonPlayer {
         BeanUtil.copyProperties(playerDto, playerPhantom);
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
+        if (this.isBoos) {
+            this.doGetBoosGoods(stringBuilder, playerDto);
+            return stringBuilder.toString();
+        }
         BaseGoods baseGoods = getResultGoods(area);
         if (baseGoods == null) {
             stringBuilder.append(GameConsts.Battle.GET_RESULT_GOOD_EMTPY).append(StrUtil.CRLF);
         }else {
             stringBuilder.append(String.format(GameConsts.Battle.GET_RESULT_GOOD, baseGoods.getName(),
                     ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel())).append(StrUtil.CRLF);
-            CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId());
+            CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId(), 1);
         }
         return stringBuilder.toString();
+    }
+
+    private void doGetBoosGoods(StringBuilder stringBuilder, BattlePhantomDTO playerDto) {
+        BaseGoods baseGoods = getBoosGoods(this.allHurt);
+        int number = 1;
+        if (this.allHurt > 3000) {
+            number = 2;
+        }
+        CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId(), number);
+        stringBuilder.append(String.format(GameConsts.Battle.BOOS_RESULT, this.allHurt, baseGoods.getName(),
+                ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel(), number)).append(StrUtil.CRLF);
     }
 }

@@ -3,7 +3,7 @@ package com.bot.game.service;
 import com.bot.game.dto.ResultContext;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/26
  */
 public interface CheckReg {

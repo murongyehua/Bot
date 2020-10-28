@@ -6,7 +6,7 @@ import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.PlayerPhantom;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/27
  */
 public class FriendCompareServiceImpl extends CommonPlayer {
@@ -26,7 +26,7 @@ public class FriendCompareServiceImpl extends CommonPlayer {
     public String doPlay(String token) {
         BaseMonster baseMonster = new BaseMonster();
         BeanUtil.copyProperties(friendPhantom, baseMonster);
-        BattleServiceImpl battleService = new BattleServiceImpl(baseMonster, playerPhantom, true);
+        BattleServiceImpl battleService = new BattleServiceImpl(baseMonster, playerPhantom, true, false);
         return battleService.doPlay(token);
     }
 }

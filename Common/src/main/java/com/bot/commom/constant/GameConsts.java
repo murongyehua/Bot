@@ -3,7 +3,7 @@ package com.bot.commom.constant;
 import cn.hutool.core.util.StrUtil;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/14
  */
 public interface GameConsts {
@@ -32,6 +32,7 @@ public interface GameConsts {
         String LOCK = "当前游戏维护中，请输入【退出】以回到聊天模式，稍后再来尝试哦~";
         String GET_APPELLATION = "获得称号[%s],若已获得过请无视这条提示";
         String MENU_TIP = "回复菜单前的数字，进入相应功能";
+        Integer MAX_LEVEL = 20;
     }
 
     interface PlayerInfo {
@@ -53,7 +54,7 @@ public interface GameConsts {
                 + "称号：%s" + StrUtil.CRLF + "属性：%s" + StrUtil.CRLF +"阵营：%s" + StrUtil.CRLF
                 +"家乡：%s" +  StrUtil.CRLF +"速度：%s" + StrUtil.CRLF + "攻击：%s" + StrUtil.CRLF
                 + "体质：%s" + StrUtil.CRLF + "成长：%s" + StrUtil.CRLF + "简介：%s" + StrUtil.CRLF
-                + "血量：%s" + StrUtil.CRLF + "经验值：%s" + StrUtil.CRLF + "技能：%s";
+                + "血量：%s" + StrUtil.CRLF + "经验值：%s/%s" + StrUtil.CRLF + "技能：%s";
     }
 
     interface MyPhantom {
@@ -149,6 +150,7 @@ public interface GameConsts {
         Integer HP_POINT = 10;
         Integer DEFENSE_POINT = 2;
         Integer UP_LEVEL_NEED_EXP = 35;
+        Integer MAX_EXP_GROW = 10;
         Double BASE_BUFF_FIGURE = 1.2;
         Double BASE_DE_BUFF_FIGURE = 0.8;
         Double BASE_ONE_NUMBER = 1.0;
@@ -175,8 +177,10 @@ public interface GameConsts {
 
         Integer LEVEL_NUMBER_1 = 3;
         String GET_RESULT_EXP = "出战幻灵经验值：+%s";
+        String EXP_MAX = "出战幻灵已达到最高等级，不增加经验值";
         String GET_RESULT_GOOD = "获得%s：%s，可前往背包查看详情";
         String GET_RESULT_GOOD_EMTPY = "此次战斗无物品掉落";
+        String BOOS_RESULT = "共造成%s点伤害" + StrUtil.CRLF + "获得%s：%s，数量[%s]可前往背包查看详情" + StrUtil.CRLF + "Q.查看战斗详情" +StrUtil.CRLF + "0.返回";
     }
 
     interface Help {
@@ -193,6 +197,17 @@ public interface GameConsts {
                 + "当然了，技能的学习是有上限的，每个幻灵最多只能学会3个技能，所以要谨慎选择哦。" + StrUtil.CRLF
                 + "对了，不同的技能卡可能藏在不同的怪物身上，要记得多去探索几个地方。" + StrUtil.CRLF
                 + "不过，这个世界很危险，当你还是新手，还比较弱小的时候，我由衷的建议你多去东海走走，那里比较宜居。";
+    }
+
+    interface WorldBoss {
+        String TITLE = "世界Boss";
+        String NOT_IN_TIME = "当前不在开放时间内，世界Boos开放时间为每日11:00-13:00以及17:00-19:00";
+        String BOOS = "当前Boos[%s],等级[%s],属性[%s],血量[%s/%s]";
+        String PICK = "请选择要出战的幻灵";
+        String FINISH = "当前Boos已被击退，下次早点来吧!";
+        String OVER_TIMES = "当前Boos你已经挑战得够多了，休息休息吧!";
+        Integer INIT_HP = 50000;
+        Integer MAX_TIME = 2;
     }
 
     interface Sign{

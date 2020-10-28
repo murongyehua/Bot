@@ -10,7 +10,7 @@ import com.bot.game.service.impl.GetPhantomServiceImpl;
 import org.springframework.stereotype.Component;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/15
  */
 @Component("getPhantomMenuPrinter")
