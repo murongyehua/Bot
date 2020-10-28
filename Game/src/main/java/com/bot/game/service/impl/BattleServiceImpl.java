@@ -287,7 +287,7 @@ public class BattleServiceImpl extends CommonPlayer {
                     WorldBossServiceImpl.boos.setFinalHp(targetDto.getFinalHp());
                 }
                 int endBoosHp = WorldBossServiceImpl.boos.getFinalHp();
-                allHurt = endBoosHp - startBoosHp;
+                allHurt = startBoosHp - endBoosHp;
                 StringBuilder stringBuilder = new StringBuilder();
                 this.doGetBoosGoods(stringBuilder, playerDto);
                 return stringBuilder.toString();
