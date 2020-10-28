@@ -41,6 +41,8 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private int allHurt = 0;
 
+    private int startBoosHp;
+
     private StringBuilder battleRecord = new StringBuilder();
 
 
@@ -76,23 +78,13 @@ public class BattleServiceImpl extends CommonPlayer {
         String result = null;
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_START,
                 playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
-        int startBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+        startBoosHp = WorldBossServiceImpl.boos.getFinalHp();
         while (result == null) {
             result = this.doBattle(targetDTO, playerDTO);
         }
-        int endBoosHp = WorldBossServiceImpl.boos.getFinalHp();
-        allHurt = endBoosHp - startBoosHp;
         battleRecord.append(GameConsts.Battle.END).append(StrUtil.CRLF);
         battleRecord.append(GameConsts.CommonTip.TURN_BACK);
         battleDetailMap.put(token, battleRecord.toString());
-        if (this.isBoos) {
-            if (targetDTO.getFinalHp() < 0) {
-                WorldBossServiceImpl.boos.setFinalHp(0);
-            }else {
-                WorldBossServiceImpl.boos.setFinalHp(targetDTO.getFinalHp());
-            }
-
-        }
         return result;
     }
 
@@ -289,6 +281,13 @@ public class BattleServiceImpl extends CommonPlayer {
                     this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TURN_BACK;
         }else {
             if (isBoos) {
+                if (targetDto.getFinalHp() < 0) {
+                    WorldBossServiceImpl.boos.setFinalHp(0);
+                }else {
+                    WorldBossServiceImpl.boos.setFinalHp(targetDto.getFinalHp());
+                }
+                int endBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+                allHurt = endBoosHp - startBoosHp;
                 StringBuilder stringBuilder = new StringBuilder();
                 this.doGetBoosGoods(stringBuilder, playerDto);
                 return stringBuilder.toString();
