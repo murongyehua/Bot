@@ -272,6 +272,7 @@
         and line = #{line,jdbcType=VARCHAR}
       </if>
     </where>
+    order by level desc
   </select>
   <select id="getMaxLevel" resultType="java.lang.Integer">
     select max(level)

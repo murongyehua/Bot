@@ -58,6 +58,12 @@ public class UseGoodsPrinter extends Menu {
             case WAN_2:
                 this.useWan(enGoodEffect, stringBuilder);
                 break;
+            case WAN_3:
+                this.useWan(enGoodEffect, stringBuilder);
+                break;
+            case WAN_4:
+                this.useResetAttribute(stringBuilder, token);
+                break;
                 default:
                     break;
         }
@@ -125,6 +131,9 @@ public class UseGoodsPrinter extends Menu {
             case WAN_2:
                 time = 5;
                 break;
+            case WAN_3:
+                time = 5;
+                break;
                 default:
                     break;
         }
@@ -137,7 +146,19 @@ public class UseGoodsPrinter extends Menu {
         CommonPlayer.afterUseGoods(playerGoods);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
         goodsDetailDTO.setNumber(nowNumber < 0 ? 0 : nowNumber);
-        stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE);
+        stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE).append(StrUtil.CRLF).append(GameConsts.CommonTip.TURN_BACK);
+    }
+
+    private void useResetAttribute(StringBuilder stringBuilder, String token) {
+        stringBuilder.append(GameConsts.MyKnapsack.CHOOSE_RESET);
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerPhantom param = new PlayerPhantom();
+        param.setPlayerId(token);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(param);
+        for (int index=0; index < playerPhantoms.size(); index++) {
+            this.menuChildrenMap.put(String.valueOf(index + 1), new UseResetAttributePrinter(playerPhantoms.get(index), goodsDetailDTO));
+        }
+
     }
 
 }

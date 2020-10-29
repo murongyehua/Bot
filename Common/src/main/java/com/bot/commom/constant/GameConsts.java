@@ -11,7 +11,7 @@ public interface GameConsts {
     interface CommonTip {
         String EXIT_SUCCESS = "退出成功";
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
-        String LOGIN_TIP = "欢迎回来,[%s],当前活动："+ StrUtil.CRLF + "1.新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "2.金系技能卡掉落几率翻倍，唤灵符掉落几率翻倍" + StrUtil.CRLF + "3.每日11:00-13:00、17:00-19:00将会有强大的异兽来袭，可在探索菜单进入挑战，海量唤灵符掉落哦~" + StrUtil.CRLF + "回复数字【1】进入游戏";
+        String LOGIN_TIP = "欢迎回来,[%s],当前公告："+ StrUtil.CRLF + "1.新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "2.普通探索(除世界Boos外的探索)新增了洗髓丹的掉落，洗髓丹可以洗掉幻灵的属性，妈妈再也不用担心我的幻灵养残了！" + StrUtil.CRLF + "3.每日11:00-13:00、17:00-19:00将会有强大的异兽来袭，可在探索菜单进入挑战，海量唤灵符掉落哦~" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
         String UN_KNOW_POINT = "未知指令，回复【0】返回";
         String ERROR_POINT = "指令错误，请输入正确的指令";
@@ -49,7 +49,7 @@ public interface GameConsts {
     }
 
     interface PhantomDetail {
-        String MENU_NAME = "[%s]%s(%s级)";
+        String MENU_NAME = "【%s】[%s]%s,%s级[%s]";
         String DESCRIBE = "名称：%s" + StrUtil.CRLF + "等级：%s" + StrUtil.CRLF + "稀有度：%s" + StrUtil.CRLF
                 + "称号：%s" + StrUtil.CRLF + "属性：%s" + StrUtil.CRLF +"阵营：%s" + StrUtil.CRLF
                 +"家乡：%s" +  StrUtil.CRLF +"速度：%s" + StrUtil.CRLF + "攻击：%s" + StrUtil.CRLF
@@ -70,6 +70,9 @@ public interface GameConsts {
         String BUFF_REPEAT = "已有类似功能的道具生效中，请勿重复使用";
         String BUFF_USE = "使用成功!快去试试效果吧~";
         String EMPTY = "该道具数量为0，无法使用";
+        String CHOOSE_RESET = "选择需要使用洗髓丹的幻灵";
+        String CHOOSE_ATTRIBUTE = "选择要洗去的属性" + StrUtil.CRLF + "所选属性将洗去1点，并自动随机加到其他属性上面" + StrUtil.CRLF + "属性最低为1，已自动隐去不可洗的属性";
+        String TITLE = "%s: %s";
     }
 
     interface GetPhantom {

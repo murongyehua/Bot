@@ -13,6 +13,7 @@ import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dto.GoodsDetailDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class MyKnapsackMenuPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
+        this.menuChildrenMap.clear();
         PlayerGoodsMapper playerGoodsMapper =  (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
         PlayerGoods playerGoods = new PlayerGoods();
         playerGoods.setPlayerId(token);

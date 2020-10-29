@@ -30,8 +30,8 @@ public class PhantomDetailMenuPrinter extends Menu {
 
     @Override
     public void initMenu() {
-        this.menuName = String.format(GameConsts.PhantomDetail.MENU_NAME,
-                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
+        this.menuName = String.format(GameConsts.PhantomDetail.MENU_NAME, ENRarity.getLabelByValue(playerPhantom.getRarity()),
+                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel(), playerPhantom.getAttribute());
     }
 
     @Override

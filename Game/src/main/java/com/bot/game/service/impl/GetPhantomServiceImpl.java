@@ -27,8 +27,8 @@ public class GetPhantomServiceImpl extends CommonPlayer {
 
     private PlayerGoods playerGoods;
 
-    private final static Integer[] BEST_NUMBER = {30,3,4};
-    private final static Integer[] GREAT_NUMBER = {27,29,5};
+    private final static Integer[] BEST_NUMBER = {30,3};
+    private final static Integer[] GREAT_NUMBER = {27,29,5,4};
     private final static Integer[] GOOD_NUMBER = {6,7,8,9,10,11};
 
     public GetPhantomServiceImpl(String title, PlayerGoods playerGoods ) {
@@ -78,14 +78,23 @@ public class GetPhantomServiceImpl extends CommonPlayer {
         List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(playerPhantom);
         if (CollectionUtil.isNotEmpty(list)) {
             // 成长 +1
+            int addNumber = 1;
             PlayerPhantom hasPhantom = list.get(0);
-            hasPhantom.setGrow(hasPhantom.getGrow() + 1);
+            ENRarity rarity =  ENRarity.getByValue(hasPhantom.getRarity());
+            if (rarity != null && hasPhantom.getGrow() >= rarity.getMaxGrow()) {
+                // 已达上限
+                addNumber = 0;
+            }
+            hasPhantom.setGrow(hasPhantom.getGrow() + addNumber);
             playerPhantomMapper.updateByPrimaryKey(hasPhantom);
             CommonPlayer.afterAddGrow(hasPhantom, null);
             CommonPlayer.computeAndUpdateSoulPower(token);
             stringBuilder.append(GameConsts.GetPhantom.REPEAT).append(StrUtil.CRLF);
         }else {
             // 存入
+            PlayerPhantom param = new PlayerPhantom();
+            param.setPlayerId(token);
+            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectBySelective(param);
             PlayerPhantom newPhantom = new PlayerPhantom();
             BeanUtil.copyProperties(basePhantom, newPhantom);
             newPhantom.setPlayerId(token);
@@ -94,9 +103,6 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             newPhantom.setHp(CommonPlayer.getInitHp(newPhantom));
             newPhantom.setExp(0);
             playerPhantomMapper.insert(newPhantom);
-            PlayerPhantom param = new PlayerPhantom();
-            param.setPlayerId(token);
-            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectBySelective(param);
             if (CollectionUtil.isEmpty(allPhantom)) {
                 // 获得称号
                 CommonPlayer.addAppellation(ENAppellation.A01, token);

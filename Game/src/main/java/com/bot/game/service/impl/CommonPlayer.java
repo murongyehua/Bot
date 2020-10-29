@@ -178,7 +178,7 @@ public class CommonPlayer implements Player {
         String needWeight = null;
         for (String weight : weights) {
             int number = RandomUtil.randomInt(0, 100);
-            int range = Integer.parseInt(weight) * 10;
+            int range = Integer.parseInt(weight);
             if ( number < range) {
                 needWeight = weight;
                 break;

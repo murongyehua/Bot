@@ -52,6 +52,8 @@ public class ExploreAreaPrinter extends Menu {
                 case WAN_2:
                     levelRange = 3;
                     break;
+                case WAN_3:
+                    levelRange = 1;
                     default:
                         break;
             }
