@@ -36,12 +36,6 @@ public class GameCommonHolder {
     @Autowired
     private BaseMonsterMapper baseMonsterMapper;
 
-    static {
-        log.info("首次初始化boos信息..");
-        WorldBossServiceImpl.boos = WorldBossServiceImpl.allBoos.get(RandomUtil.randomInt(WorldBossServiceImpl.allBoos.size()));
-        log.info("首次初始化boos信息完成");
-    }
-
     @PostConstruct
     public void initGame() {
         log.info("开始加载游戏信息..");
