@@ -54,7 +54,7 @@ public class WorldBossServiceImpl extends CommonPlayer {
         return battleService.doPlay(token);
     }
 
-    private boolean judgeNotInTime() {
+    public static boolean judgeNotInTime() {
         Date now = new Date();
         Date amStartDate = DateUtil.parse(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN) + "110000", DatePattern.PURE_DATETIME_PATTERN);
         Date amEndDate = DateUtil.parse(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN) + "130000", DatePattern.PURE_DATETIME_PATTERN);

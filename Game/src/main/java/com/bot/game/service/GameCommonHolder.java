@@ -46,16 +46,16 @@ public class GameCommonHolder {
             while (true) {
                 initAllBoos();
                 try {
-//                    if (judgeNotInTime()) {
-                    if (WorldBossServiceImpl.boos.getFinalHp() == null || WorldBossServiceImpl.boos.getFinalHp() == 0) {
-                        log.info("初始化boos信息..");
-                        WorldBossServiceImpl.boos = WorldBossServiceImpl.allBoos.get(RandomUtil.randomInt(WorldBossServiceImpl.allBoos.size()));
+                    if (WorldBossServiceImpl.judgeNotInTime()) {
                         WorldBossServiceImpl.joinTimes = new LinkedHashMap<>();
-                        log.info("初始化boos信息完成");
+                        if (WorldBossServiceImpl.boos.getFinalHp() == null || WorldBossServiceImpl.boos.getFinalHp() == 0) {
+                            log.info("初始化boos信息..");
+                            WorldBossServiceImpl.boos = WorldBossServiceImpl.allBoos.get(RandomUtil.randomInt(WorldBossServiceImpl.allBoos.size()));
+                            log.info("初始化boos信息完成");
+                        }
                     }
-//                    }
                     Thread.sleep(60 * 1000);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     log.error("任务异常", e);
                 }
             }
