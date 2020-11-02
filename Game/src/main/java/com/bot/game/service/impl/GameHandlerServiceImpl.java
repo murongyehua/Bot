@@ -77,7 +77,7 @@ public class GameHandlerServiceImpl implements GameHandler {
     public String play(String reqContent, String token) {
         // 游戏是否维护
         Game game = gameMapper.selectAll().get(0);
-        if (ENStatus.LOCK.equals(game.getStatus())) {
+        if (ENStatus.LOCK.getValue().equals(game.getStatus())) {
             return GameConsts.CommonTip.LOCK;
         }
         // 先查是否已处于在线状态

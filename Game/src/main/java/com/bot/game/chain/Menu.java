@@ -3,10 +3,13 @@ package com.bot.game.chain;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.exception.BotException;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.service.impl.CommonPlayer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 菜单执行者共用基类
@@ -35,12 +38,14 @@ public class Menu implements MenuPrinter{
         this.getDescribe(token);
         stringBuilder.append(StrUtil.BRACKET_START).append(menuName).append(StrUtil.BRACKET_END).append(StrUtil.CRLF).append(StrUtil.CRLF);
         stringBuilder.append(describe).append(StrUtil.CRLF);
-        menuChildrenMap.keySet().forEach(sort ->
-                stringBuilder.append(sort).append(StrUtil.DOT).append(StrUtil.SPACE)
-                        .append(menuChildrenMap.get(sort).menuName).append(StrUtil.CRLF));
-        playServiceMap.keySet().forEach(sort ->
-                stringBuilder.append(sort).append(StrUtil.DOT).append(StrUtil.SPACE)
-                        .append(playServiceMap.get(sort).title).append(StrUtil.CRLF));
+        List<String> sortedMenuKey = menuChildrenMap.keySet().stream().map(IndexUtil::fullIndex).sorted().collect(Collectors.toList());
+        sortedMenuKey.forEach(sort ->
+                stringBuilder.append(IndexUtil.subIndex(sort)).append(StrUtil.DOT).append(StrUtil.SPACE)
+                        .append(menuChildrenMap.get(IndexUtil.subIndex(sort)).menuName).append(StrUtil.CRLF));
+        List<String> sortedServiceKey = playServiceMap.keySet().stream().map(IndexUtil::fullIndex).sorted().collect(Collectors.toList());
+        sortedServiceKey.forEach(sort ->
+                stringBuilder.append(IndexUtil.subIndex(sort)).append(StrUtil.DOT).append(StrUtil.SPACE)
+                        .append(playServiceMap.get(IndexUtil.subIndex(sort)).title).append(StrUtil.CRLF));
         this.appendTurnBack(stringBuilder);
         // 选项与结尾之间换一下行
         stringBuilder.append(StrUtil.CRLF);
