@@ -125,7 +125,7 @@ public class GameHandlerServiceImpl implements GameHandler {
         if (reqContent.startsWith(GameConsts.Manage.COMPENSATE)) {
             CompensateDTO compensate = new CompensateDTO();
             String content = reqContent.substring(2);
-            String[] contents = content.split("||");
+            String[] contents = content.split("\\|\\|");
             compensate.setGoodsId(contents[0]);
             compensate.setNumber(Integer.valueOf(contents[1]));
             String[] powers = contents[2].split(StrUtil.DASHED);
