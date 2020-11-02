@@ -113,6 +113,8 @@ public interface BaseConsts {
         String MANAGER_PASSWORD_RIGHT = "密码正确，成功进入管理模式";
 
         String MANAGER_CODE_RELOAD_TEXT = "重载文本";
+        String CLEAR_VOTE = "清空投票";
+        String LOOK_VOTE = "投票结果";
         String UN_KNOW_MANAGER_CODE = "未知管理指令";
         String SUCCESS = "操作成功";
         String MANAGE_OUT_TIME = "超过1分钟未发现有效操作，已自动退出管理模式";

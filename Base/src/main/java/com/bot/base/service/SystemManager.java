@@ -2,13 +2,17 @@ package com.bot.base.service;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
+import com.bot.base.service.impl.VoteServiceImpl;
 import com.bot.commom.constant.BaseConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * 系统管理
@@ -72,6 +76,20 @@ public class SystemManager {
             userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
             commonTextLoader.loadText();
             return BaseConsts.SystemManager.SUCCESS;
+        }
+        // 清空投票
+        if (BaseConsts.SystemManager.CLEAR_VOTE.equals(reqContent)) {
+            VoteServiceImpl.votes = new HashMap<>();
+            VoteServiceImpl.voted = new LinkedList<>();
+            return BaseConsts.SystemManager.SUCCESS;
+        }
+        // 查看票数
+        if (BaseConsts.SystemManager.LOOK_VOTE.equals(reqContent)) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String name : VoteServiceImpl.votes.keySet()) {
+                stringBuilder.append(name).append(":").append(VoteServiceImpl.votes.get(name)).append(StrUtil.CRLF);
+            }
+            return stringBuilder.toString();
         }
         userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
         return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;

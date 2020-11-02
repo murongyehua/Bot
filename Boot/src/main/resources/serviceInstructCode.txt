@@ -3,3 +3,4 @@
 占卜,运势占卜,运势=luckServiceImpl
 情话=sweetServiceImpl
 音乐,歌=cloudMusicServiceImpl
+投票=voteServiceImpl

@@ -273,6 +273,18 @@ public class BattleServiceImpl extends CommonPlayer {
     }
 
     private String getResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto) {
+        if (isBoos) {
+            if (targetDto.getFinalHp() < 0) {
+                WorldBossServiceImpl.boos.setFinalHp(0);
+            }else {
+                WorldBossServiceImpl.boos.setFinalHp(targetDto.getFinalHp());
+            }
+            int endBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+            allHurt = startBoosHp - endBoosHp;
+            StringBuilder stringBuilder = new StringBuilder();
+            this.doGetBoosGoods(stringBuilder, playerDto);
+            return stringBuilder.toString();
+        }
         if (targetDto.getFinalHp() <= 0) {
             if (isCompare) {
                 return GameConsts.Battle.SUCCESS + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
@@ -280,18 +292,6 @@ public class BattleServiceImpl extends CommonPlayer {
             return GameConsts.Battle.SUCCESS + StrUtil.CRLF +
                     this.afterBattleSuccessResult(playerDto, targetDto, targetDto.getArea()) + GameConsts.CommonTip.TURN_BACK;
         }else {
-            if (isBoos) {
-                if (targetDto.getFinalHp() < 0) {
-                    WorldBossServiceImpl.boos.setFinalHp(0);
-                }else {
-                    WorldBossServiceImpl.boos.setFinalHp(targetDto.getFinalHp());
-                }
-                int endBoosHp = WorldBossServiceImpl.boos.getFinalHp();
-                allHurt = startBoosHp - endBoosHp;
-                StringBuilder stringBuilder = new StringBuilder();
-                this.doGetBoosGoods(stringBuilder, playerDto);
-                return stringBuilder.toString();
-            }
             return GameConsts.Battle.FAIL + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
         }
     }
