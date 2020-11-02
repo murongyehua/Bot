@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.PlayerPhantom;
@@ -76,7 +77,7 @@ public class ExploreAreaPrinter extends Menu {
         phantomParam.setPlayerId(token);
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
         for (int index=0; index < playerPhantoms.size(); index++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new BattleServiceImpl(baseMonster, playerPhantoms.get(index), false, false));
+            this.playServiceMap.put(IndexUtil.getIndex(index + 1), new BattleServiceImpl(baseMonster, playerPhantoms.get(index), false, false));
         }
     }
 

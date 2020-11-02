@@ -2,6 +2,7 @@ package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerAppellation;
 import com.bot.game.dao.mapper.PlayerAppellationMapper;
@@ -35,7 +36,7 @@ public class ChangeAppellationPrinter extends Menu {
         }else {
             this.describe = GameConsts.CommonTip.APPELLATION_CHANGE;
             for (int index=0; index < list.size(); index ++) {
-                this.playServiceMap.put(String.valueOf(index + 1), new ChangeAppellationServiceImpl(list.get(index).getAppellation()));
+                this.playServiceMap.put(IndexUtil.getIndex(index + 1), new ChangeAppellationServiceImpl(list.get(index).getAppellation()));
             }
         }
     }

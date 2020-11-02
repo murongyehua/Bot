@@ -3,6 +3,7 @@ package com.bot.game.chain.menu;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerPhantom;
@@ -53,7 +54,7 @@ public class CompareDetailPrinter extends Menu {
         List<PlayerPhantom> newList = listFriend.stream().sorted(Comparator.comparing(PlayerPhantom::getLevel).reversed()).collect(Collectors.toList());
         this.describe = GameConsts.FriendCompare.PICK;
         for (int index=0; index < list.size(); index ++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new FriendCompareServiceImpl(list.get(index), newList.get(0)));
+            this.playServiceMap.put(IndexUtil.getIndex(index + 1), new FriendCompareServiceImpl(list.get(index), newList.get(0)));
         }
     }
 

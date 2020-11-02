@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/10/29
  */
 @Service("voteServiceImpl")

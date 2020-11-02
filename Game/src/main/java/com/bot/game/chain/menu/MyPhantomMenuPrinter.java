@@ -2,6 +2,7 @@ package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
@@ -36,7 +37,7 @@ public class MyPhantomMenuPrinter extends Menu {
         }else {
             this.describe = GameConsts.CommonTip.PHANTOM_LOOK;
             for (int index=0; index < list.size(); index++) {
-                this.menuChildrenMap.put(String.valueOf(index + 1), new PhantomDetailMenuPrinter(list.get(index)));
+                this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new PhantomDetailMenuPrinter(list.get(index)));
             }
         }
 

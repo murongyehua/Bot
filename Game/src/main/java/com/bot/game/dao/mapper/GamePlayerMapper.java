@@ -23,4 +23,6 @@ public interface GamePlayerMapper {
     List<GamePlayer> getByIds(@Param("ids") List<String> ids);
 
     List<GamePlayer> getBySoulPowerDesc();
+
+    List<GamePlayer> selectBySoulPower(@Param("soulPowerStart") Integer soulPowerStart, @Param("soulPowerEnd") Integer soulPowerEnd);
 }

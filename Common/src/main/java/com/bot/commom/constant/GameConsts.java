@@ -213,10 +213,14 @@ public interface GameConsts {
         Integer MAX_TIME = 2;
     }
 
-    interface Sign{
+    interface Sign {
         String MENU_NAME = "签到";
         String SIGN_SUCCESS = "签到成功，获得了[%s]";
         String SIGN_REPEAT = "今天已经签到过了，明天再来吧~";
         String SIGN_NOTHING = "很遗憾，什么都没有得到...";
+    }
+
+    interface Manage {
+        String COMPENSATE = "补偿";
     }
 }

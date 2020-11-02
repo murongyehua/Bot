@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.base.service.impl.VoteServiceImpl;
 import com.bot.commom.constant.BaseConsts;
+import com.bot.game.service.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class SystemManager {
 
     @Autowired
     private CommonTextLoader commonTextLoader;
+
+    @Autowired
+    private GameHandler gameHandler;
 
     /**
      * 尝试进入管理模式
@@ -90,6 +94,10 @@ public class SystemManager {
                 stringBuilder.append(name).append(":").append(VoteServiceImpl.votes.get(name)).append(StrUtil.CRLF);
             }
             return stringBuilder.toString();
+        }
+        // 游戏管理
+        if (reqContent.startsWith(BaseConsts.SystemManager.GAME_MANAGER)) {
+            return gameHandler.manage(reqContent.substring(2));
         }
         userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
         return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;

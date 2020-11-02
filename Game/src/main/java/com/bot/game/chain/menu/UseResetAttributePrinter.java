@@ -2,6 +2,7 @@ package com.bot.game.chain.menu;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dto.GoodsDetailDTO;
@@ -39,7 +40,7 @@ public class UseResetAttributePrinter extends Menu {
         for (ENPhantomAttribute enPhantomAttribute : ENPhantomAttribute.values()) {
             int number = (Integer) ReflectUtil.getFieldValue(playerPhantom, enPhantomAttribute.getValue());
             if (number > 1) {
-                this.playServiceMap.put(String.valueOf(index), new ResetAttributeServiceImpl(playerPhantom, enPhantomAttribute, goodsDetailDTO));
+                this.playServiceMap.put(IndexUtil.getIndex(index), new ResetAttributeServiceImpl(playerPhantom, enPhantomAttribute, goodsDetailDTO));
                 index++;
             }
         }

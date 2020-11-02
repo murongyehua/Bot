@@ -1,6 +1,7 @@
 package com.bot.game.chain.menu;
 
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.enums.ENArea;
 import org.springframework.stereotype.Component;
@@ -26,9 +27,9 @@ public class ExploreMenuPrinter extends Menu {
         this.describe = GameConsts.Explore.TIP;
         ENArea[] enAreas = ENArea.values();
         for (int index=0; index < enAreas.length; index++) {
-            this.menuChildrenMap.put(String.valueOf(index + 1), new ExploreAreaPrinter(ENArea.getByValue(enAreas[index].getValue())));
+            this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new ExploreAreaPrinter(ENArea.getByValue(enAreas[index].getValue())));
         }
-        this.menuChildrenMap.put(String.valueOf(enAreas.length + 1), new WordBoosPrinter());
+        this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 1), new WordBoosPrinter());
     }
 
 }

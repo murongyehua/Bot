@@ -19,4 +19,11 @@ public interface GameHandler {
      * @return
      */
     String play(String reqContent, String token);
+
+    /**
+     * 管理员操作
+     * @param reqContent
+     * @return
+     */
+    String manage(String reqContent);
 }

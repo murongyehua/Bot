@@ -3,6 +3,7 @@ package com.bot.game.chain.menu;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.entity.PlayerPhantom;
@@ -94,7 +95,7 @@ public class UseGoodsPrinter extends Menu {
             return;
         }
         for (int index = 0; index < finalList.size(); index++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new PhantomAddSkillServiceImpl(this.getUseGoodsDTO(goodsDetailDTO, finalList.get(index))));
+            this.playServiceMap.put(IndexUtil.getIndex(index + 1), new PhantomAddSkillServiceImpl(this.getUseGoodsDTO(goodsDetailDTO, finalList.get(index))));
         }
         stringBuilder.append(GameConsts.MyKnapsack.USE_SKILL_CARD);
     }

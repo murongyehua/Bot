@@ -2,6 +2,7 @@ package com.bot.game.chain.menu;
 
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
@@ -34,7 +35,7 @@ public class WordBoosPrinter extends Menu {
         phantomParam.setPlayerId(token);
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
         for (int index=0; index < playerPhantoms.size(); index++) {
-            this.playServiceMap.put(String.valueOf(index + 1), new WorldBossServiceImpl(playerPhantoms.get(index)));
+            this.playServiceMap.put(IndexUtil.getIndex(index + 1), new WorldBossServiceImpl(playerPhantoms.get(index)));
         }
     }
 

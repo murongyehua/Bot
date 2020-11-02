@@ -2,6 +2,7 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.enums.ENStatus;
@@ -10,8 +11,10 @@ import com.bot.game.dao.entity.Game;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.*;
+import com.bot.game.dto.CompensateDTO;
 import com.bot.game.service.GameCommonHolder;
 import com.bot.game.service.GameHandler;
+import com.bot.game.service.GameManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +59,9 @@ public class GameHandlerServiceImpl implements GameHandler {
 
     @Autowired
     private BaseMonsterMapper baseMonsterMapper;
+
+    @Autowired
+    private GameManageService gameManageService;
 
     private final static List<String> WAIT_REG = new LinkedList<>();
 
@@ -112,6 +118,22 @@ public class GameHandlerServiceImpl implements GameHandler {
             WAIT_LOGIN.add(token);
             return String.format(GameConsts.CommonTip.LOGIN_TIP, gamePlayer.getNickname());
         }
+    }
+
+    @Override
+    public String manage(String reqContent) {
+        if (reqContent.startsWith(GameConsts.Manage.COMPENSATE)) {
+            CompensateDTO compensate = new CompensateDTO();
+            String content = reqContent.substring(2);
+            String[] contents = content.split("||");
+            compensate.setGoodsId(contents[0]);
+            compensate.setNumber(Integer.valueOf(contents[1]));
+            String[] powers = contents[2].split(StrUtil.DASHED);
+            compensate.setSoulPowerStart(Integer.valueOf(powers[0]));
+            compensate.setSoulPowerEnd(Integer.valueOf(powers[1]));
+            return gameManageService.compensate(compensate);
+        }
+        return GameConsts.CommonTip.ERROR_POINT;
     }
 
     private GamePlayer getGamePlayer(String token, String nickName) {

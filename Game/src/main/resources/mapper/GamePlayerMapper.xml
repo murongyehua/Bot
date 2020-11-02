@@ -144,4 +144,10 @@
     from bot_game_player
     order by soul_power desc
   </select>
+
+  <select id="selectBySoulPower" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_game_player
+    where soul_power between #{soulPowerStart} and #{soulPowerEnd}
+  </select>
 </mapper>
