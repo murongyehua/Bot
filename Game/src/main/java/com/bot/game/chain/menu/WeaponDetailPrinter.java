@@ -1,10 +1,13 @@
 package com.bot.game.chain.menu;
 
+import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.BaseWeapon;
 import com.bot.game.dao.entity.PlayerWeapon;
 import com.bot.game.dao.mapper.BaseWeaponMapper;
+import com.bot.game.enums.ENWeaponEffect;
+import com.bot.game.service.impl.ChangeWeaponServiceImpl;
 
 /**
  * @author liul
@@ -30,7 +33,10 @@ public class WeaponDetailPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
-
+        ENWeaponEffect enWeaponEffect = ENWeaponEffect.getByValue(baseWeapon.getEffect());
+        this.describe = String.format(GameConsts.Weapon.WEAPON_DETAIL, String.format(enWeaponEffect.getEffectContent(), enWeaponEffect.getLevelNumber()[playerWeapon.getLevel()]),
+                baseWeapon.getDescribe());
+        this.playServiceMap.put(BaseConsts.Menu.ONE, new ChangeWeaponServiceImpl(playerWeapon));
     }
 
 

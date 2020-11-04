@@ -40,7 +40,8 @@ public interface GameConsts {
         String DESCRIBE = "昵称：[%s]" + StrUtil.CRLF
                 + "称号：[%s]" + StrUtil.CRLF
                 + "幻灵数：[%s]" + StrUtil.CRLF
-                + "战灵力：[%s]" + StrUtil.CRLF;
+                + "战灵力：[%s]" + StrUtil.CRLF
+                + "法宝：[%s]" + StrUtil.CRLF;
     }
 
     interface GoodsDetail {
@@ -144,8 +145,15 @@ public interface GameConsts {
     interface LittlePrinter {
         String CHANGE_APPELLATION = "更换称号";
         String CHANGE_WEAPON = "更换法宝";
+
+    }
+
+    interface Weapon {
         String NO_WEAPON = "你还没有法宝，快去获取吧!";
         String WAIT_WEAPON = "选择法宝查看详情";
+        String WEAPON_DETAIL = "效果：%s" + StrUtil.CRLF + "介绍：%s";
+        String CHANGE = "装备";
+        String SUCCESS = "装备成功，0返回";
     }
 
     interface BaseFigure {

@@ -29,13 +29,13 @@ public class ChangeWeaponPrinter extends Menu {
         param.setPlayerId(token);
         List<PlayerWeapon> list = playerWeaponMapper.selectBySelective(param);
         if (CollectionUtil.isEmpty(list)) {
-            this.describe = GameConsts.LittlePrinter.NO_WEAPON;
+            this.describe = GameConsts.Weapon.NO_WEAPON;
             return;
         }
         for (int index=0; index < list.size(); index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new WeaponDetailPrinter(list.get(index)));
         }
-        this.describe = GameConsts.LittlePrinter.WAIT_WEAPON;
+        this.describe = GameConsts.Weapon.WAIT_WEAPON;
     }
 
 

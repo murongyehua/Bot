@@ -1,14 +1,16 @@
 package com.bot.game.enums;
 
 import com.bot.commom.exception.BotException;
+import lombok.Getter;
 
 /**
  * @author liul
  * @version 1.0 2020/11/4
  */
+@Getter
 public enum ENWeaponEffect {
     //
-    A01("A01", "", "", new Integer[]{5,6,7,8,10});
+    A01("A01", "", "参战幻灵的攻击提升%s%", new Integer[]{5,6,7,8,10});
 
     private String value;
 
