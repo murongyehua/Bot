@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.game.dao.mapper.PlayerWeaponMapper">
+  <resultMap id="BaseResultMap" type="com.bot.game.dao.entity.PlayerWeapon">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="player_id" jdbcType="VARCHAR" property="playerId" />
+    <result column="weapon_id" jdbcType="VARCHAR" property="weaponId" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, player_id, weapon_id, `level`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bot_player_weapon
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from bot_player_weapon
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.bot.game.dao.entity.PlayerWeapon">
+    insert into bot_player_weapon (id, player_id, weapon_id, 
+      `level`)
+    values (#{id,jdbcType=VARCHAR}, #{playerId,jdbcType=VARCHAR}, #{weaponId,jdbcType=VARCHAR}, 
+      #{level,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bot.game.dao.entity.PlayerWeapon">
+    insert into bot_player_weapon
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="playerId != null">
+        player_id,
+      </if>
+      <if test="weaponId != null">
+        weapon_id,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="playerId != null">
+        #{playerId,jdbcType=VARCHAR},
+      </if>
+      <if test="weaponId != null">
+        #{weaponId,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bot.game.dao.entity.PlayerWeapon">
+    update bot_player_weapon
+    <set>
+      <if test="playerId != null">
+        player_id = #{playerId,jdbcType=VARCHAR},
+      </if>
+      <if test="weaponId != null">
+        weapon_id = #{weaponId,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bot.game.dao.entity.PlayerWeapon">
+    update bot_player_weapon
+    set player_id = #{playerId,jdbcType=VARCHAR},
+      weapon_id = #{weaponId,jdbcType=VARCHAR},
+      `level` = #{level,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_player_weapon
+    <where>
+      <if test="playerId != null">
+        player_id = #{playerId,jdbcType=VARCHAR}
+      </if>
+      <if test="weaponId != null">
+        and weapon_id = #{weaponId,jdbcType=VARCHAR}
+      </if>
+      <if test="level != null">
+        and `level` = #{level,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+</mapper>

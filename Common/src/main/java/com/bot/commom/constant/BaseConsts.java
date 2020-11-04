@@ -125,6 +125,7 @@ public interface BaseConsts {
                 + "只有当您发送【退出】时才会退出并回到正常的聊天模式" + StrUtil.CRLF
                 + "回复数字【1】进入，数字【0】返回";
         String EXIT_GAME = "退出";
+        String GET_TOKEN = "我的专属token";
     }
 
     interface Sweet {

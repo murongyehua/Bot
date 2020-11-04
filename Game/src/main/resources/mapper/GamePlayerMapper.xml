@@ -9,9 +9,10 @@
     <result column="status" jdbcType="CHAR" property="status" />
     <result column="appellation" jdbcType="VARCHAR" property="appellation" />
     <result column="soul_power" jdbcType="INTEGER" property="soulPower" />
+    <result column="player_weapon_id" jdbcType="VARCHAR" property="playerWeaponId"/>
   </resultMap>
   <sql id="Base_Column_List">
-    id, game_id, nickname, reg_time, status, appellation, soul_power
+    id, game_id, nickname, reg_time, status, appellation, soul_power, player_weapon_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -25,10 +26,10 @@
   </delete>
   <insert id="insert" parameterType="com.bot.game.dao.entity.GamePlayer" useGeneratedKeys="true">
     insert into bot_game_player (id, game_id, nickname, reg_time,
-      status, appellation, soul_power
+      status, appellation, soul_power, player_weapon_id
       )
     values (#{id, jdbcType=VARCHAR}, #{gameId,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP},
-      #{status,jdbcType=CHAR}, #{appellation,jdbcType=VARCHAR}, #{soulPower,jdbcType=INTEGER}
+      #{status,jdbcType=CHAR}, #{appellation,jdbcType=VARCHAR}, #{soulPower,jdbcType=INTEGER}, #{playerWeaponId, jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.GamePlayer" useGeneratedKeys="true">
@@ -52,6 +53,9 @@
       <if test="soulPower != null">
         soul_power,
       </if>
+      <if test="playerWeaponId != null">
+        player_weapon_id
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gameId != null">
@@ -71,6 +75,9 @@
       </if>
       <if test="soulPower != null">
         #{soulPower,jdbcType=INTEGER},
+      </if>
+      <if test="playerWeaponId != null">
+        #{playerWeaponId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -95,6 +102,9 @@
       <if test="soulPower != null">
         soul_power = #{soulPower,jdbcType=INTEGER},
       </if>
+      <if test="playerWeaponId != null">
+        player_weapon_id = #{playerWeaponId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -105,7 +115,8 @@
       reg_time = #{regTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=CHAR},
       appellation = #{appellation,jdbcType=VARCHAR},
-      soul_power = #{soulPower,jdbcType=INTEGER}
+      soul_power = #{soulPower,jdbcType=INTEGER},
+      player_weapon_id = #{playerWeaponId,jdbcType=VARCHAR},
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectBySelective" resultMap="BaseResultMap">
@@ -126,6 +137,9 @@
       </if>
       <if test="soulPower != null">
         and soul_power = #{soulPower,jdbcType=INTEGER}
+      </if>
+      <if test="playerWeaponId != null">
+        and player_weapon_id = #{playerWeaponId,jdbcType=VARCHAR}
       </if>
     </where>
   </select>

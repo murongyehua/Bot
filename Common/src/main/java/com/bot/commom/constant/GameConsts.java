@@ -32,7 +32,7 @@ public interface GameConsts {
         String LOCK = "当前游戏维护中，请输入【退出】以回到聊天模式，稍后再来尝试哦~";
         String GET_APPELLATION = "获得称号[%s],若已获得过请无视这条提示";
         String MENU_TIP = "回复菜单前的数字，进入相应功能";
-        Integer MAX_LEVEL = 20;
+        Integer MAX_LEVEL = 25;
     }
 
     interface PlayerInfo {
@@ -137,10 +137,15 @@ public interface GameConsts {
         String PLAYER_GOODS = "playerGoodsMapper";
         String PLAYER_PHANTOM = "playerPhantomMapper";
         String BASE_MONSTER = "baseMonsterMapper";
+        String BASE_WEAPON = "baseWeaponMapper";
+        String PLAYER_WEAPON = "playerWeaponMapper";
     }
 
     interface LittlePrinter {
         String CHANGE_APPELLATION = "更换称号";
+        String CHANGE_WEAPON = "更换法宝";
+        String NO_WEAPON = "你还没有法宝，快去获取吧!";
+        String WAIT_WEAPON = "选择法宝查看详情";
     }
 
     interface BaseFigure {
@@ -209,7 +214,7 @@ public interface GameConsts {
         String PICK = "请选择要出战的幻灵";
         String FINISH = "当前Boos已被击退，下次早点来吧!";
         String OVER_TIMES = "当前Boos你已经挑战得够多了，休息休息吧!";
-        Integer INIT_HP = 50000;
+        Integer INIT_HP = 120000;
         Integer MAX_TIME = 2;
     }
 

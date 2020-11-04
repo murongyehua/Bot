@@ -1,5 +1,6 @@
 package com.bot.game.chain.menu;
 
+import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
@@ -20,7 +21,8 @@ public class GoodsDetailMenuPrinter extends Menu {
 
     @Override
     public void initMenu() {
-        this.menuName = String.format("%s[%s]", goodsDetailDTO.getName(), goodsDetailDTO.getNumber());
+        this.menuName = StrUtil.isEmpty(goodsDetailDTO.getAttribute()) ? String.format("%s[%s]", goodsDetailDTO.getName(), goodsDetailDTO.getNumber())
+        : String.format("[%s]%s[%s]", goodsDetailDTO.getAttribute(), goodsDetailDTO.getName(), goodsDetailDTO.getNumber());
     }
 
     @Override

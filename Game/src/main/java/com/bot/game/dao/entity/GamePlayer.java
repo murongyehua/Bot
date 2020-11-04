@@ -24,5 +24,7 @@ public class GamePlayer implements Serializable {
 
     private Integer soulPower;
 
+    private String playerWeaponId;
+
     private static final long serialVersionUID = 1L;
 }

@@ -61,6 +61,12 @@ public class GameHandlerServiceImpl implements GameHandler {
     private BaseMonsterMapper baseMonsterMapper;
 
     @Autowired
+    private BaseWeaponMapper baseWeaponMapper;
+
+    @Autowired
+    private PlayerWeaponMapper playerWeaponMapper;
+
+    @Autowired
     private GameManageService gameManageService;
 
     private final static List<String> WAIT_REG = new LinkedList<>();
@@ -155,7 +161,7 @@ public class GameHandlerServiceImpl implements GameHandler {
     }
 
     private Map<String, Object> getMapperMap() {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(12);
         map.put(GameConsts.MapperName.BASE_GOODS, baseGoodsMapper);
         map.put(GameConsts.MapperName.BASE_PHANTOM, basePhantomMapper);
         map.put(GameConsts.MapperName.BASE_SKILL, baseSkillMapper);
@@ -166,6 +172,8 @@ public class GameHandlerServiceImpl implements GameHandler {
         map.put(GameConsts.MapperName.PLAYER_GOODS, playerGoodsMapper);
         map.put(GameConsts.MapperName.PLAYER_PHANTOM, playerPhantomMapper);
         map.put(GameConsts.MapperName.BASE_MONSTER, baseMonsterMapper);
+        map.put(GameConsts.MapperName.BASE_WEAPON, baseWeaponMapper);
+        map.put(GameConsts.MapperName.PLAYER_WEAPON, playerWeaponMapper);
         return map;
     }
 }

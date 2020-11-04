@@ -90,6 +90,10 @@ public class DistributorServiceImpl implements Distributor {
         if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
             return systemManager.managerDistribute(reqContent);
         }
+        // 获取token
+        if (BaseConsts.SystemManager.GET_TOKEN.equals(reqContent)) {
+            return token;
+        }
         // 是不是处于游戏模式
         if (GAME_TOKENS.keySet().contains(token)) {
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.JOINED.getValue()) && BaseConsts.SystemManager.EXIT_GAME.equals(reqContent)) {
