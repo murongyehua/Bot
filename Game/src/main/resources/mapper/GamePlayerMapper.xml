@@ -116,7 +116,7 @@
       status = #{status,jdbcType=CHAR},
       appellation = #{appellation,jdbcType=VARCHAR},
       soul_power = #{soulPower,jdbcType=INTEGER},
-      player_weapon_id = #{playerWeaponId,jdbcType=VARCHAR},
+      player_weapon_id = #{playerWeaponId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectBySelective" resultMap="BaseResultMap">

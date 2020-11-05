@@ -66,6 +66,7 @@ public interface BaseConsts {
         String NINE  = "9";
         String TEN = "10";
         String ZERO = "0";
+        String DOUBLE_ZERO = "00";
 
         String MAIN_MENU_NAME = "菜单";
         String WEATHER_MENU_NAME = "天气";
@@ -75,6 +76,7 @@ public interface BaseConsts {
         String MUSIC = "听音乐";
 
         String TURN_BACK = "返回";
+        String TURN_BACK_MAIN = "返回主菜单";
         String MENU_TIP = "回复选项前的数字，即可查看更多";
         String VERSION_TIP = "[小林当前版本]: [%s]";
     }

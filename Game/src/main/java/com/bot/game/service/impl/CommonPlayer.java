@@ -7,10 +7,12 @@ import com.bot.commom.constant.GameConsts;
 import com.bot.commom.exception.BotException;
 import com.bot.game.dao.entity.*;
 import com.bot.game.dao.mapper.*;
+import com.bot.game.dto.BattleWeaponDTO;
 import com.bot.game.dto.ExploreBuffDTO;
 import com.bot.game.enums.ENAppellation;
 import com.bot.game.enums.ENGoodEffect;
 import com.bot.game.enums.ENRarity;
+import com.bot.game.enums.ENWeaponEffect;
 import com.bot.game.service.Player;
 import org.springframework.stereotype.Service;
 
@@ -211,6 +213,19 @@ public class CommonPlayer implements Player {
         }
         List<BaseGoods> list = baseGoodsMapper.selectBySelective(param);
         return list.get(0);
+    }
+
+    public static BattleWeaponDTO getCurrentWeapon(String token) {
+        GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
+        PlayerWeaponMapper playerWeaponMapper = (PlayerWeaponMapper) mapperMap.get(GameConsts.MapperName.PLAYER_WEAPON);
+        BaseWeaponMapper baseWeaponMapper = (BaseWeaponMapper) mapperMap.get(GameConsts.MapperName.BASE_WEAPON);
+        GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
+        PlayerWeapon playerWeapon = playerWeaponMapper.selectByPrimaryKey(gamePlayer.getPlayerWeaponId());
+        BaseWeapon baseWeapon = baseWeaponMapper.selectByPrimaryKey(playerWeapon.getWeaponId());
+        BattleWeaponDTO battleWeaponDTO = new BattleWeaponDTO();
+        battleWeaponDTO.setEnWeaponEffect(ENWeaponEffect.getByValue(baseWeapon.getEffect()));
+        battleWeaponDTO.setLevel(playerWeapon.getLevel());
+        return battleWeaponDTO;
     }
 
 }

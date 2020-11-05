@@ -2,6 +2,7 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
@@ -16,12 +17,10 @@ import com.bot.game.dto.BattleEffectDTO;
 import com.bot.game.dto.BattleMonsterDTO;
 import com.bot.game.dto.BattlePhantomDTO;
 import com.bot.game.dto.BattleSkillDTO;
-import com.bot.game.enums.ENAttribute;
-import com.bot.game.enums.ENEffectType;
-import com.bot.game.enums.ENGoodEffect;
-import com.bot.game.enums.ENSkillEffect;
+import com.bot.game.enums.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author murongyehua
@@ -45,6 +44,7 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private StringBuilder battleRecord = new StringBuilder();
 
+    private String targetPlayerId;
 
     public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isCompare, boolean isBoos) {
         this.title = String.format(GameConsts.Battle.TITLE,
@@ -53,6 +53,18 @@ public class BattleServiceImpl extends CommonPlayer {
         this.playerPhantom = playerPhantom;
         this.isCompare = isCompare;
         this.isBoos = isBoos;
+    }
+
+    public BattleServiceImpl(PlayerPhantom targetPhantom, PlayerPhantom playerPhantom, boolean isCompare, boolean isBoos) {
+        BaseMonster baseMonster = new BaseMonster();
+        BeanUtil.copyProperties(targetPhantom, baseMonster);
+        this.title = String.format(GameConsts.Battle.TITLE,
+                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
+        this.baseMonster = baseMonster;
+        this.playerPhantom = playerPhantom;
+        this.isCompare = isCompare;
+        this.isBoos = isBoos;
+        this.targetPlayerId = targetPhantom.getPlayerId();
     }
 
     @Override
@@ -79,6 +91,7 @@ public class BattleServiceImpl extends CommonPlayer {
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_START,
                 playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
         startBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+        this.dealWeapon(targetDTO, playerDTO);
         while (result == null) {
             result = this.doBattle(targetDTO, playerDTO);
         }
@@ -115,6 +128,9 @@ public class BattleServiceImpl extends CommonPlayer {
             battleMonsterDTO.setHp(WorldBossServiceImpl.boos.getFinalHp());
             battleMonsterDTO.setFinalHp(WorldBossServiceImpl.boos.getFinalHp());
         }
+        if (isCompare) {
+            battleMonsterDTO.setBattleWeaponDTO(getCurrentWeapon(targetPlayerId));
+        }
         return battleMonsterDTO;
     }
 
@@ -131,6 +147,7 @@ public class BattleServiceImpl extends CommonPlayer {
         battlePhantomDTO.setFinalDefense(playerPhantom.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL +
                 playerPhantom.getPhysique() * GameConsts.BaseFigure.DEFENSE_POINT);
         battlePhantomDTO.setFinalHp(battlePhantomDTO.getHp());
+        battlePhantomDTO.setBattleWeaponDTO(getCurrentWeapon(playerPhantom.getPlayerId()));
         return battlePhantomDTO;
     }
 
@@ -146,7 +163,7 @@ public class BattleServiceImpl extends CommonPlayer {
     }
 
     private String doBattle(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
-        roundStart(targetDTO, playerDTO);
+        round++;
         if (targetDTO.getFinalHp() <= 0 || playerDTO.getFinalHp() <= 0) {
             return this.getResult(playerDTO, targetDTO);
         }
@@ -161,6 +178,7 @@ public class BattleServiceImpl extends CommonPlayer {
         }
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_ROUND_RESULT,
                 playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
+        roundEnd(targetDTO, playerDTO);
         // 返回null 以继续
         return null;
     }
@@ -178,8 +196,7 @@ public class BattleServiceImpl extends CommonPlayer {
         return list;
     }
 
-    private void roundStart(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
-        round++;
+    private void roundEnd(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
         playerDTO.getSkillList().forEach(skill -> {
             if (skill.getNowWaitRound() != 0) {
                 skill.setNowWaitRound(skill.getNowWaitRound() - 1);
@@ -191,6 +208,7 @@ public class BattleServiceImpl extends CommonPlayer {
             }
         });
     }
+
 
     private void useSkill(BattlePhantomDTO nowAttackPhantom, BattlePhantomDTO another, BattleSkillDTO skill) {
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_PHANTOM, nowAttackPhantom.getName(), skill.getName()));
@@ -223,7 +241,12 @@ public class BattleServiceImpl extends CommonPlayer {
                     break;
                 }
             }
-            if (!hasEffect) {
+            boolean isCanNotAddDeBuff = false;
+            List<ENSkillEffect> enSkillEffects = another.getBuffs().stream().map(BattleEffectDTO::getEffect).collect(Collectors.toList());
+            if (enSkillEffects.contains(ENSkillEffect.W05)) {
+                isCanNotAddDeBuff = true;
+            }
+            if (!hasEffect && !isCanNotAddDeBuff) {
                 another.getDeBuffs().add(battleEffectDTO);
             }
         }
@@ -247,6 +270,10 @@ public class BattleServiceImpl extends CommonPlayer {
         if (hurt < 1) {
             hurt = 1;
         }
+        List<ENSkillEffect> enSkillEffects = tempAnother.getBuffs().stream().map(BattleEffectDTO::getEffect).collect(Collectors.toList());
+        if (enSkillEffects.contains(ENSkillEffect.W04)) {
+            hurt = 0;
+        }
         tempAnother.setFinalHp(tempAnother.getFinalHp() - hurt);
         this.buffDone(tempAnother, tempPhantom, null, ENEffectType.DEFENSE, hurt);
         this.buffDone(tempPhantom, tempAnother, null, ENEffectType.END, hurt);
@@ -262,6 +289,10 @@ public class BattleServiceImpl extends CommonPlayer {
             return;
         }
         for (BattleSkillDTO skill : nowAttackPhantom.getSkillList()) {
+            List<ENSkillEffect> enSkillEffects = nowAttackPhantom.getDeBuffs().stream().map(BattleEffectDTO::getEffect).collect(Collectors.toList());
+            if (enSkillEffects.contains(ENSkillEffect.W06)) {
+                break;
+            }
             if (skill.getNowWaitRound() == 0) {
                 this.useSkill(nowAttackPhantom, another, skill);
                 skill.setNowWaitRound(skill.getWaitRound());
@@ -405,8 +436,6 @@ public class BattleServiceImpl extends CommonPlayer {
                 double tempC10 = another.getFinalSpeed() * 0.05;
                 another.setFinalSpeed(another.getFinalSpeed() - (int) tempC10);
                 break;
-            case D01:
-
                 default:
                     break;
         }
@@ -487,4 +516,57 @@ public class BattleServiceImpl extends CommonPlayer {
         stringBuilder.append(String.format(GameConsts.Battle.BOOS_RESULT, this.allHurt, baseGoods.getName(),
                 ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel(), number)).append(StrUtil.CRLF);
     }
+
+    private void dealWeapon(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
+        if (ObjectUtil.isNotEmpty(targetDTO.getBattleWeaponDTO())) {
+            this.finalWeapon(targetDTO, playerDTO);
+        }
+        if (ObjectUtil.isNotEmpty(playerDTO.getBattleWeaponDTO())) {
+            this.finalWeapon(playerDTO, targetDTO);
+        }
+    }
+
+    private void finalWeapon(BattlePhantomDTO phantom, BattlePhantomDTO another) {
+        int level = phantom.getBattleWeaponDTO().getLevel();
+        switch (phantom.getBattleWeaponDTO().getEnWeaponEffect()) {
+            case W01:
+                Double tempW01 = phantom.getFinalAttack() * 0.01 * level;
+                phantom.setFinalAttack(phantom.getFinalAttack() + tempW01.intValue());
+                break;
+            case W02:
+                Double tempW02 = phantom.getFinalDefense() * 0.01 * level;
+                phantom.setFinalDefense(phantom.getFinalDefense() + tempW02.intValue());
+                break;
+            case W03:
+                Double tempW03 = phantom.getFinalHp() * 0.01 * level;
+                phantom.setFinalHp(phantom.getFinalHp() + tempW03.intValue());
+                break;
+            case W04:
+                BattleEffectDTO tempW04 = new BattleEffectDTO();
+                tempW04.setLiveRound(ENWeaponEffect.W04.getLevelNumber()[level]);
+                tempW04.setEffect(ENSkillEffect.W04);
+                phantom.getBuffs().add(tempW04);
+                break;
+            case W05:
+                BattleEffectDTO tempW05 = new BattleEffectDTO();
+                tempW05.setLiveRound(ENWeaponEffect.W05.getLevelNumber()[level]);
+                tempW05.setEffect(ENSkillEffect.W05);
+                phantom.getBuffs().add(tempW05);
+                break;
+            case W06:
+                BattleEffectDTO tempW06 = new BattleEffectDTO();
+                tempW06.setLiveRound(ENWeaponEffect.W06.getLevelNumber()[level]);
+                tempW06.setEffect(ENSkillEffect.W06);
+                another.getDeBuffs().add(tempW06);
+                break;
+            case W07:
+                Double tempW07 = phantom.getFinalSpeed() * 0.01 * level;
+                phantom.setFinalSpeed(phantom.getFinalSpeed() + tempW07.intValue());
+                break;
+                default:
+                    break;
+        }
+    }
+
+
 }

@@ -6,6 +6,7 @@ import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerPhantom;
+import com.bot.game.dao.entity.PlayerWeapon;
 import com.bot.game.dao.mapper.BaseWeaponMapper;
 import com.bot.game.dao.mapper.GamePlayerMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
@@ -42,12 +43,16 @@ public class PlayerInfoMenuPrinter extends Menu {
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(param);
-        String weaponName = baseWeaponMapper.selectByPrimaryKey(
-                playerWeaponMapper.selectByPrimaryKey(gamePlayer.getPlayerWeaponId()).getWeaponId()).getName();
+        PlayerWeapon playerWeapon = playerWeaponMapper.selectByPrimaryKey(gamePlayer.getPlayerWeaponId());
+        String weaponName = GameConsts.CommonTip.EMPTY;
+        if (playerWeapon != null) {
+            weaponName = baseWeaponMapper.selectByPrimaryKey(playerWeapon.getWeaponId()).getName();
+        }
         this.describe = String.format(GameConsts.PlayerInfo.DESCRIBE, gamePlayer.getNickname(),
                 StrUtil.isEmpty(gamePlayer.getAppellation()) ? GameConsts.CommonTip.EMPTY : gamePlayer.getAppellation(),
                 playerPhantoms.size(),
-                gamePlayer.getSoulPower(), weaponName);
+                gamePlayer.getSoulPower(), weaponName) +
+                (playerWeapon != null ? String.format("[灵气%s级]", playerWeapon.getLevel()) : StrUtil.EMPTY) + StrUtil.CRLF;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.bot.game.dto;
 
 import com.bot.game.dao.entity.PlayerPhantom;
+import com.bot.game.dao.entity.PlayerWeapon;
+import com.bot.game.enums.ENWeaponEffect;
 import lombok.Data;
 
 import java.util.LinkedList;
@@ -30,4 +32,6 @@ public class BattlePhantomDTO extends PlayerPhantom {
     private List<BattleSkillDTO> skillList = new LinkedList<>();
 
     private Boolean stop;
+
+    private BattleWeaponDTO battleWeaponDTO;
 }

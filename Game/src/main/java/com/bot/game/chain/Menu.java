@@ -54,7 +54,8 @@ public class Menu implements MenuPrinter{
 
     protected void appendTurnBack(StringBuilder stringBuilder) {
         // 添加返回选项
-        stringBuilder.append(BaseConsts.Menu.ZERO).append(StrUtil.DOT).append(StrUtil.SPACE).append(BaseConsts.Menu.TURN_BACK);
+        stringBuilder.append(BaseConsts.Menu.ZERO).append(StrUtil.DOT).append(StrUtil.SPACE).append(BaseConsts.Menu.TURN_BACK).append(StrUtil.CRLF);
+        stringBuilder.append(BaseConsts.Menu.DOUBLE_ZERO).append(StrUtil.DOT).append(StrUtil.SPACE).append(BaseConsts.Menu.TURN_BACK_MAIN);
     }
 
     @Override

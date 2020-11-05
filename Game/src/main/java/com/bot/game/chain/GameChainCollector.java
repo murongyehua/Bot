@@ -10,10 +10,7 @@ import com.bot.game.service.impl.CommonPlayer;
 import com.bot.game.service.impl.FindPlayerServiceImpl;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 菜单链路收集与调用者
@@ -64,6 +61,14 @@ public class GameChainCollector implements Collector{
                 // 返回
                 chain.remove(chain.size() - 1);
                 Menu preMenu = chain.get(chain.size() -1);
+                return preMenu.print(token);
+            }
+            if (BaseConsts.Menu.DOUBLE_ZERO.equals(point)) {
+                // 返回主菜单
+                List<Menu> newChain = new LinkedList<>();
+                newChain.add(chain.get(0));
+                userChainMap.put(token, newChain);
+                Menu preMenu = newChain.get(0);
                 return preMenu.print(token);
             }
             // 非正确链路调用,尝试调用service

@@ -41,7 +41,7 @@ public interface GameConsts {
                 + "称号：[%s]" + StrUtil.CRLF
                 + "幻灵数：[%s]" + StrUtil.CRLF
                 + "战灵力：[%s]" + StrUtil.CRLF
-                + "法宝：[%s]" + StrUtil.CRLF;
+                + "法宝：[%s]";
     }
 
     interface GoodsDetail {
@@ -151,7 +151,7 @@ public interface GameConsts {
     interface Weapon {
         String NO_WEAPON = "你还没有法宝，快去获取吧!";
         String WAIT_WEAPON = "选择法宝查看详情";
-        String WEAPON_DETAIL = "效果：%s" + StrUtil.CRLF + "介绍：%s";
+        String WEAPON_DETAIL = "效果：%s" + StrUtil.CRLF + "灵气：%s级" + StrUtil.CRLF + "介绍：%s";
         String CHANGE = "装备";
         String SUCCESS = "装备成功，0返回";
     }

@@ -1,6 +1,7 @@
 package com.bot.game.dto;
 
 import com.bot.game.dao.entity.BaseMonster;
+import com.bot.game.dao.entity.PlayerWeapon;
 import lombok.Data;
 
 /**
@@ -20,5 +21,7 @@ public class BattleMonsterDTO extends BaseMonster {
     private Integer finalHp;
 
     private Integer hp;
+
+    private BattleWeaponDTO battleWeaponDTO;
 
 }

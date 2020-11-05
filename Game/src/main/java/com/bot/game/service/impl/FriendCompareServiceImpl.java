@@ -24,9 +24,7 @@ public class FriendCompareServiceImpl extends CommonPlayer {
 
     @Override
     public String doPlay(String token) {
-        BaseMonster baseMonster = new BaseMonster();
-        BeanUtil.copyProperties(friendPhantom, baseMonster);
-        BattleServiceImpl battleService = new BattleServiceImpl(baseMonster, playerPhantom, true, false);
+        BattleServiceImpl battleService = new BattleServiceImpl(friendPhantom, playerPhantom, true, false);
         return battleService.doPlay(token);
     }
 }

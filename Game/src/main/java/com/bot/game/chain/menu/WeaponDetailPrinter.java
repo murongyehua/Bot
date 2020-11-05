@@ -34,8 +34,8 @@ public class WeaponDetailPrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         ENWeaponEffect enWeaponEffect = ENWeaponEffect.getByValue(baseWeapon.getEffect());
-        this.describe = String.format(GameConsts.Weapon.WEAPON_DETAIL, String.format(enWeaponEffect.getEffectContent(), enWeaponEffect.getLevelNumber()[playerWeapon.getLevel()]),
-                baseWeapon.getDescribe());
+        this.describe = String.format(GameConsts.Weapon.WEAPON_DETAIL, String.format(enWeaponEffect.getEffectContent(),
+                enWeaponEffect.getLevelNumber()[playerWeapon.getLevel() - 1]), playerWeapon.getLevel(),baseWeapon.getDescribe());
         this.playServiceMap.put(BaseConsts.Menu.ONE, new ChangeWeaponServiceImpl(playerWeapon));
     }
 

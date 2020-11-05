@@ -30,7 +30,15 @@ public enum ENSkillEffect {
     C10("C10", "本次战斗中，永久降低目标速度5%", "deBuff", ENEffectType.PRE),
 
     D01("D01", "盗取对方一个buff", null, null),
-    D02("D02", "取消一个deBuff", null, null);
+    D02("D02", "取消一个deBuff", null, null),
+
+    W01("W01","翻天印","buff", ENEffectType.END),
+    W02("W02","护灵甲","buff", ENEffectType.END),
+    W03("W03","玄王佩","buff", ENEffectType.END),
+    W04("W04","醒世符","buff", ENEffectType.DEFENSE),
+    W05("W05","解灵囊","buff", ENEffectType.DEFENSE),
+    W06("W06","禁灵镜","deBuff", ENEffectType.PRE),
+    W07("W07","极影斗篷","buff", ENEffectType.END);
 
 
     private String value;
