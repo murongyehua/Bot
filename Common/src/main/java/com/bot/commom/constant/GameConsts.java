@@ -13,7 +13,7 @@ public interface GameConsts {
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
         String LOGIN_TIP = "欢迎回来,[%s],当前公告："+ StrUtil.CRLF + "1.新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "2.普通探索(除世界Boos外的探索)新增了洗髓丹的掉落，洗髓丹可以洗掉幻灵的属性，妈妈再也不用担心我的幻灵养残了！" + StrUtil.CRLF + "3.每日11:00-13:00、17:00-19:00将会有强大的异兽来袭，可在探索菜单进入挑战，海量唤灵符掉落哦~" + StrUtil.CRLF + "回复数字【1】进入游戏";
         String REPEAT_REG = "昵称重复了，重新输入：";
-        String UN_KNOW_POINT = "未知指令，回复【0】返回";
+        String UN_KNOW_POINT = "未知指令，回复【0】返回上级菜单，【00】返回主菜单";
         String ERROR_POINT = "指令错误，请输入正确的指令";
         String EMPTY = "无";
         String APPELLATION_EMPTY = "您还没有称号";
@@ -235,5 +235,24 @@ public interface GameConsts {
 
     interface Manage {
         String COMPENSATE = "补偿";
+    }
+
+    interface Dungeon {
+        String MENU_TITLE = "时光溯流";
+        String DESCRIBE = "时光之门已开启，请选择要进入的场景";
+        String DUNGEON_NAME = "[%s]建议最低等级%s";
+        String NO_GROUP = "此场景当前没有还在等待的探索队伍，你可以选择创建队伍等待其他玩家加入，也可以选择返回去其他地方看看";
+        String WAIT_TIP = "已找到想要探索当前场景的队伍，你可以选择一个加入，也可以自行创建队伍，组满两人将会自动开始探索";
+        String GROUP_FULL = "就在这片刻之间，该队伍已经满了，请返回加入其他队伍吧";
+        String PICK_PHANTOM = "请选择你要出战的第%s个幻灵";
+        String JOIN_SUCCESS = "操作成功，请稍候再进入该场景查看探索结果领取探索奖励，输入[00]返回主菜单";
+        String GROUP_WAIT = "你已经有队伍了，请稍候再来看看，或者你可以退出去加入其他玩家的队伍";
+        String GROUP_WAIT_FULL = "你已经有队伍了，即将自动进行探索，请稍候来领取奖励哦";
+        String DUNGEON_FINISH = "战斗已结束，奖励已发放" + StrUtil.CRLF;
+        String REPEAT = "你今日已挑战过该副本，先歇一歇吧~";
+        String CREATE_GROUP = "创建队伍";
+        String QUIT_GROUP = "退出队伍";
+        String QUIT_FULL = "队伍满员，即将开始探索，不能退出哦";
+        String QUIT_SUCESS = "退出成功，输入[00]返回主菜单";
     }
 }

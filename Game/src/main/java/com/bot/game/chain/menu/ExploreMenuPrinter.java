@@ -3,6 +3,7 @@ package com.bot.game.chain.menu;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
+import com.bot.game.chain.menu.dungeon.DungeonEnterMenuPrinter;
 import com.bot.game.enums.ENArea;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ public class ExploreMenuPrinter extends Menu {
             this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new ExploreAreaPrinter(ENArea.getByValue(enAreas[index].getValue())));
         }
         this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 1), new WordBoosPrinter());
+        this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 2), new DungeonEnterMenuPrinter());
     }
 
 }

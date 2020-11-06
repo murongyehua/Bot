@@ -106,6 +106,12 @@ public class InstructDistributor {
         return distributor.doDistributeWithString(msg, token);
     }
 
+    @PostMapping("/testOther")
+    public String testOther(String msg) {
+        String token = "test321";
+        return distributor.doDistributeWithString(msg, token);
+    }
+
     @PostMapping("/checkReg")
     public String checkReg(String token) {
         boolean isReg = checkReg.checkReg(token);
