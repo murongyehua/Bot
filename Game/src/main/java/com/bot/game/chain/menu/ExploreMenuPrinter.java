@@ -32,6 +32,7 @@ public class ExploreMenuPrinter extends Menu {
         }
         this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 1), new WordBoosPrinter());
         this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 2), new DungeonEnterMenuPrinter());
+        this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 3), new ShopMenuPrinter());
     }
 
 }

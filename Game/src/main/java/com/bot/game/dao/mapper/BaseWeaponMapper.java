@@ -18,4 +18,6 @@ public interface BaseWeaponMapper {
 
     int updateByPrimaryKey(BaseWeapon record);
 
+    List<BaseWeapon> selectAll();
+
 }

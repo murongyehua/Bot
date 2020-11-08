@@ -28,13 +28,15 @@ import java.util.stream.Collectors;
  */
 public class BattleServiceImpl extends CommonPlayer {
 
-    private BaseMonster baseMonster;
+    private final BaseMonster baseMonster;
 
-    private PlayerPhantom playerPhantom;
+    private final PlayerPhantom playerPhantom;
 
-    private boolean isCompare;
+    private final boolean isCompare;
 
-    private boolean isBoos;
+    private final boolean isBoos;
+
+    private boolean isDungeon;
 
     private int round = 0;
 
@@ -42,17 +44,21 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private int startBoosHp;
 
-    private StringBuilder battleRecord = new StringBuilder();
+    private final StringBuilder battleRecord = new StringBuilder();
 
     private String targetPlayerId;
 
-    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isCompare, boolean isBoos) {
+    private int nowHp;
+
+
+    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isCompare, boolean isBoos, boolean isDungeon) {
         this.title = String.format(GameConsts.Battle.TITLE,
                 playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
         this.baseMonster = baseMonster;
         this.playerPhantom = playerPhantom;
         this.isCompare = isCompare;
         this.isBoos = isBoos;
+        this.isDungeon = isDungeon;
     }
 
     public BattleServiceImpl(PlayerPhantom targetPhantom, PlayerPhantom playerPhantom, boolean isCompare, boolean isBoos) {
@@ -65,6 +71,17 @@ public class BattleServiceImpl extends CommonPlayer {
         this.isCompare = isCompare;
         this.isBoos = isBoos;
         this.targetPlayerId = targetPhantom.getPlayerId();
+    }
+
+    public BattleServiceImpl(BaseMonster baseMonster, PlayerPhantom playerPhantom, boolean isDungeon, Integer nowHp) {
+        this.title = String.format(GameConsts.Battle.TITLE,
+                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel());
+        this.baseMonster = baseMonster;
+        this.playerPhantom = playerPhantom;
+        this.isCompare = false;
+        this.isBoos = false;
+        this.isDungeon = isDungeon;
+        this.nowHp = nowHp;
     }
 
     @Override
@@ -90,7 +107,9 @@ public class BattleServiceImpl extends CommonPlayer {
         String result = null;
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_START,
                 playerDTO.getName(), playerDTO.getFinalHp(), targetDTO.getName(), targetDTO.getFinalHp()));
-        startBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+        if (isBoos) {
+            startBoosHp = WorldBossServiceImpl.boos.getFinalHp();
+        }
         this.dealWeapon(targetDTO, playerDTO);
         while (result == null) {
             result = this.doBattle(targetDTO, playerDTO);
@@ -112,8 +131,8 @@ public class BattleServiceImpl extends CommonPlayer {
         int intAttack = (baseMonster.getAttack() + list.get(0)) * GameConsts.BaseFigure.ATTACK_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL;
         Double figure = this.getFigure();
-        Double doubleAttack = intAttack * figure;
-        battleMonsterDTO.setFinalAttack(doubleAttack.intValue());
+        double doubleAttack = intAttack * figure;
+        battleMonsterDTO.setFinalAttack((int) doubleAttack);
         battleMonsterDTO.setFinalSpeed((baseMonster.getSpeed() + list.get(1)) * GameConsts.BaseFigure.SPEED_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL);
         battleMonsterDTO.setFinalDefense((baseMonster.getPhysique() + list.get(2)) * GameConsts.BaseFigure.DEFENSE_POINT +
@@ -131,6 +150,10 @@ public class BattleServiceImpl extends CommonPlayer {
         if (isCompare) {
             battleMonsterDTO.setBattleWeaponDTO(getCurrentWeapon(targetPlayerId));
         }
+        if (nowHp != 0) {
+            battleMonsterDTO.setFinalHp(nowHp);
+            battleMonsterDTO.setHp(nowHp);
+        }
         return battleMonsterDTO;
     }
 
@@ -140,8 +163,8 @@ public class BattleServiceImpl extends CommonPlayer {
         Double figure = this.getFigure();
         int intAttack = playerPhantom.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL +
                 playerPhantom.getAttack() * GameConsts.BaseFigure.ATTACK_POINT;
-        Double doubleAttack = intAttack * figure;
-        battlePhantomDTO.setFinalAttack(doubleAttack.intValue());
+        double doubleAttack = intAttack * figure;
+        battlePhantomDTO.setFinalAttack((int) doubleAttack);
         battlePhantomDTO.setFinalSpeed(playerPhantom.getLevel() * GameConsts.BaseFigure.SPEED_FOR_EVERY_LEVEL +
                 playerPhantom.getSpeed() + GameConsts.BaseFigure.SPEED_POINT);
         battlePhantomDTO.setFinalDefense(playerPhantom.getLevel() * GameConsts.BaseFigure.DEFENSE_FOR_EVERY_LEVEL +
@@ -169,7 +192,7 @@ public class BattleServiceImpl extends CommonPlayer {
         }
         battleRecord.append(String.format(GameConsts.Battle.BATTLE_RECORD_ROUND, round));
         // 对比速度
-        if (targetDTO.getSpeed() > playerPhantom.getSpeed()) {
+        if (targetDTO.getFinalSpeed() > playerDTO.getFinalSpeed()) {
             doSingleBattle(targetDTO, playerDTO);
             doSingleBattle(playerDTO, targetDTO);
         }else {
@@ -244,6 +267,7 @@ public class BattleServiceImpl extends CommonPlayer {
             boolean isCanNotAddDeBuff = false;
             List<ENSkillEffect> enSkillEffects = another.getBuffs().stream().map(BattleEffectDTO::getEffect).collect(Collectors.toList());
             if (enSkillEffects.contains(ENSkillEffect.W05)) {
+                battleRecord.append("解灵囊生效，此回合").append(another.getName()).append("将免疫所有负面效果").append(StrUtil.CRLF);
                 isCanNotAddDeBuff = true;
             }
             if (!hasEffect && !isCanNotAddDeBuff) {
@@ -272,6 +296,7 @@ public class BattleServiceImpl extends CommonPlayer {
         }
         List<ENSkillEffect> enSkillEffects = tempAnother.getBuffs().stream().map(BattleEffectDTO::getEffect).collect(Collectors.toList());
         if (enSkillEffects.contains(ENSkillEffect.W04)) {
+            battleRecord.append("醒世符生效，此回合").append(tempAnother.getName()).append("免疫伤害(不含DOT)").append(StrUtil.CRLF);
             hurt = 0;
         }
         tempAnother.setFinalHp(tempAnother.getFinalHp() - hurt);
@@ -285,12 +310,14 @@ public class BattleServiceImpl extends CommonPlayer {
             return;
         }
         if (nowAttackPhantom.getStop()) {
+            battleRecord.append(nowAttackPhantom.getName()).append("此回合停止行动");
             nowAttackPhantom.setStop(false);
             return;
         }
         for (BattleSkillDTO skill : nowAttackPhantom.getSkillList()) {
             List<ENSkillEffect> enSkillEffects = nowAttackPhantom.getDeBuffs().stream().map(BattleEffectDTO::getEffect).collect(Collectors.toList());
             if (enSkillEffects.contains(ENSkillEffect.W06)) {
+                battleRecord.append("禁灵镜生效，此回合").append(nowAttackPhantom.getName()).append("不能使用技能").append(StrUtil.CRLF);
                 break;
             }
             if (skill.getNowWaitRound() == 0) {
@@ -304,6 +331,10 @@ public class BattleServiceImpl extends CommonPlayer {
     }
 
     private String getResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto) {
+        if (isDungeon) {
+            // 返回Boos生命值和参战幻灵的生命值
+            return targetDto.getFinalHp() + StrUtil.DASHED + playerDto.getFinalHp();
+        }
         if (isBoos) {
             if (targetDto.getFinalHp() < 0) {
                 WorldBossServiceImpl.boos.setFinalHp(0);
@@ -389,27 +420,33 @@ public class BattleServiceImpl extends CommonPlayer {
                 double tempB01 = phantom.getFinalHp() * 0.05;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempB01);
                 another.setFinalHp(another.getFinalHp() - (int) tempB01);
+                battleRecord.append("技能扣除了").append(phantom.getName()).append(tempB01).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
                 break;
             case B02:
                 double tempB02 = phantom.getFinalHp() * 0.10;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempB02);
                 another.setFinalHp(another.getFinalHp() - (int) tempB02);
+                battleRecord.append("技能扣除了").append(phantom.getName()).append(tempB02).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
                 break;
             case C01:
                 double tempC01 = another.getFinalAttack() * 0.1;
                 another.setFinalAttack(another.getFinalAttack() - (int) tempC01);
+                battleRecord.append(another.getName()).append("的攻击力降低了").append(tempC01).append("点").append(StrUtil.CRLF);
                 break;
             case C02:
                 double tempC02 = another.getFinalAttack() * 0.2;
                 another.setFinalAttack(another.getFinalAttack() - (int) tempC02);
+                battleRecord.append(another.getName()).append("的攻击力降低了").append(tempC02).append("点").append(StrUtil.CRLF);
                 break;
             case C03:
                 double tempC03 = another.getFinalDefense() * 0.1;
                 another.setFinalDefense(another.getFinalDefense() - (int) tempC03);
+                battleRecord.append(another.getName()).append("的防御力降低了").append(tempC03).append("点").append(StrUtil.CRLF);
                 break;
             case C04:
                 double tempC04 = another.getFinalDefense() * 0.2;
                 another.setFinalDefense(another.getFinalDefense() - (int) tempC04);
+                battleRecord.append(another.getName()).append("的防御力降低了").append(tempC04).append("点").append(StrUtil.CRLF);
                 break;
             case C05:
                 another.setStop(true);
@@ -417,19 +454,23 @@ public class BattleServiceImpl extends CommonPlayer {
             case C06:
                 double tempC06 = another.getHp() * 0.02;
                 another.setFinalHp(another.getFinalHp() - (int) tempC06);
+                battleRecord.append("DOT触发,").append(another.getName()).append("扣除血量").append(tempC06).append("点").append(StrUtil.CRLF);
                 break;
             case C07:
                 double tempC07 = another.getFinalHp() * 0.05;
                 another.setFinalHp(another.getFinalHp() - (int) tempC07);
+                battleRecord.append("DOT触发,").append(another.getName()).append("扣除血量").append(tempC07).append("点").append(StrUtil.CRLF);
                 break;
             case C08:
                 double tempC08 = hurt * 0.3;
                 another.setFinalHp(another.getFinalHp() - (int) tempC08);
+                battleRecord.append(another.getName()).append("受到反弹伤害").append(tempC08).append("点").append(StrUtil.CRLF);
                 break;
             case C09:
                 if (phantom.getFinalHp() > 0) {
                     double tempC09 = (phantom.getHp() - phantom.getFinalHp()) * 0.1;
                     phantom.setFinalHp(phantom.getFinalHp() + (int) tempC09);
+                    battleRecord.append(phantom.getName()).append("回复生命值").append(tempC09).append("点").append(StrUtil.CRLF);
                 }
                 break;
             case C10:
@@ -506,17 +547,26 @@ public class BattleServiceImpl extends CommonPlayer {
         return stringBuilder.toString();
     }
 
+    /**
+     * 执行世界Boos奖励
+     * @param stringBuilder
+     * @param playerDto
+     */
     private void doGetBoosGoods(StringBuilder stringBuilder, BattlePhantomDTO playerDto) {
         BaseGoods baseGoods = getBoosGoods(this.allHurt);
         int number = 1;
-        if (this.allHurt > 3000) {
-            number = 2;
-        }
         CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId(), number);
+        int money = CommonPlayer.getBoosMoney(this.allHurt);
+        CommonPlayer.addOrSubMoney(playerDto.getPlayerId(), money);
         stringBuilder.append(String.format(GameConsts.Battle.BOOS_RESULT, this.allHurt, baseGoods.getName(),
-                ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel(), number)).append(StrUtil.CRLF);
+                ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel(), money)).append(StrUtil.CRLF);
     }
 
+    /**
+     * 执行法宝效果
+     * @param targetDTO
+     * @param playerDTO
+     */
     private void dealWeapon(BattlePhantomDTO targetDTO, BattlePhantomDTO playerDTO) {
         if (ObjectUtil.isNotEmpty(targetDTO.getBattleWeaponDTO())) {
             this.finalWeapon(targetDTO, playerDTO);
@@ -530,16 +580,19 @@ public class BattleServiceImpl extends CommonPlayer {
         int level = phantom.getBattleWeaponDTO().getLevel();
         switch (phantom.getBattleWeaponDTO().getEnWeaponEffect()) {
             case W01:
-                Double tempW01 = phantom.getFinalAttack() * 0.01 * level;
-                phantom.setFinalAttack(phantom.getFinalAttack() + tempW01.intValue());
+                double tempW01 = phantom.getFinalAttack() * 0.01 * level;
+                phantom.setFinalAttack(phantom.getFinalAttack() + (int) tempW01);
+                battleRecord.append("番天印生效，本次战斗").append(phantom.getName()).append("的攻击力提升了").append(StrUtil.CRLF);
                 break;
             case W02:
-                Double tempW02 = phantom.getFinalDefense() * 0.01 * level;
-                phantom.setFinalDefense(phantom.getFinalDefense() + tempW02.intValue());
+                double tempW02 = phantom.getFinalDefense() * 0.01 * level;
+                phantom.setFinalDefense(phantom.getFinalDefense() + (int) tempW02);
+                battleRecord.append("护灵甲生效，本次战斗").append(phantom.getName()).append("的防御力提升了").append(StrUtil.CRLF);
                 break;
             case W03:
-                Double tempW03 = phantom.getFinalHp() * 0.01 * level;
-                phantom.setFinalHp(phantom.getFinalHp() + tempW03.intValue());
+                double tempW03 = phantom.getFinalHp() * 0.01 * level;
+                phantom.setFinalHp(phantom.getFinalHp() + (int) tempW03);
+                battleRecord.append("玄王佩生效，本次战斗").append(phantom.getName()).append("的血量值提升了").append(StrUtil.CRLF);
                 break;
             case W04:
                 BattleEffectDTO tempW04 = new BattleEffectDTO();
@@ -560,8 +613,9 @@ public class BattleServiceImpl extends CommonPlayer {
                 another.getDeBuffs().add(tempW06);
                 break;
             case W07:
-                Double tempW07 = phantom.getFinalSpeed() * 0.01 * level;
-                phantom.setFinalSpeed(phantom.getFinalSpeed() + tempW07.intValue());
+                double tempW07 = phantom.getFinalSpeed() * 0.01 * level;
+                phantom.setFinalSpeed(phantom.getFinalSpeed() + (int) tempW07);
+                battleRecord.append("极影斗篷生效，本次战斗").append(phantom.getName()).append("的速度提升了").append(StrUtil.CRLF);
                 break;
                 default:
                     break;

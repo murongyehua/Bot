@@ -35,11 +35,18 @@ public class CommonPlayer implements Player {
 
     public static Map<String, ExploreBuffDTO> exploreBuffMap = new HashMap<>();
 
+    public static Integer nowSale;
+
     @Override
     public String doPlay(String token) {
         throw new BotException("子类实现");
     }
 
+    /**
+     * 是否可唤灵
+     * @param token
+     * @return
+     */
     public static PlayerGoods isCanGetPhantom(String token) {
         PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
         BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
@@ -61,17 +68,38 @@ public class CommonPlayer implements Player {
                 playerPhantom.getPhysique() * GameConsts.BaseFigure.HP_POINT;
     }
 
+    /**
+     * 计算和更新战灵力
+     * @param token
+     */
     public static void computeAndUpdateSoulPower(String token) {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerWeaponMapper playerWeaponMapper = (PlayerWeaponMapper) mapperMap.get(GameConsts.MapperName.PLAYER_WEAPON);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
         List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
         int power = 0;
+        // 幻灵提供的战力
         for (PlayerPhantom playerPhantom : list) {
             power += Objects.requireNonNull(ENRarity.getByValue(playerPhantom.getRarity())).getPower();
             power += playerPhantom.getAttack() * GameConsts.BaseFigure.POWER_ATTACK;
             power += playerPhantom.getSpeed() * GameConsts.BaseFigure.POWER_SPEED;
             power += playerPhantom.getPhysique() * GameConsts.BaseFigure.POWER_PHYSIQUE;
+        }
+        // 法宝提供的战力
+        PlayerWeapon weapon = new PlayerWeapon();
+        weapon.setPlayerId(token);
+        List<PlayerWeapon> playerWeapons = playerWeaponMapper.selectBySelective(weapon);
+        for (PlayerWeapon playerWeapon : playerWeapons) {
+            int level = playerWeapon.getLevel();
+            // 拥有法宝即可获取的战力
+            power += GameConsts.BaseFigure.WEAPON_ONE;
+            // 每升一级增加的战力
+            power += GameConsts.BaseFigure.WEAPON_LEVEL * ( level - 1);
+            if (level == 5) {
+                // 法宝满级额外提供的战力
+                power += GameConsts.BaseFigure.WEAPON_MAX;
+            }
         }
         GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
         GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
@@ -79,6 +107,11 @@ public class CommonPlayer implements Player {
         gamePlayerMapper.updateByPrimaryKey(gamePlayer);
     }
 
+    /**
+     * 幻灵成长增加之后调用，按等级随机增长属性
+     * @param playerPhantom
+     * @param needAddGrow
+     */
     public static void afterAddGrow(PlayerPhantom playerPhantom, Integer needAddGrow) {
         int waitAdd = playerPhantom.getLevel() - 1;
         if (needAddGrow != null) {
@@ -120,6 +153,12 @@ public class CommonPlayer implements Player {
         return list;
     }
 
+    /**
+     * 获得物品的时候调用
+     * @param goodsId
+     * @param token
+     * @param number
+     */
     public static void addPlayerGoods(String goodsId, String token, int number) {
         PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
         PlayerGoods param = new PlayerGoods();
@@ -137,6 +176,10 @@ public class CommonPlayer implements Player {
         playerGoodsMapper.insert(param);
     }
 
+    /**
+     * 使用物品之后调用，用于减少物品数量或移除物品
+     * @param playerGoods
+     */
     public static void afterUseGoods(PlayerGoods playerGoods) {
         PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
         if (playerGoods.getNumber() == 1) {
@@ -147,6 +190,20 @@ public class CommonPlayer implements Player {
         }
     }
 
+    /**
+     * 出售物品后调用，直接删除该物品
+     * @param playerGoodsId
+     */
+    public static void afterSaleGoods(String playerGoodsId) {
+        PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
+        playerGoodsMapper.deleteByPrimaryKey(playerGoodsId);
+    }
+
+    /**
+     * 添加称号
+     * @param enAppellation
+     * @param token
+     */
     public static void addAppellation(ENAppellation enAppellation, String token) {
         PlayerAppellationMapper playerAppellationMapper = (PlayerAppellationMapper) mapperMap.get(GameConsts.MapperName.PLAYER_APPELLATION);
         PlayerAppellation param = new PlayerAppellation();
@@ -199,14 +256,19 @@ public class CommonPlayer implements Player {
         return finalList.get(RandomUtil.randomInt(finalList.size()));
     }
 
+    /**
+     * 获取世界Boos奖励
+     * @param hurt
+     * @return
+     */
     public static BaseGoods getBoosGoods(int hurt) {
         BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
         BaseGoods param = new BaseGoods();
-        if (hurt < 100) {
+        if (hurt < 300) {
             param.setEffect(ENGoodEffect.WAN_2.getValue());
-        }else if (hurt < 300) {
+        }else if (hurt < 1000) {
             param.setEffect(ENGoodEffect.WAN_3.getValue());
-        }else if (hurt < 3000) {
+        }else if (hurt < 5500) {
             param.setEffect(ENGoodEffect.GET_PHANTOM.getValue());
         }else {
             param.setEffect(ENGoodEffect.GET_PHANTOM.getValue());
@@ -215,17 +277,115 @@ public class CommonPlayer implements Player {
         return list.get(0);
     }
 
+    /**
+     * 获取Boos灵石
+     * @param hurt
+     * @return
+     */
+    public static Integer getBoosMoney(int hurt) {
+        if (hurt < 300) {
+            return GameConsts.Money.WORLD_BOOS_1;
+        }else if (hurt < 1000) {
+            return GameConsts.Money.WORLD_BOOS_2;
+        }else if (hurt < 5500) {
+            return GameConsts.Money.WORLD_BOOS_3;
+        }else {
+            return GameConsts.Money.WORLD_BOOS_4;
+        }
+    }
+
+    /**
+     * 获取玩家当前佩戴的法宝
+     * @param token
+     * @return
+     */
     public static BattleWeaponDTO getCurrentWeapon(String token) {
         GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
         PlayerWeaponMapper playerWeaponMapper = (PlayerWeaponMapper) mapperMap.get(GameConsts.MapperName.PLAYER_WEAPON);
         BaseWeaponMapper baseWeaponMapper = (BaseWeaponMapper) mapperMap.get(GameConsts.MapperName.BASE_WEAPON);
         GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
         PlayerWeapon playerWeapon = playerWeaponMapper.selectByPrimaryKey(gamePlayer.getPlayerWeaponId());
+        if (playerWeapon == null) {
+            return null;
+        }
         BaseWeapon baseWeapon = baseWeaponMapper.selectByPrimaryKey(playerWeapon.getWeaponId());
         BattleWeaponDTO battleWeaponDTO = new BattleWeaponDTO();
         battleWeaponDTO.setEnWeaponEffect(ENWeaponEffect.getByValue(baseWeapon.getEffect()));
         battleWeaponDTO.setLevel(playerWeapon.getLevel());
         return battleWeaponDTO;
+    }
+
+    /**
+     * 添加或减少灵石 当减少灵石后为负数时，返回false
+     * @param token
+     * @param moneyNumber
+     * @return
+     */
+    public static boolean addOrSubMoney(String token, Integer moneyNumber) {
+        GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
+        GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
+        if (gamePlayer.getMoney() + moneyNumber < 0) {
+            return false;
+        }
+        gamePlayer.setMoney(gamePlayer.getMoney() + moneyNumber);
+        gamePlayerMapper.updateByPrimaryKeySelective(gamePlayer);
+        return true;
+    }
+
+    /**
+     * 获得法宝，如果已经拥有，则法宝灵气+1
+     * @param token
+     * @param baseWeapon
+     */
+    public static void addWeapon(String token, BaseWeapon baseWeapon) {
+        PlayerWeaponMapper playerWeaponMapper = (PlayerWeaponMapper) mapperMap.get(GameConsts.MapperName.PLAYER_WEAPON);
+        PlayerWeapon param = new PlayerWeapon();
+        param.setPlayerId(token);
+        param.setWeaponId(baseWeapon.getId());
+        List<PlayerWeapon> list = playerWeaponMapper.selectBySelective(param);
+        if (CollectionUtil.isNotEmpty(list)) {
+            PlayerWeapon playerWeapon = list.get(0);
+            if (playerWeapon.getLevel() < 5) {
+                playerWeapon.setLevel(playerWeapon.getLevel() + 1);
+                playerWeaponMapper.updateByPrimaryKey(playerWeapon);
+            }
+            return;
+        }
+        param.setLevel(1);
+        param.setId(IdUtil.simpleUUID());
+        playerWeaponMapper.insert(param);
+    }
+
+    /**
+     * 获取当前灵石数量
+     * @param token
+     * @return
+     */
+    public static Integer getMoney(String token) {
+        GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
+        GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
+        return gamePlayer.getMoney();
+    }
+
+    /**
+     * 物品使用前校验数量
+     * @param goodEffect
+     * @return
+     */
+    public static PlayerGoods checkGoodsNumber(String token, ENGoodEffect goodEffect) {
+        PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
+        BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
+        BaseGoods baseGoods = new BaseGoods();
+        baseGoods.setEffect(goodEffect.getValue());
+        List<BaseGoods> baseGoodsList = baseGoodsMapper.selectBySelective(baseGoods);
+        PlayerGoods playerGoods = new PlayerGoods();
+        playerGoods.setPlayerId(token);
+        playerGoods.setGoodId(baseGoodsList.get(0).getId());
+        List<PlayerGoods> list = playerGoodsMapper.selectBySelective(playerGoods);
+        if (CollectionUtil.isEmpty(list) || list.get(0).getNumber() == 0) {
+            return null;
+        }
+        return list.get(0);
     }
 
 }

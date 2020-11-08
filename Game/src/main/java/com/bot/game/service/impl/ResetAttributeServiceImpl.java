@@ -23,11 +23,11 @@ import java.util.List;
  */
 public class ResetAttributeServiceImpl extends CommonPlayer {
 
-    private PlayerPhantom playerPhantom;
+    private final PlayerPhantom playerPhantom;
 
-    private ENPhantomAttribute enPhantomAttribute;
+    private final ENPhantomAttribute enPhantomAttribute;
 
-    private GoodsDetailDTO goodsDetailDTO;
+    private final GoodsDetailDTO goodsDetailDTO;
 
     public ResetAttributeServiceImpl(PlayerPhantom playerPhantom, ENPhantomAttribute enPhantomAttribute, GoodsDetailDTO goodsDetailDTO) {
         this.playerPhantom = playerPhantom;
@@ -39,16 +39,8 @@ public class ResetAttributeServiceImpl extends CommonPlayer {
     @Override
     public String doPlay(String token) {
         // 校验
-        PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
-        BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
-        BaseGoods baseGoods = new BaseGoods();
-        baseGoods.setEffect(ENGoodEffect.WAN_4.getValue());
-        List<BaseGoods> baseGoodsList = baseGoodsMapper.selectBySelective(baseGoods);
-        PlayerGoods playerGoods = new PlayerGoods();
-        playerGoods.setPlayerId(token);
-        playerGoods.setGoodId(baseGoodsList.get(0).getId());
-        List<PlayerGoods> list = playerGoodsMapper.selectBySelective(playerGoods);
-        if (CollectionUtil.isEmpty(list) || list.get(0).getNumber() == 0) {
+        PlayerGoods playerGoods = checkGoodsNumber(token, ENGoodEffect.WAN_4);
+        if (playerGoods == null) {
             return GameConsts.MyKnapsack.EMPTY + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
         }
         List<ENPhantomAttribute> enPhantomAttributes = ENPhantomAttribute.getWithOutOne(enPhantomAttribute);
@@ -60,9 +52,9 @@ public class ResetAttributeServiceImpl extends CommonPlayer {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
         // 扣除
-        CommonPlayer.afterUseGoods(list.get(0));
+        CommonPlayer.afterUseGoods(playerGoods);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
-        goodsDetailDTO.setNumber(nowNumber < 0 ? 0 : nowNumber);
+        goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         return GameConsts.MyKnapsack.BUFF_USE + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
     }
 

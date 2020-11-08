@@ -50,7 +50,7 @@ public class WorldBossServiceImpl extends CommonPlayer {
         }
         BaseMonster baseMonster = new BaseMonster();
         BeanUtil.copyProperties(boos, baseMonster);
-        BattleServiceImpl battleService = new BattleServiceImpl(baseMonster, playerPhantom, false, true);
+        BattleServiceImpl battleService = new BattleServiceImpl(baseMonster, playerPhantom, false, true, false);
         return battleService.doPlay(token);
     }
 

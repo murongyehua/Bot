@@ -20,6 +20,10 @@
     delete from bot_player_appellation
     where id = #{id,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteByAppellation" parameterType="java.lang.String">
+    delete from bot_player_appellation
+    where appellation = #{appellation,jdbcType=VARCHAR}
+  </delete>
   <insert id="insert" parameterType="com.bot.game.dao.entity.PlayerAppellation" useGeneratedKeys="true">
     insert into bot_player_appellation (id, player_id, appellation, get_time
       )

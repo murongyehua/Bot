@@ -20,7 +20,7 @@ public interface GameConsts {
         String APPELLATION_CHANGE = "输入称号前的编号以完成更换";
         String PLAY_SUCCESS = "操作成功，目前菜单仍停留在上一层，可输入【0】返回，或继续操作";
         String GOODS_EMPTY = "啊哦，这里什么也没有哦~";
-        String GOODS_UES = "输入物品前的编号查看详情或使用";
+        String GOODS_UES = "输入物品前的编号可查看详情、使用或出售";
         String PHANTOM_LOOK = "输入幻灵前的编号查看详细信息";
         String PHANTOM_EMPTY = "您还没有幻灵，赶紧去唤灵仪式吧~";
         String SKILL_DESCRIBE = "【%s】";
@@ -41,11 +41,12 @@ public interface GameConsts {
                 + "称号：[%s]" + StrUtil.CRLF
                 + "幻灵数：[%s]" + StrUtil.CRLF
                 + "战灵力：[%s]" + StrUtil.CRLF
+                + "灵石：[%s]" + StrUtil.CRLF
                 + "法宝：[%s]";
     }
 
     interface GoodsDetail {
-        String DESCRIBE = "名称：%s" + StrUtil.CRLF + "数量：%s" + StrUtil.CRLF + "用途：%s";
+        String DESCRIBE = "名称：%s" + StrUtil.CRLF + "数量：%s" + StrUtil.CRLF + "出售单价：%s灵石" +StrUtil.CRLF+ "用途：%s";
         String USE = "使用";
     }
 
@@ -65,6 +66,7 @@ public interface GameConsts {
     interface MyKnapsack {
         String MENU_NAME = "我的背包";
         String USE_GOODS_MENU = "使用道具";
+        String SALE_GOODS_MENU = "出售道具(目前仅支持全部卖出，请谨慎选择)";
         String GET_PHANTOM = "请前往【唤灵仪式】使用唤灵符";
         String USE_SKILL_CARD = "请选择需要使用的幻灵" + StrUtil.CRLF + "已自动过滤掉与此技能属性不符的幻灵、学满3个技能的幻灵和已学会该技能的幻灵";
         String USE_SKILL_NO_PHANTOM = "没有满足使用条件的幻灵";
@@ -72,8 +74,13 @@ public interface GameConsts {
         String BUFF_USE = "使用成功!快去试试效果吧~";
         String EMPTY = "该道具数量为0，无法使用";
         String CHOOSE_RESET = "选择需要使用洗髓丹的幻灵";
+        String CHOOSE_FORGET = "选择需要使用溢灵散的幻灵";
         String CHOOSE_ATTRIBUTE = "选择要洗去的属性" + StrUtil.CRLF + "所选属性将洗去1点，并自动随机加到其他属性上面" + StrUtil.CRLF + "属性最低为1，已自动隐去不可洗的属性";
+        String CHOOSE_SKILL = "选择要遗忘的技能";
+        String NO_SKILL = "该幻灵没有技能";
         String TITLE = "%s: %s";
+        String SALE_RESULT = "共计出售%s个%s，获得%s灵石";
+        String SKILL_FORGET_SUCCESS = "使用成功，所选技能已遗忘";
     }
 
     interface GetPhantom {
@@ -151,7 +158,7 @@ public interface GameConsts {
     interface Weapon {
         String NO_WEAPON = "你还没有法宝，快去获取吧!";
         String WAIT_WEAPON = "选择法宝查看详情";
-        String WEAPON_DETAIL = "效果：%s" + StrUtil.CRLF + "灵气：%s级" + StrUtil.CRLF + "介绍：%s";
+        String WEAPON_DETAIL = "效果：%s" + StrUtil.CRLF + "灵气：%s 级" + StrUtil.CRLF + "介绍：" + StrUtil.CRLF + "%s";
         String CHANGE = "装备";
         String SUCCESS = "装备成功，0返回";
     }
@@ -175,6 +182,10 @@ public interface GameConsts {
         Integer POWER_ATTACK = 10;
         Integer POWER_SPEED = 3;
         Integer POWER_PHYSIQUE = 8;
+
+        Integer WEAPON_ONE = 500;
+        Integer WEAPON_LEVEL = 200;
+        Integer WEAPON_MAX = 400;
     }
 
     interface Battle {
@@ -196,7 +207,7 @@ public interface GameConsts {
         String EXP_MAX = "出战幻灵已达到最高等级，不增加经验值";
         String GET_RESULT_GOOD = "获得%s：%s，可前往背包查看详情";
         String GET_RESULT_GOOD_EMTPY = "此次战斗无物品掉落";
-        String BOOS_RESULT = "共造成%s点伤害" + StrUtil.CRLF + "获得%s：%s，数量[%s]可前往背包查看详情" + StrUtil.CRLF + "Q.查看战斗详情" +StrUtil.CRLF + "0.返回";
+        String BOOS_RESULT = "共造成%s点伤害" + StrUtil.CRLF + "获得%s：%s，灵石*%s可前往背包查看详情" + StrUtil.CRLF + "Q.查看战斗详情" +StrUtil.CRLF + "0.返回";
     }
 
     interface Help {
@@ -253,6 +264,29 @@ public interface GameConsts {
         String CREATE_GROUP = "创建队伍";
         String QUIT_GROUP = "退出队伍";
         String QUIT_FULL = "队伍满员，即将开始探索，不能退出哦";
-        String QUIT_SUCESS = "退出成功，输入[00]返回主菜单";
+        String QUIT_SUCCESS = "退出成功，输入[00]返回主菜单";
+        String FAIL = "很遗憾!副本挑战失败!"+ StrUtil.CRLF +"获得50灵石已到账，努力提升自己吧，再接再厉!";
+        String VICTORY = "副本挑战成功，获得";
+        Integer GET_DUNGEON = 30;
+    }
+
+    interface  Money {
+        Integer WORLD_BOOS_1 = 20;
+        Integer WORLD_BOOS_2 = 50;
+        Integer WORLD_BOOS_3 = 100;
+        Integer WORLD_BOOS_4 = 200;
+
+        Integer DUNGEON_SUCCESS = 200;
+        Integer DUNGEON_FAIL = 50;
+
+        Integer EXPLORE_MIN = 0;
+        Integer EXPLORE_MAX = 1;
+    }
+
+    interface Shop {
+        String MENU_NAME = "神秘商店";
+        String DESCRIBE = "当前折扣：%s折(每天凌晨刷新)" + StrUtil.CRLF + "我的灵石：%s";
+        String NO_MONEY = "你的灵石不足，无法购买";
+        String BUY_SUCCESS = "购买成功，消耗灵石：%s，剩余灵石：%s";
     }
 }

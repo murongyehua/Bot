@@ -10,9 +10,10 @@ import lombok.Getter;
 public enum ENAppellation {
     //
     A01("初出茅庐"),
-    A02("幸运天使");
+    A02("幸运天使"),
+    A03("山海乾坤");
 
-    private String appellation;
+    private final String appellation;
 
     ENAppellation(String appellation) {
         this.appellation = appellation;

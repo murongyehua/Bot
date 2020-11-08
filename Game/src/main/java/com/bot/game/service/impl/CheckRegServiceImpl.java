@@ -52,6 +52,7 @@ public class CheckRegServiceImpl implements CheckReg {
         param.setStatus(ENStatus.NORMAL.getValue());
         param.setRegTime(new Date());
         param.setGameId(GameCommonHolder.GAMES.get(0).getId());
+        param.setMoney(0);
         gamePlayerMapper.insert(param);
         PlayerGoods playerGoods = new PlayerGoods();
         playerGoods.setId(IdUtil.simpleUUID());

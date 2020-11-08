@@ -3,6 +3,7 @@ package com.bot.game.dto;
 import com.bot.game.enums.ENDungeonResult;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,6 @@ public class DungeonGroupDTO {
 
     private List<DungeonSinglePlayerDTO> players;
 
-    private Map<String, String> resultMap;
+    private Map<String, String> resultMap = new HashMap<>(2);
 
 }

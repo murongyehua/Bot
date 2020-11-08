@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public class UseGoodsPrinter extends Menu {
 
-    private GoodsDetailDTO goodsDetailDTO;
+    private final GoodsDetailDTO goodsDetailDTO;
 
     UseGoodsPrinter(GoodsDetailDTO goodsDetailDTO) {
         this.goodsDetailDTO = goodsDetailDTO;
@@ -54,16 +54,15 @@ public class UseGoodsPrinter extends Menu {
                 this.useSkillCard(stringBuilder);
                 break;
             case WAN_1:
-                this.useWan(enGoodEffect, stringBuilder);
-                break;
             case WAN_2:
-                this.useWan(enGoodEffect, stringBuilder);
-                break;
             case WAN_3:
                 this.useWan(enGoodEffect, stringBuilder);
                 break;
             case WAN_4:
                 this.useResetAttribute(stringBuilder, token);
+                break;
+            case WAN_5:
+                this.useForgetSkill(stringBuilder, token);
                 break;
                 default:
                     break;
@@ -130,12 +129,10 @@ public class UseGoodsPrinter extends Menu {
                 time = 10;
                 break;
             case WAN_2:
-                time = 5;
-                break;
             case WAN_3:
                 time = 5;
                 break;
-                default:
+            default:
                     break;
         }
         long timeValue = time * 1000 * 60;
@@ -146,7 +143,7 @@ public class UseGoodsPrinter extends Menu {
         playerGoods.setNumber(goodsDetailDTO.getNumber());
         CommonPlayer.afterUseGoods(playerGoods);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
-        goodsDetailDTO.setNumber(nowNumber < 0 ? 0 : nowNumber);
+        goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE).append(StrUtil.CRLF).append(GameConsts.CommonTip.TURN_BACK);
     }
 
@@ -159,7 +156,17 @@ public class UseGoodsPrinter extends Menu {
         for (int index=0; index < playerPhantoms.size(); index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new UseResetAttributePrinter(playerPhantoms.get(index), goodsDetailDTO));
         }
+    }
 
+    private void useForgetSkill(StringBuilder stringBuilder, String token) {
+        stringBuilder.append(GameConsts.MyKnapsack.CHOOSE_FORGET);
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerPhantom param = new PlayerPhantom();
+        param.setPlayerId(token);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(param);
+        for (int index=0; index < playerPhantoms.size(); index++) {
+            this.menuChildrenMap.put(String.valueOf(index + 1), new ForgetSkillPrinter(playerPhantoms.get(index), goodsDetailDTO));
+        }
     }
 
 }

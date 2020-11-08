@@ -5,6 +5,7 @@ import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dto.GoodsDetailDTO;
+import com.bot.game.enums.ENGoodEffect;
 
 /**
  * @author murongyehua
@@ -28,7 +29,8 @@ public class GoodsDetailMenuPrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         this.describe = String.format(GameConsts.GoodsDetail.DESCRIBE,
-                goodsDetailDTO.getName(), goodsDetailDTO.getNumber(), goodsDetailDTO.getDescribe());
+                goodsDetailDTO.getName(), goodsDetailDTO.getNumber(), ENGoodEffect.getByValue(goodsDetailDTO.getEffect()).getMoney() / 5, goodsDetailDTO.getDescribe());
         this.menuChildrenMap.put(BaseConsts.Menu.ONE, new UseGoodsPrinter(goodsDetailDTO));
+        this.menuChildrenMap.put(BaseConsts.Menu.TWO, new SaleGoodsPrinter(goodsDetailDTO));
     }
 }

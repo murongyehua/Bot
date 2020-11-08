@@ -54,6 +54,7 @@ public class GameCommonHolder {
                             log.info("初始化boos信息完成");
                         }
                     }
+                    // 每1分钟尝试一次初始化
                     Thread.sleep(60 * 1000);
                 } catch (Exception e) {
                     log.error("任务异常", e);

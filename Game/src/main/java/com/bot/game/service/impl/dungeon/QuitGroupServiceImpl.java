@@ -54,6 +54,6 @@ public class QuitGroupServiceImpl extends CommonPlayer {
                 groups.remove(myGroup);
             }
         }
-        return GameConsts.Dungeon.QUIT_SUCESS;
+        return GameConsts.Dungeon.QUIT_SUCCESS;
     }
 }

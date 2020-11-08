@@ -1,26 +1,34 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
+import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerPhantom;
+import com.bot.game.dao.mapper.BaseSkillMapper;
 import com.bot.game.dto.GoodsDetailDTO;
 import com.bot.game.enums.ENPhantomAttribute;
 import com.bot.game.enums.ENRarity;
+import com.bot.game.service.impl.ForgetSkillServiceImpl;
 import com.bot.game.service.impl.ResetAttributeServiceImpl;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author murongyehua
- * @version 1.0 2020/10/29
+ * @version 1.0 2020/11/8
  */
-public class UseResetAttributePrinter extends Menu {
+public class ForgetSkillPrinter extends Menu {
 
     private final PlayerPhantom playerPhantom;
 
     private final GoodsDetailDTO goodsDetailDTO;
 
-    UseResetAttributePrinter(PlayerPhantom playerPhantom, GoodsDetailDTO goodsDetailDTO) {
+
+    ForgetSkillPrinter(PlayerPhantom playerPhantom, GoodsDetailDTO goodsDetailDTO) {
         this.playerPhantom = playerPhantom;
         this.goodsDetailDTO = goodsDetailDTO;
         this.initMenu();
@@ -35,14 +43,18 @@ public class UseResetAttributePrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         this.playServiceMap.clear();
-        this.describe = GameConsts.MyKnapsack.CHOOSE_ATTRIBUTE;
+        if (StrUtil.isEmpty(playerPhantom.getSkills())) {
+            this.describe = GameConsts.MyKnapsack.NO_SKILL;
+            return;
+        }
+        this.describe = GameConsts.MyKnapsack.CHOOSE_SKILL;
+        BaseSkillMapper baseSkillMapper = (BaseSkillMapper) mapperMap.get(GameConsts.MapperName.BASE_SKILL);
+        String[] skillIds = playerPhantom.getSkills().split(StrUtil.COMMA);
+        List<BaseSkill> baseSkills = baseSkillMapper.getByIds(Arrays.asList(skillIds));
         int index = 1;
-        for (ENPhantomAttribute enPhantomAttribute : ENPhantomAttribute.values()) {
-            int number = (Integer) ReflectUtil.getFieldValue(playerPhantom, enPhantomAttribute.getValue());
-            if (number > 1) {
-                this.playServiceMap.put(IndexUtil.getIndex(index), new ResetAttributeServiceImpl(playerPhantom, enPhantomAttribute, goodsDetailDTO));
-                index++;
-            }
+        for (BaseSkill baseSkill : baseSkills) {
+            this.playServiceMap.put(IndexUtil.getIndex(index), new ForgetSkillServiceImpl(playerPhantom, baseSkill, goodsDetailDTO));
+            index++;
         }
 
     }
