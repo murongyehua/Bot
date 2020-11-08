@@ -41,13 +41,13 @@ public enum ENSkillEffect {
     W07("W07","极影斗篷","buff", ENEffectType.END);
 
 
-    private String value;
+    private final String value;
 
-    private String label;
+    private final String label;
 
-    private ENEffectType enEffectType;
+    private final ENEffectType enEffectType;
 
-    private String buffStatus;
+    private final String buffStatus;
 
     ENSkillEffect(String value, String label, String buffStatus, ENEffectType enEffectType) {
         this.value = value;

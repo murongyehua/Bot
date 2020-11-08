@@ -283,6 +283,11 @@ public class BattleServiceImpl extends CommonPlayer {
         BattlePhantomDTO tempAnother = new BattlePhantomDTO();
         BeanUtil.copyProperties(another, tempAnother);
         this.buffDone(tempPhantom, tempAnother, skill, ENEffectType.PRE, 0);
+        if (tempPhantom.getStop()) {
+            battleRecord.append(tempPhantom.getName()).append("此回合停止行动，攻击无效").append(StrUtil.CRLF);
+            tempPhantom.setStop(false);
+            return;
+        }
         this.finalAttack(tempPhantom, tempAnother);
         nowAttackPhantom.setFinalHp(tempPhantom.getFinalHp());
         another.setFinalHp(tempAnother.getFinalHp());
@@ -307,11 +312,6 @@ public class BattleServiceImpl extends CommonPlayer {
 
     private void doSingleBattle(BattlePhantomDTO nowAttackPhantom, BattlePhantomDTO another) {
         if (nowAttackPhantom.getFinalHp() <= 0 || another.getFinalHp() <= 0) {
-            return;
-        }
-        if (nowAttackPhantom.getStop()) {
-            battleRecord.append(nowAttackPhantom.getName()).append("此回合停止行动");
-            nowAttackPhantom.setStop(false);
             return;
         }
         for (BattleSkillDTO skill : nowAttackPhantom.getSkillList()) {
@@ -449,7 +449,7 @@ public class BattleServiceImpl extends CommonPlayer {
                 battleRecord.append(another.getName()).append("的防御力降低了").append(tempC04).append("点").append(StrUtil.CRLF);
                 break;
             case C05:
-                another.setStop(true);
+                phantom.setStop(true);
                 break;
             case C06:
                 double tempC06 = another.getHp() * 0.02;
