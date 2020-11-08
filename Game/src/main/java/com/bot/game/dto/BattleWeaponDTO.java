@@ -4,7 +4,7 @@ import com.bot.game.enums.ENWeaponEffect;
 import lombok.Data;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/5
  */
 @Data

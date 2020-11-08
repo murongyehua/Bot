@@ -4,7 +4,7 @@ import com.bot.commom.exception.BotException;
 import lombok.Getter;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/5
  */
 @Getter

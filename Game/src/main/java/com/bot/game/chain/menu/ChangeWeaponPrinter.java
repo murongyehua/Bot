@@ -9,7 +9,7 @@ import com.bot.game.dao.mapper.PlayerWeaponMapper;
 import java.util.List;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/4
  */
 public class ChangeWeaponPrinter extends Menu {

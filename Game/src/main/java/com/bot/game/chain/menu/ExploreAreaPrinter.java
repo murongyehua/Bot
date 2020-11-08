@@ -1,5 +1,6 @@
 package com.bot.game.chain.menu;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
@@ -37,6 +38,10 @@ public class ExploreAreaPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
+        if (!judgeLevel(token)) {
+            this.describe = "此地过于凶险，你当前的实力无法涉足，请尝试探索其他区域";
+            return;
+        }
         BaseMonsterMapper baseMonsterMapper = (BaseMonsterMapper) mapperMap.get(GameConsts.MapperName.BASE_MONSTER);
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         BaseMonster param = new BaseMonster();
@@ -84,6 +89,20 @@ public class ExploreAreaPrinter extends Menu {
     @Override
     public void appendTurnBack(StringBuilder stringBuilder) {
         stringBuilder.append(BaseConsts.Menu.ZERO).append(StrUtil.DOT).append(StrUtil.SPACE).append(GameConsts.Explore.RUN);
+    }
+
+    private boolean judgeLevel(String token) {
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerPhantom phantomParam = new PlayerPhantom();
+        phantomParam.setPlayerId(token);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
+        if (CollectionUtil.isEmpty(playerPhantoms)) {
+            return false;
+        }
+        if (playerPhantoms.get(0).getLevel() < 20) {
+            return false;
+        }
+        return true;
     }
 
 }

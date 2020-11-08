@@ -7,7 +7,7 @@ import com.bot.game.dao.entity.PlayerWeapon;
 import com.bot.game.dao.mapper.GamePlayerMapper;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/4
  */
 public class ChangeWeaponServiceImpl extends CommonPlayer {

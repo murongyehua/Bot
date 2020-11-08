@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/5
  */
 @Slf4j
@@ -106,10 +106,7 @@ public class DungeonCommonHolder {
         ThreadPoolManager.addBaseTask(() -> {
             while (true) {
                 try {
-                    log.info("副本轮循任务开始..");
                     this.roundDungeonGroup();
-                    log.info("副本轮序任务结束");
-                    // 每两分钟轮循一次
                 }catch (Exception e) {
                     log.error("副本轮循任务异常", e);
                 }finally {

@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/5
  */
 public class DungeonWaitMenuPrinter extends Menu {

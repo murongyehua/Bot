@@ -14,11 +14,12 @@ public enum ENArea {
     EAST_SEA("S01", "东海"),
     ZY_M("M01", "招摇山"),
     JYZZ_Z("Z01", "即翼之泽"),
-    FY_M("M02", "浮玉山");
+    FY_M("M02", "浮玉山"),
+    PL_M("M03", "蓬莱山");
 
-    private String value;
+    private final String value;
 
-    private String label;
+    private final String label;
 
     ENArea(String value, String label) {
         this.value = value;

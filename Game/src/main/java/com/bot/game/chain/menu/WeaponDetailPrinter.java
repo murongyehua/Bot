@@ -10,7 +10,7 @@ import com.bot.game.enums.ENWeaponEffect;
 import com.bot.game.service.impl.ChangeWeaponServiceImpl;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/4
  */
 public class WeaponDetailPrinter extends Menu {

@@ -1,7 +1,7 @@
 package com.bot.game.enums;
 
 /**
- * @author liul
+ * @author murongyehua
  * @version 1.0 2020/11/5
  */
 public enum  ENDungeonResult {
