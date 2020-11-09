@@ -209,6 +209,7 @@ public interface GameConsts {
         Integer WEAPON_ONE = 500;
         Integer WEAPON_LEVEL = 200;
         Integer WEAPON_MAX = 400;
+        Integer HALF = 50;
     }
 
     interface Battle {
@@ -268,6 +269,7 @@ public interface GameConsts {
     }
 
     interface Manage {
+        String COMPENSATE_MONEY = "补偿灵石";
         String COMPENSATE = "补偿";
     }
 
@@ -303,7 +305,7 @@ public interface GameConsts {
         Integer DUNGEON_FAIL = 50;
 
         Integer EXPLORE_MIN = 0;
-        Integer EXPLORE_MAX = 1;
+        Integer EXPLORE_MAX = 2;
     }
 
     interface Shop {

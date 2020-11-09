@@ -128,6 +128,9 @@ public class GameHandlerServiceImpl implements GameHandler {
 
     @Override
     public String manage(String reqContent) {
+        if (reqContent.startsWith(GameConsts.Manage.COMPENSATE_MONEY)) {
+            return gameManageService.compensateMoney(Integer.parseInt(reqContent.substring(4).trim()));
+        }
         if (reqContent.startsWith(GameConsts.Manage.COMPENSATE)) {
             CompensateDTO compensate = new CompensateDTO();
             String content = reqContent.substring(2);

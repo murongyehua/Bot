@@ -51,4 +51,11 @@ public class GameManagerServiceImpl implements GameManageService {
         }
         return BaseConsts.SystemManager.SUCCESS;
     }
+
+    @Override
+    public String compensateMoney(Integer money) {
+        List<GamePlayer> list = gamePlayerMapper.getBySoulPowerDesc();
+        list.forEach(x -> CommonPlayer.addOrSubMoney(x.getId(), money));
+        return BaseConsts.SystemManager.SUCCESS;
+    }
 }

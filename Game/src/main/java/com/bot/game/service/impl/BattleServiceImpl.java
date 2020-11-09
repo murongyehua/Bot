@@ -3,6 +3,7 @@ package com.bot.game.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
@@ -416,6 +417,12 @@ public class BattleServiceImpl extends CommonPlayer {
                 phantom.setFinalDefense((int) tempA03);
                 phantom.setFinalAttack(phantom.getFinalAttack() * 3);
                 break;
+            case A04:
+                if (RandomUtil.randomInt(101) <= GameConsts.BaseFigure.HALF) {
+                    phantom.setFinalAttack(phantom.getFinalAttack() * 3);
+                    battleRecord.append("判定成功，").append(phantom.getName()).append("此回合将造成三倍伤害");
+                }
+                break;
             case B01:
                 double tempB01 = phantom.getFinalHp() * 0.05;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempB01);
@@ -429,37 +436,37 @@ public class BattleServiceImpl extends CommonPlayer {
                 battleRecord.append("技能扣除了").append(phantom.getName()).append(tempB02).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
                 break;
             case C01:
-                double tempC01 = another.getFinalAttack() * 0.1;
-                another.setFinalAttack(another.getFinalAttack() - (int) tempC01);
-                battleRecord.append(another.getName()).append("的攻击力降低了").append(tempC01).append("点").append(StrUtil.CRLF);
+                double tempC01 = phantom.getFinalAttack() * 0.1;
+                phantom.setFinalAttack(phantom.getFinalAttack() - (int) tempC01);
+                battleRecord.append(phantom.getName()).append("的攻击力降低了").append(tempC01).append("点").append(StrUtil.CRLF);
                 break;
             case C02:
-                double tempC02 = another.getFinalAttack() * 0.2;
-                another.setFinalAttack(another.getFinalAttack() - (int) tempC02);
-                battleRecord.append(another.getName()).append("的攻击力降低了").append(tempC02).append("点").append(StrUtil.CRLF);
+                double tempC02 = phantom.getFinalAttack() * 0.2;
+                phantom.setFinalAttack(phantom.getFinalAttack() - (int) tempC02);
+                battleRecord.append(phantom.getName()).append("的攻击力降低了").append(tempC02).append("点").append(StrUtil.CRLF);
                 break;
             case C03:
-                double tempC03 = another.getFinalDefense() * 0.1;
-                another.setFinalDefense(another.getFinalDefense() - (int) tempC03);
-                battleRecord.append(another.getName()).append("的防御力降低了").append(tempC03).append("点").append(StrUtil.CRLF);
+                double tempC03 = phantom.getFinalDefense() * 0.1;
+                phantom.setFinalDefense(phantom.getFinalDefense() - (int) tempC03);
+                battleRecord.append(phantom.getName()).append("的防御力降低了").append(tempC03).append("点").append(StrUtil.CRLF);
                 break;
             case C04:
-                double tempC04 = another.getFinalDefense() * 0.2;
-                another.setFinalDefense(another.getFinalDefense() - (int) tempC04);
-                battleRecord.append(another.getName()).append("的防御力降低了").append(tempC04).append("点").append(StrUtil.CRLF);
+                double tempC04 = phantom.getFinalDefense() * 0.2;
+                phantom.setFinalDefense(phantom.getFinalDefense() - (int) tempC04);
+                battleRecord.append(phantom.getName()).append("的防御力降低了").append(tempC04).append("点").append(StrUtil.CRLF);
                 break;
             case C05:
                 phantom.setStop(true);
                 break;
             case C06:
-                double tempC06 = another.getHp() * 0.02;
-                another.setFinalHp(another.getFinalHp() - (int) tempC06);
-                battleRecord.append("DOT触发,").append(another.getName()).append("扣除血量").append(tempC06).append("点").append(StrUtil.CRLF);
+                double tempC06 = phantom.getHp() * 0.02;
+                phantom.setFinalHp(phantom.getFinalHp() - (int) tempC06);
+                battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append(tempC06).append("点").append(StrUtil.CRLF);
                 break;
             case C07:
-                double tempC07 = another.getFinalHp() * 0.05;
-                another.setFinalHp(another.getFinalHp() - (int) tempC07);
-                battleRecord.append("DOT触发,").append(another.getName()).append("扣除血量").append(tempC07).append("点").append(StrUtil.CRLF);
+                double tempC07 = phantom.getFinalHp() * 0.05;
+                phantom.setFinalHp(phantom.getFinalHp() - (int) tempC07);
+                battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append(tempC07).append("点").append(StrUtil.CRLF);
                 break;
             case C08:
                 double tempC08 = hurt * 0.3;
@@ -474,8 +481,8 @@ public class BattleServiceImpl extends CommonPlayer {
                 }
                 break;
             case C10:
-                double tempC10 = another.getFinalSpeed() * 0.05;
-                another.setFinalSpeed(another.getFinalSpeed() - (int) tempC10);
+                double tempC10 = phantom.getFinalSpeed() * 0.05;
+                phantom.setFinalSpeed(phantom.getFinalSpeed() - (int) tempC10);
                 break;
                 default:
                     break;
@@ -544,6 +551,9 @@ public class BattleServiceImpl extends CommonPlayer {
                     ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel())).append(StrUtil.CRLF);
             CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId(), 1);
         }
+        int getMoney = RandomUtil.randomInt(GameConsts.Money.EXPLORE_MIN, GameConsts.Money.EXPLORE_MAX);
+        CommonPlayer.addOrSubMoney(playerDto.getPlayerId(), getMoney);
+        stringBuilder.append(String.format("获得灵石*%s", getMoney)).append(StrUtil.CRLF);
         return stringBuilder.toString();
     }
 

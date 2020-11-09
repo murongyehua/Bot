@@ -19,7 +19,7 @@ public enum  ENGoodEffect {
     WAN_2("3", "大蕴丸", 10),
     WAN_3("4", "天命散", 20),
     WAN_4("5", "洗髓丹", 300),
-    WAN_5("6", "溢灵散", 500);
+    WAN_5("6", "溢灵散", 600);
 
     private final String value;
     private final String label;
@@ -41,7 +41,7 @@ public enum  ENGoodEffect {
     }
 
     public static List<ENGoodEffect> getCanSaleGoods() {
-        return Arrays.asList(GET_PHANTOM,WAN_1,WAN_2,WAN_3,WAN_4);
+        return Arrays.asList(GET_PHANTOM,WAN_1,WAN_2,WAN_3,WAN_4,WAN_5);
     }
 
 }

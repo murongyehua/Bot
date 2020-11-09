@@ -10,4 +10,6 @@ public interface GameManageService {
 
     String compensate(CompensateDTO compensate);
 
+    String compensateMoney(Integer money);
+
 }
