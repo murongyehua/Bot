@@ -9,7 +9,7 @@
     <springProperty scope="context" name="sql.level" source="logback.sql-level"/>
 
     <property name="logback.path" value="${logback.rootPath}/bot-controller" />
-    <property name="project.name" value="reconciliation" />
+    <property name="project.name" value="bot" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
