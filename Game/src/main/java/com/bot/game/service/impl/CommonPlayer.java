@@ -388,4 +388,22 @@ public class CommonPlayer implements Player {
         return list.get(0);
     }
 
+    /**
+     * 增加或扣除行动点
+     * @param token
+     * @param number
+     * @return
+     */
+    public static boolean addOrSubActionPoint(String token, Integer number) {
+        GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
+        GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
+        int finalNumber = gamePlayer.getActionPoint() + number;
+        if (finalNumber >= 0 && finalNumber <= 100) {
+            gamePlayer.setActionPoint(finalNumber);
+            gamePlayerMapper.updateByPrimaryKey(gamePlayer);
+            return true;
+        }
+        return false;
+    }
+
 }

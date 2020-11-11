@@ -154,6 +154,7 @@ public class GameHandlerServiceImpl implements GameHandler {
         gamePlayer.setSoulPower(1);
         gamePlayer.setStatus(ENStatus.NORMAL.getValue());
         gamePlayer.setMoney(0);
+        gamePlayer.setActionPoint(100);
         return gamePlayer;
     }
 

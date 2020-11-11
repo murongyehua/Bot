@@ -17,7 +17,7 @@ public interface GameConsts {
                 "造成300以内伤害获得大蕴丸*1、灵石*20\n" +
                 "造成300-1000伤害获得天命散*1、灵石*50\n" +
                 "造成1000-5500伤害获得唤灵符*1、灵石*100\n" +
-                "造成5500以上伤害获得唤灵符*16、灵石*200\n" +
+                "造成5500以上伤害获得唤灵符*1、灵石*200\n" +
                 "3. 木系、土系新增了幻灵，共计8个，赶紧去唤灵试试吧~\n" +
                 "4. 调整了部分技能的冷却时间\n" +
                 "5. 调整了部分道具的掉落几率\n" +
@@ -65,6 +65,7 @@ public interface GameConsts {
                 + "幻灵数：[%s]" + StrUtil.CRLF
                 + "战灵力：[%s]" + StrUtil.CRLF
                 + "灵石：[%s]" + StrUtil.CRLF
+                + "体力：[%s]" + StrUtil.CRLF
                 + "法宝：[%s]";
     }
 
@@ -104,6 +105,7 @@ public interface GameConsts {
         String TITLE = "%s: %s";
         String SALE_RESULT = "共计出售%s个%s，获得%s灵石";
         String SKILL_FORGET_SUCCESS = "使用成功，所选技能已遗忘";
+        String ACTION_POINT_FULL = "目前体力充沛，不要浪费哦~";
     }
 
     interface GetPhantom {
@@ -124,8 +126,9 @@ public interface GameConsts {
     interface Explore {
         String MENU_NAME = "外出探索";
         String TIP = "输入所要探索的地区前的编号：";
-        String MEET = "你遭遇了%s[%s][%s级]，请选择你要出战的幻灵";
+        String MEET = "你消耗了1点体力，遭遇了%s[%s][%s级]，请选择你要出战的幻灵";
         String RUN = "逃跑";
+        String NO_ACTION_POINT = "体力不足，无法探索，恢复恢复了再来试试吧~";
     }
 
     interface MyFriends {
@@ -257,7 +260,7 @@ public interface GameConsts {
         String PICK = "请选择要出战的幻灵";
         String FINISH = "当前Boos已被击退，下次早点来吧!";
         String OVER_TIMES = "当前Boos你已经挑战得够多了，休息休息吧!";
-        Integer INIT_HP = 120000;
+        Integer INIT_HP = 150000;
         Integer MAX_TIME = 2;
     }
 

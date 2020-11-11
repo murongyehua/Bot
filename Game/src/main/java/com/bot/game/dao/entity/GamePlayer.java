@@ -28,5 +28,7 @@ public class GamePlayer implements Serializable {
 
     private Integer money;
 
+    private Integer actionPoint;
+
     private static final long serialVersionUID = 1L;
 }

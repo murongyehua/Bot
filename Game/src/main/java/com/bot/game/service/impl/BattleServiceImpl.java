@@ -306,6 +306,7 @@ public class BattleServiceImpl extends CommonPlayer {
             hurt = 0;
         }
         tempAnother.setFinalHp(tempAnother.getFinalHp() - hurt);
+        battleRecord.append(tempPhantom.getName()).append("此回合的攻击造成了").append(hurt).append("点伤害");
         this.buffDone(tempAnother, tempPhantom, null, ENEffectType.DEFENSE, hurt);
         this.buffDone(tempPhantom, tempAnother, null, ENEffectType.END, hurt);
     }
@@ -334,7 +335,7 @@ public class BattleServiceImpl extends CommonPlayer {
     private String getResult(BattlePhantomDTO playerDto, BattlePhantomDTO targetDto) {
         if (isDungeon) {
             // 返回Boos生命值和参战幻灵的生命值
-            return targetDto.getFinalHp() + StrUtil.DASHED + playerDto.getFinalHp();
+            return targetDto.getFinalHp() + StrUtil.UNDERLINE + playerDto.getFinalHp();
         }
         if (isBoos) {
             if (targetDto.getFinalHp() < 0) {
@@ -427,33 +428,33 @@ public class BattleServiceImpl extends CommonPlayer {
                 double tempB01 = phantom.getFinalHp() * 0.05;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempB01);
                 another.setFinalHp(another.getFinalHp() - (int) tempB01);
-                battleRecord.append("技能扣除了").append(phantom.getName()).append(tempB01).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
+                battleRecord.append("技能扣除了").append(phantom.getName()).append((int) tempB01).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
                 break;
             case B02:
                 double tempB02 = phantom.getFinalHp() * 0.10;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempB02);
                 another.setFinalHp(another.getFinalHp() - (int) tempB02);
-                battleRecord.append("技能扣除了").append(phantom.getName()).append(tempB02).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
+                battleRecord.append("技能扣除了").append(phantom.getName()).append((int) tempB02).append("点生命值，并且给").append(another.getName()).append("造成了等额伤害").append(StrUtil.CRLF);
                 break;
             case C01:
                 double tempC01 = phantom.getFinalAttack() * 0.1;
                 phantom.setFinalAttack(phantom.getFinalAttack() - (int) tempC01);
-                battleRecord.append(phantom.getName()).append("的攻击力降低了").append(tempC01).append("点").append(StrUtil.CRLF);
+                battleRecord.append(phantom.getName()).append("的攻击力降低了").append((int) tempC01).append("点").append(StrUtil.CRLF);
                 break;
             case C02:
                 double tempC02 = phantom.getFinalAttack() * 0.2;
                 phantom.setFinalAttack(phantom.getFinalAttack() - (int) tempC02);
-                battleRecord.append(phantom.getName()).append("的攻击力降低了").append(tempC02).append("点").append(StrUtil.CRLF);
+                battleRecord.append(phantom.getName()).append("的攻击力降低了").append((int) tempC02).append("点").append(StrUtil.CRLF);
                 break;
             case C03:
                 double tempC03 = phantom.getFinalDefense() * 0.1;
                 phantom.setFinalDefense(phantom.getFinalDefense() - (int) tempC03);
-                battleRecord.append(phantom.getName()).append("的防御力降低了").append(tempC03).append("点").append(StrUtil.CRLF);
+                battleRecord.append(phantom.getName()).append("的防御力降低了").append((int) tempC03).append("点").append(StrUtil.CRLF);
                 break;
             case C04:
                 double tempC04 = phantom.getFinalDefense() * 0.2;
                 phantom.setFinalDefense(phantom.getFinalDefense() - (int) tempC04);
-                battleRecord.append(phantom.getName()).append("的防御力降低了").append(tempC04).append("点").append(StrUtil.CRLF);
+                battleRecord.append(phantom.getName()).append("的防御力降低了").append((int) tempC04).append("点").append(StrUtil.CRLF);
                 break;
             case C05:
                 phantom.setStop(true);
@@ -461,23 +462,23 @@ public class BattleServiceImpl extends CommonPlayer {
             case C06:
                 double tempC06 = phantom.getHp() * 0.02;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempC06);
-                battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append(tempC06).append("点").append(StrUtil.CRLF);
+                battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append((int) tempC06).append("点").append(StrUtil.CRLF);
                 break;
             case C07:
                 double tempC07 = phantom.getFinalHp() * 0.05;
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempC07);
-                battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append(tempC07).append("点").append(StrUtil.CRLF);
+                battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append((int) tempC07).append("点").append(StrUtil.CRLF);
                 break;
             case C08:
                 double tempC08 = hurt * 0.3;
                 another.setFinalHp(another.getFinalHp() - (int) tempC08);
-                battleRecord.append(another.getName()).append("受到反弹伤害").append(tempC08).append("点").append(StrUtil.CRLF);
+                battleRecord.append(another.getName()).append("受到反弹伤害").append((int) tempC08).append("点").append(StrUtil.CRLF);
                 break;
             case C09:
                 if (phantom.getFinalHp() > 0) {
                     double tempC09 = (phantom.getHp() - phantom.getFinalHp()) * 0.1;
                     phantom.setFinalHp(phantom.getFinalHp() + (int) tempC09);
-                    battleRecord.append(phantom.getName()).append("回复生命值").append(tempC09).append("点").append(StrUtil.CRLF);
+                    battleRecord.append(phantom.getName()).append("回复生命值").append((int) tempC09).append("点").append(StrUtil.CRLF);
                 }
                 break;
             case C10:

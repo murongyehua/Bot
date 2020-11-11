@@ -51,7 +51,7 @@ public class PlayerInfoMenuPrinter extends Menu {
         this.describe = String.format(GameConsts.PlayerInfo.DESCRIBE, gamePlayer.getNickname(),
                 StrUtil.isEmpty(gamePlayer.getAppellation()) ? GameConsts.CommonTip.EMPTY : gamePlayer.getAppellation(),
                 playerPhantoms.size(),
-                gamePlayer.getSoulPower(), gamePlayer.getMoney(), weaponName) +
+                gamePlayer.getSoulPower(), gamePlayer.getMoney(), gamePlayer.getActionPoint(), weaponName) +
                 (playerWeapon != null ? String.format("[灵气%s级]", playerWeapon.getLevel()) : StrUtil.EMPTY) + StrUtil.CRLF;
     }
 

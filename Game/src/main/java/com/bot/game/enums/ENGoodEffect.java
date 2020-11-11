@@ -19,7 +19,9 @@ public enum  ENGoodEffect {
     WAN_2("3", "大蕴丸", 10),
     WAN_3("4", "天命散", 20),
     WAN_4("5", "洗髓丹", 300),
-    WAN_5("6", "溢灵散", 600);
+    WAN_5("6", "溢灵散", 600),
+    WAN_6("7", "小补丸", 100),
+    WAN_7("8", "大还丹", 190);
 
     private final String value;
     private final String label;

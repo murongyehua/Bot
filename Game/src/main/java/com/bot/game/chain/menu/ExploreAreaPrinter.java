@@ -38,7 +38,7 @@ public class ExploreAreaPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
-        if (!judgeLevel(token)) {
+        if (ENArea.PL_M.getValue().equals(area.getValue()) && !judgeLevel(token)) {
             this.describe = "此地过于凶险，你当前的实力无法涉足，请尝试探索其他区域";
             return;
         }
@@ -74,6 +74,10 @@ public class ExploreAreaPrinter extends Menu {
             }).collect(Collectors.toList());
         }else {
             finalList = list;
+        }
+        if (!CommonPlayer.addOrSubActionPoint(token, -1)) {
+            this.describe = GameConsts.Explore.NO_ACTION_POINT;
+            return;
         }
         BaseMonster baseMonster = finalList.get(RandomUtil.randomInt(finalList.size()));
         this.describe = String.format(GameConsts.Explore.MEET,

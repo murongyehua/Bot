@@ -64,6 +64,12 @@ public class UseGoodsPrinter extends Menu {
             case WAN_5:
                 this.useForgetSkill(stringBuilder, token);
                 break;
+            case WAN_6:
+                this.useAddActionPoint(stringBuilder, token, 5);
+                break;
+            case WAN_7:
+                this.useAddActionPoint(stringBuilder, token, 10);
+                break;
                 default:
                     break;
         }
@@ -167,6 +173,15 @@ public class UseGoodsPrinter extends Menu {
         for (int index=0; index < playerPhantoms.size(); index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new ForgetSkillPrinter(playerPhantoms.get(index), goodsDetailDTO));
         }
+    }
+
+    private void useAddActionPoint(StringBuilder stringBuilder, String token, Integer number) {
+        boolean isCan = CommonPlayer.addOrSubActionPoint(token, number);
+        if (!isCan) {
+            stringBuilder.append(GameConsts.MyKnapsack.ACTION_POINT_FULL);
+            return;
+        }
+        stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE);
     }
 
 }

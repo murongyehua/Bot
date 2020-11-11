@@ -166,7 +166,7 @@ public class DungeonCommonHolder {
                     String tempResult = battleService.doPlay(playerPhantom.getPlayerId());
                     // 分析结果
                     detailRecord.append(CommonPlayer.battleDetailMap.get(playerPhantom.getPlayerId())).append(StrUtil.CRLF).append(StrUtil.CRLF);
-                    String[] finalHps = tempResult.split(StrUtil.DASHED);
+                    String[] finalHps = tempResult.split(StrUtil.UNDERLINE);
                     if (Integer.parseInt(finalHps[0]) <= 0) {
                         // 这个Boss死掉了
                         playerPhantom.setHp(Integer.parseInt(finalHps[1]));
