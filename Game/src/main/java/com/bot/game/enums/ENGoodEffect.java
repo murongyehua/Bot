@@ -43,7 +43,7 @@ public enum  ENGoodEffect {
     }
 
     public static List<ENGoodEffect> getCanSaleGoods() {
-        return Arrays.asList(GET_PHANTOM,WAN_1,WAN_2,WAN_3,WAN_4,WAN_5);
+        return Arrays.asList(GET_PHANTOM,WAN_1,WAN_2,WAN_3,WAN_4,WAN_5,WAN_6,WAN_7);
     }
 
 }
