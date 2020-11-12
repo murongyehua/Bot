@@ -160,6 +160,9 @@ public class DungeonCommonHolder {
             List<PlayerPhantom> playerPhantoms = player.getPhantoms();
             for (PlayerPhantom playerPhantom : playerPhantoms) {
                 for (int index = 0; index < monsters.size(); index++) {
+                    if (hps[index] < 0) {
+                        continue;
+                    }
                     BattleServiceImpl battleService = new BattleServiceImpl(monsters.get(index), playerPhantom, true, hps[index]);
                     String tempResult = battleService.doPlay(playerPhantom.getPlayerId());
                     // 分析结果
@@ -168,6 +171,7 @@ public class DungeonCommonHolder {
                     if (Integer.parseInt(finalHps[0]) <= 0) {
                         // 这个Boss死掉了
                         playerPhantom.setHp(Integer.parseInt(finalHps[1]));
+                        hps[index] = Integer.parseInt(finalHps[0]);
                     }else {
                         // 幻灵死掉了
                         hps[index] = Integer.parseInt(finalHps[0]);
