@@ -8,6 +8,7 @@ import com.bot.game.dto.DungeonGroupDTO;
 import com.bot.game.dto.DungeonSinglePlayerDTO;
 import com.bot.game.service.DungeonCommonHolder;
 import com.bot.game.service.impl.CommonPlayer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author murongyehua
  * @version 1.0 2020/11/5
  */
+@Slf4j
 public class JoinGroupServiceImpl extends CommonPlayer {
 
     private String dungeon;
@@ -46,6 +48,7 @@ public class JoinGroupServiceImpl extends CommonPlayer {
             return GameConsts.Dungeon.JOIN_SUCCESS;
         } catch (Exception e) {
             // do nothing
+            log.error("加入队伍出现异常", e);
         }
         return GameConsts.Dungeon.GROUP_FULL;
     }

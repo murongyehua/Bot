@@ -54,7 +54,7 @@ public class PickPhantomPrinter extends Menu {
                     List<PlayerPhantom> phantoms = new LinkedList<>();
                     phantoms.add(onePhantom);
                     phantoms.add(playerPhantoms.get(index));
-                    this.playServiceMap.put(IndexUtil.getIndex(index + 1), new JoinGroupServiceImpl(dungeon, index, phantoms));
+                    this.playServiceMap.put(IndexUtil.getIndex(index + 1), new JoinGroupServiceImpl(dungeon, this.index, phantoms));
                 }
             } else {
                 this.describe = GameConsts.Dungeon.GROUP_FULL;

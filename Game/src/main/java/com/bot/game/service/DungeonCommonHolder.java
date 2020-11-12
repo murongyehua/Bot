@@ -125,7 +125,7 @@ public class DungeonCommonHolder {
         for (ENDungeon enDungeon : enDungeons) {
             List<DungeonGroupDTO> groups = DUNGEON_GROUP.get(enDungeon.getValue());
             for (DungeonGroupDTO group : groups) {
-                if (group.getPlayers().size() >= 2) {
+                if (group.getPlayers().size() >= 2 && group.getResult().equals(ENDungeonResult.WAIT)) {
                     List<BaseMonster> monsters = this.getBoos(enDungeon);
                     if (this.dungeonBattle(group, monsters)) {
                         // 战斗胜利
