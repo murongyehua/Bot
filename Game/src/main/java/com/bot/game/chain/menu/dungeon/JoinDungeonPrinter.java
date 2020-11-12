@@ -7,6 +7,7 @@ import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.DungeonGroupDTO;
 import com.bot.game.service.DungeonCommonHolder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @author murongyehua
  * @version 1.0 2020/11/5
  */
+@Slf4j
 public class JoinDungeonPrinter extends Menu {
 
     private String dungeon;
@@ -47,12 +49,13 @@ public class JoinDungeonPrinter extends Menu {
                 phantomParam.setPlayerId(token);
                 List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
                 for (int index=0; index < playerPhantoms.size(); index++) {
-                    this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new PickPhantomPrinter(playerPhantoms.get(index), dungeon, index));
+                    this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new PickPhantomPrinter(playerPhantoms.get(index), dungeon, this.index));
                 }
             }else {
                 this.describe = GameConsts.Dungeon.GROUP_FULL;
             }
         }catch (Exception e) {
+            log.error("副本处理出现异常", e);
             this.describe = GameConsts.Dungeon.GROUP_FULL;
         }
     }

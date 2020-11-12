@@ -62,7 +62,7 @@ public interface GameConsts {
 
     interface MyPhantom {
         String MENU_NAME = "我的幻灵";
-        String SUCCESS = "操作成功";
+        String SUCCESS = "操作成功，赶紧带着幻灵出去探索吧~";
     }
 
     interface MyKnapsack {
@@ -274,6 +274,7 @@ public interface GameConsts {
         String FAIL = "很遗憾!副本挑战失败!"+ StrUtil.CRLF +"获得50灵石已到账，努力提升自己吧，再接再厉!";
         String VICTORY = "副本挑战成功，获得";
         Integer GET_DUNGEON = 30;
+        String PHANTOM_NOT = "你的参战幻灵不足2个，进入此地实在不太安全，请先去携带幻灵或去唤灵";
     }
 
     interface  Money {

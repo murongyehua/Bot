@@ -39,7 +39,7 @@ public class CreateGroupPrinter extends Menu {
         phantomParam.setPlayerId(token);
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(phantomParam);
         for (int index=0; index < playerPhantoms.size(); index++) {
-            this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new PickPhantomPrinter(playerPhantoms.get(index), dungeon, index));
+            this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new PickPhantomPrinter(playerPhantoms.get(index), dungeon, DungeonCommonHolder.DUNGEON_GROUP.get(dungeon).size()));
         }
         // 初始化队伍
         GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);

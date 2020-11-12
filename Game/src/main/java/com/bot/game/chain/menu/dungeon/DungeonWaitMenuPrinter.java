@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
+import com.bot.game.dao.entity.PlayerPhantom;
+import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.DungeonGroupDTO;
 import com.bot.game.dto.DungeonSinglePlayerDTO;
 import com.bot.game.dto.DungeonTryTimesDTO;
@@ -36,6 +38,14 @@ public class DungeonWaitMenuPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerPhantom param = new PlayerPhantom();
+        param.setPlayerId(token);
+        List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
+        if (CollectionUtil.isEmpty(list) || list.size() < 2) {
+            this.describe = GameConsts.Dungeon.PHANTOM_NOT;
+            return;
+        }
         List<DungeonGroupDTO> groups = DungeonCommonHolder.DUNGEON_GROUP.get(enDungeon.getValue());
         List<DungeonGroupDTO> myGroup = groups.stream().filter(x -> {
             boolean isMyGroup = false;
