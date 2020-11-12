@@ -77,7 +77,7 @@ public class CommonPlayer implements Player {
         PlayerWeaponMapper playerWeaponMapper = (PlayerWeaponMapper) mapperMap.get(GameConsts.MapperName.PLAYER_WEAPON);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
-        List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
+        List<PlayerPhantom> list = playerPhantomMapper.selectAllCarried(param);
         int power = 0;
         // 幻灵提供的战力
         for (PlayerPhantom playerPhantom : list) {
