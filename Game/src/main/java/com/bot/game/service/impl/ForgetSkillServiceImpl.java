@@ -36,7 +36,7 @@ public class ForgetSkillServiceImpl extends CommonPlayer{
     @Override
     public String doPlay(String token) {
         // 校验
-        PlayerGoods playerGoods = checkGoodsNumber(token, ENGoodEffect.WAN_5);
+        PlayerGoods playerGoods = checkGoodsNumber(token, ENGoodEffect.WAN_5, null);
         if (playerGoods == null) {
             return GameConsts.MyKnapsack.EMPTY + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
         }

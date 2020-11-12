@@ -306,7 +306,7 @@ public class BattleServiceImpl extends CommonPlayer {
             hurt = 0;
         }
         tempAnother.setFinalHp(tempAnother.getFinalHp() - hurt);
-        battleRecord.append(tempPhantom.getName()).append("此回合的攻击造成了").append(hurt).append("点伤害");
+        battleRecord.append(tempPhantom.getName()).append("此回合的攻击造成了").append(hurt).append("点伤害").append(StrUtil.CRLF);
         this.buffDone(tempAnother, tempPhantom, null, ENEffectType.DEFENSE, hurt);
         this.buffDone(tempPhantom, tempAnother, null, ENEffectType.END, hurt);
     }

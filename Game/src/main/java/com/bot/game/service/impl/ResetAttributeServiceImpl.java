@@ -39,7 +39,7 @@ public class ResetAttributeServiceImpl extends CommonPlayer {
     @Override
     public String doPlay(String token) {
         // 校验
-        PlayerGoods playerGoods = checkGoodsNumber(token, ENGoodEffect.WAN_4);
+        PlayerGoods playerGoods = checkGoodsNumber(token, ENGoodEffect.WAN_4, null);
         if (playerGoods == null) {
             return GameConsts.MyKnapsack.EMPTY + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;
         }

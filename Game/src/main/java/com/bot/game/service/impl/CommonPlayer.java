@@ -372,11 +372,12 @@ public class CommonPlayer implements Player {
      * @param goodEffect
      * @return
      */
-    public static PlayerGoods checkGoodsNumber(String token, ENGoodEffect goodEffect) {
+    public static PlayerGoods checkGoodsNumber(String token, ENGoodEffect goodEffect, String targetId) {
         PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
         BaseGoodsMapper baseGoodsMapper = (BaseGoodsMapper) mapperMap.get(GameConsts.MapperName.BASE_GOODS);
         BaseGoods baseGoods = new BaseGoods();
         baseGoods.setEffect(goodEffect.getValue());
+        baseGoods.setTargetId(targetId);
         List<BaseGoods> baseGoodsList = baseGoodsMapper.selectBySelective(baseGoods);
         PlayerGoods playerGoods = new PlayerGoods();
         playerGoods.setPlayerId(token);

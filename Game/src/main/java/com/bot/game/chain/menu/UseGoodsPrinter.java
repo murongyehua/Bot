@@ -100,7 +100,7 @@ public class UseGoodsPrinter extends Menu {
             return;
         }
         for (int index = 0; index < finalList.size(); index++) {
-            this.playServiceMap.put(IndexUtil.getIndex(index + 1), new PhantomAddSkillServiceImpl(this.getUseGoodsDTO(goodsDetailDTO, finalList.get(index))));
+            this.playServiceMap.put(IndexUtil.getIndex(index + 1), new PhantomAddSkillServiceImpl(this.getUseGoodsDTO(goodsDetailDTO, finalList.get(index)), goodsDetailDTO));
         }
         stringBuilder.append(GameConsts.MyKnapsack.USE_SKILL_CARD);
     }
@@ -177,7 +177,7 @@ public class UseGoodsPrinter extends Menu {
 
     private void useAddActionPoint(StringBuilder stringBuilder, String token, Integer number, ENGoodEffect goodEffect) {
         // 校验
-        PlayerGoods playerGoods = CommonPlayer.checkGoodsNumber(token, goodEffect);
+        PlayerGoods playerGoods = CommonPlayer.checkGoodsNumber(token, goodEffect, null);
         if (playerGoods == null) {
             stringBuilder.append(GameConsts.MyKnapsack.EMPTY + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK);
             return;
