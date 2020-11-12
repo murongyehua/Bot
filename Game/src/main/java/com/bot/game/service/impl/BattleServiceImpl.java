@@ -131,7 +131,7 @@ public class BattleServiceImpl extends CommonPlayer {
         List<Integer> list = spiltNumber(canAddPoint);
         int intAttack = (baseMonster.getAttack() + list.get(0)) * GameConsts.BaseFigure.ATTACK_POINT +
                 baseMonster.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL;
-        Double figure = this.getFigure();
+        Double figure = this.getFigure(baseMonster.getAttribute(), playerPhantom.getAttribute());
         double doubleAttack = intAttack * figure;
         battleMonsterDTO.setFinalAttack((int) doubleAttack);
         battleMonsterDTO.setFinalSpeed((baseMonster.getSpeed() + list.get(1)) * GameConsts.BaseFigure.SPEED_POINT +
@@ -161,7 +161,7 @@ public class BattleServiceImpl extends CommonPlayer {
     private BattlePhantomDTO getBattlePhantom() {
         BattlePhantomDTO battlePhantomDTO = new BattlePhantomDTO();
         BeanUtil.copyProperties(playerPhantom, battlePhantomDTO);
-        Double figure = this.getFigure();
+        Double figure = this.getFigure(playerPhantom.getAttribute(), baseMonster.getAttribute());
         int intAttack = playerPhantom.getLevel() * GameConsts.BaseFigure.ATTACK_FOR_EVERY_LEVEL +
                 playerPhantom.getAttack() * GameConsts.BaseFigure.ATTACK_POINT;
         double doubleAttack = intAttack * figure;
@@ -175,12 +175,12 @@ public class BattleServiceImpl extends CommonPlayer {
         return battlePhantomDTO;
     }
 
-    private Double getFigure() {
+    private Double getFigure(String myAttribute, String targetAttribute) {
         Double figure = GameConsts.BaseFigure.BASE_ONE_NUMBER;
-        if (ENAttribute.isBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+        if (ENAttribute.isBuff(myAttribute, targetAttribute)) {
             figure = GameConsts.BaseFigure.BASE_BUFF_FIGURE;
         }
-        if (ENAttribute.isDeBuff(baseMonster.getAttribute(), playerPhantom.getAttribute())) {
+        if (ENAttribute.isDeBuff(myAttribute, targetAttribute)) {
             figure = GameConsts.BaseFigure.BASE_DE_BUFF_FIGURE;
         }
         return figure;
