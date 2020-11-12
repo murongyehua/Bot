@@ -65,10 +65,10 @@ public class UseGoodsPrinter extends Menu {
                 this.useForgetSkill(stringBuilder, token);
                 break;
             case WAN_6:
-                this.useAddActionPoint(stringBuilder, token, 5);
+                this.useAddActionPoint(stringBuilder, token, 5, ENGoodEffect.WAN_6);
                 break;
             case WAN_7:
-                this.useAddActionPoint(stringBuilder, token, 10);
+                this.useAddActionPoint(stringBuilder, token, 10, ENGoodEffect.WAN_7);
                 break;
                 default:
                     break;
@@ -175,12 +175,22 @@ public class UseGoodsPrinter extends Menu {
         }
     }
 
-    private void useAddActionPoint(StringBuilder stringBuilder, String token, Integer number) {
+    private void useAddActionPoint(StringBuilder stringBuilder, String token, Integer number, ENGoodEffect goodEffect) {
+        // 校验
+        PlayerGoods playerGoods = CommonPlayer.checkGoodsNumber(token, goodEffect);
+        if (playerGoods == null) {
+            stringBuilder.append(GameConsts.MyKnapsack.EMPTY + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK);
+            return;
+        }
         boolean isCan = CommonPlayer.addOrSubActionPoint(token, number);
         if (!isCan) {
             stringBuilder.append(GameConsts.MyKnapsack.ACTION_POINT_FULL);
             return;
         }
+        // 扣除
+        CommonPlayer.afterUseGoods(playerGoods);
+        int nowNumber = goodsDetailDTO.getNumber() - 1;
+        goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE);
     }
 

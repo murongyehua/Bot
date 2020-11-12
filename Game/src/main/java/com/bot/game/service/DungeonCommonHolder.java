@@ -41,7 +41,7 @@ public class DungeonCommonHolder {
     /**
      * 副本队伍，每日零点清空
      */
-    public static Map<String, List<DungeonGroupDTO>> dungeonGroup = new HashMap<>();
+    public static volatile Map<String, List<DungeonGroupDTO>> dungeonGroup = new HashMap<>();
     /**
      * 次数统计，每日零点清空
      */

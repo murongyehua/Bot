@@ -17,7 +17,7 @@ public class BuyGoodsServiceImpl extends CommonPlayer{
 
     public BuyGoodsServiceImpl(ENGoodEffect goodEffect) {
         this.enGoodEffect = goodEffect;
-        this.title = String.format("%s,原价%s,现价%s", enGoodEffect.getLabel(), enGoodEffect.getMoney(), ((Double) (enGoodEffect.getMoney() * nowSale * 0.1)).intValue());
+        this.title = String.format("%s,原%s灵石,现%s灵石", enGoodEffect.getLabel(), enGoodEffect.getMoney(), ((Double) (enGoodEffect.getMoney() * nowSale * 0.1)).intValue());
     }
 
     @Override
