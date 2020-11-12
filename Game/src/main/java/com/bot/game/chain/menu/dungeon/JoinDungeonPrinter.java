@@ -7,7 +7,6 @@ import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.DungeonGroupDTO;
 import com.bot.game.service.DungeonCommonHolder;
-import com.bot.game.service.impl.BattleServiceImpl;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class JoinDungeonPrinter extends Menu {
     @Override
     public void initMenu() {
         try{
-            DungeonGroupDTO group = DungeonCommonHolder.dungeonGroup.get(dungeon).get(index);
+            DungeonGroupDTO group = DungeonCommonHolder.DUNGEON_GROUP.get(dungeon).get(index);
             this.menuName = group.getName();
         }catch (Exception e) {
             // do nothing
@@ -40,7 +39,7 @@ public class JoinDungeonPrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         try{
-            DungeonGroupDTO group = DungeonCommonHolder.dungeonGroup.get(dungeon).get(index);
+            DungeonGroupDTO group = DungeonCommonHolder.DUNGEON_GROUP.get(dungeon).get(index);
             if (group != null && group.getPlayers().size() < 2) {
                 this.describe = String.format(GameConsts.Dungeon.PICK_PHANTOM, 1);
                 PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);

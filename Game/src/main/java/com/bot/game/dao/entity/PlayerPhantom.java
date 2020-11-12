@@ -99,5 +99,10 @@ public class PlayerPhantom implements Serializable {
      */
     private Integer exp;
 
+    /**
+     * 是否携带
+     */
+    private String carried;
+
     private static final long serialVersionUID = 1L;
 }

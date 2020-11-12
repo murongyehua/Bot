@@ -29,7 +29,7 @@ public class QuitGroupServiceImpl extends CommonPlayer {
     public String doPlay(String token) {
         // 控制下个指令只能是【00】
         GameChainCollector.supportPoint.put(token, Collections.singletonList(BaseConsts.Menu.DOUBLE_ZERO));
-        List<DungeonGroupDTO> groups = DungeonCommonHolder.dungeonGroup.get(dungeon);
+        List<DungeonGroupDTO> groups = DungeonCommonHolder.DUNGEON_GROUP.get(dungeon);
         List<DungeonGroupDTO> myGroups = groups.stream().filter(x -> {
             for (DungeonSinglePlayerDTO player : x.getPlayers()) {
                 if (player.getPlayerId().equals(token)) {

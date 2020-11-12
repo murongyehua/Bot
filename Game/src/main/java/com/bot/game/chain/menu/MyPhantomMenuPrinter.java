@@ -31,7 +31,7 @@ public class MyPhantomMenuPrinter extends Menu {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
-        List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
+        List<PlayerPhantom> list = playerPhantomMapper.selectAllCarried(param);
         if (CollectionUtil.isEmpty(list)) {
             this.describe = GameConsts.CommonTip.PHANTOM_EMPTY;
         }else {

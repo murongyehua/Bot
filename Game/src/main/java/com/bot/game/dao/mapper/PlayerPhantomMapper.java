@@ -20,5 +20,7 @@ public interface PlayerPhantomMapper {
 
     List<PlayerPhantom> selectBySelective(PlayerPhantom record);
 
+    List<PlayerPhantom> selectAllCarried(PlayerPhantom record);
+
     Integer getMaxLevel(@Param("playerId") String token);
 }

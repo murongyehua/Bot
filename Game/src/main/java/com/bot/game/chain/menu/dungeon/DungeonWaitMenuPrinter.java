@@ -36,7 +36,7 @@ public class DungeonWaitMenuPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
-        List<DungeonGroupDTO> groups = DungeonCommonHolder.dungeonGroup.get(enDungeon.getValue());
+        List<DungeonGroupDTO> groups = DungeonCommonHolder.DUNGEON_GROUP.get(enDungeon.getValue());
         List<DungeonGroupDTO> myGroup = groups.stream().filter(x -> {
             boolean isMyGroup = false;
             for (DungeonSinglePlayerDTO dungeonSinglePlayerDTO : x.getPlayers()) {

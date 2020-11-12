@@ -1,7 +1,5 @@
 package com.bot.game.chain.menu.dungeon;
 
-import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
@@ -49,7 +47,7 @@ public class CreateGroupPrinter extends Menu {
         dungeonGroupDTO.setName(gamePlayerMapper.selectByPrimaryKey(token).getNickname() + "的探索小队");
         dungeonGroupDTO.setPlayers(new LinkedList<>());
         dungeonGroupDTO.setResult(ENDungeonResult.WAIT);
-        DungeonCommonHolder.dungeonGroup.get(dungeon).add(dungeonGroupDTO);
+        DungeonCommonHolder.DUNGEON_GROUP.get(dungeon).add(dungeonGroupDTO);
     }
 
     @Override

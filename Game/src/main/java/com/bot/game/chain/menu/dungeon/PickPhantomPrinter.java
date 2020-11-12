@@ -40,7 +40,7 @@ public class PickPhantomPrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         try {
-            DungeonGroupDTO group = DungeonCommonHolder.dungeonGroup.get(dungeon).get(index);
+            DungeonGroupDTO group = DungeonCommonHolder.DUNGEON_GROUP.get(dungeon).get(index);
             if (group != null && group.getPlayers().size() < 2) {
                 this.describe = String.format(GameConsts.Dungeon.PICK_PHANTOM, 2);
                 PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);

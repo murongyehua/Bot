@@ -20,10 +20,11 @@
     <result column="line" jdbcType="VARCHAR" property="line" />
     <result column="hp" jdbcType="INTEGER" property="hp" />
     <result column="exp" jdbcType="INTEGER" property="exp" />
+    <result column="carried" jdbcType="CHAR" property="carried" />
   </resultMap>
   <sql id="Base_Column_List">
     id, player_id, name, level, appellation, rarity, attribute, camp, area, speed,
-    attack, physique, grow, skills, `describe`, line, hp, exp
+    attack, physique, grow, skills, `describe`, line, hp, exp, carried
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -40,12 +41,12 @@
       appellation, rarity, attribute,
       camp, area, speed, attack, 
       physique, grow, skills, 
-      `describe`, line, hp, exp)
+      `describe`, line, hp, exp, carried)
     values (#{id,jdbcType=VARCHAR}, #{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER},
       #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, #{attribute,jdbcType=CHAR}, 
       #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, #{attack,jdbcType=INTEGER}, 
       #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{exp,jdbcType=INTEGER})
+      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{exp,jdbcType=INTEGER}, #{carried,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
     insert into bot_player_phantom
@@ -95,6 +96,9 @@
       <if test="line != null">
         line,
       </if>
+      <if test="carried != null">
+        carried
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="playerId != null">
@@ -141,6 +145,9 @@
       </if>
       <if test="line != null">
         #{line,jdbcType=VARCHAR},
+      </if>
+      <if test="carried != null">
+        #{carried,jdbcType=CHAR}
       </if>
     </trim>
   </insert>
@@ -196,7 +203,10 @@
         hp = #{hp,jdbcType=INTEGER},
       </if>
       <if test="exp != null">
-        exp = #{exp,jdbcType=INTEGER}
+        exp = #{exp,jdbcType=INTEGER},
+      </if>
+      <if test="carried != null">
+        carried = #{carried, jdbcType=CHAR}
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -219,10 +229,71 @@
       `describe` = #{describe,jdbcType=VARCHAR},
       line = #{line,jdbcType=VARCHAR},
       hp = #{hp,jdbcType=INTEGER},
-      exp = #{exp,jdbcType=INTEGER}
+      exp = #{exp,jdbcType=INTEGER},
+      carried = #{carried, jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bot_player_phantom
+    <where>
+      <if test="playerId != null">
+        player_id = #{playerId,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null">
+        and name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="level != null">
+        and level = #{level,jdbcType=INTEGER}
+      </if>
+      <if test="appellation != null">
+        and appellation = #{appellation,jdbcType=VARCHAR}
+      </if>
+      <if test="rarity != null">
+        and rarity = #{rarity,jdbcType=CHAR}
+      </if>
+      <if test="attribute != null">
+        and attribute = #{attribute,jdbcType=CHAR}
+      </if>
+      <if test="camp != null">
+        and camp = #{camp,jdbcType=CHAR}
+      </if>
+      <if test="area != null">
+        and area = #{area,jdbcType=CHAR}
+      </if>
+      <if test="speed != null">
+        and speed = #{speed,jdbcType=INTEGER}
+      </if>
+      <if test="attack != null">
+        and attack = #{attack,jdbcType=INTEGER}
+      </if>
+      <if test="physique != null">
+        and physique = #{physique,jdbcType=INTEGER}
+      </if>
+      <if test="grow != null">
+        and grow = #{grow,jdbcType=INTEGER}
+      </if>
+      <if test="skills != null">
+        and skills = #{skills,jdbcType=VARCHAR}
+      </if>
+      <if test="describe != null">
+        and describe = #{describe,jdbcType=VARCHAR}
+      </if>
+      <if test="line != null">
+        and line = #{line,jdbcType=VARCHAR}
+      </if>
+      <choose>
+        <when test="carried != null">
+          and carried = #{carried, jdbcType=CHAR}
+        </when>
+        <otherwise>
+          and carried = '0'
+        </otherwise>
+      </choose>
+    </where>
+    order by level desc
+  </select>
+  <select id="selectAllCarried" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     from bot_player_phantom
     <where>

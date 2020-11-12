@@ -38,7 +38,7 @@ public class JoinGroupServiceImpl extends CommonPlayer {
         // 控制下个指令只能是【00】
         GameChainCollector.supportPoint.put(token, Collections.singletonList(BaseConsts.Menu.DOUBLE_ZERO));
         try {
-            DungeonGroupDTO dungeonGroupDTO = DungeonCommonHolder.dungeonGroup.get(dungeon).get(index);
+            DungeonGroupDTO dungeonGroupDTO = DungeonCommonHolder.DUNGEON_GROUP.get(dungeon).get(index);
             DungeonSinglePlayerDTO dungeonSinglePlayerDTO = new DungeonSinglePlayerDTO();
             dungeonSinglePlayerDTO.setPlayerId(token);
             dungeonSinglePlayerDTO.setPhantoms(playerPhantoms);

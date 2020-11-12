@@ -6,6 +6,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.enums.ENStatus;
 import com.bot.game.dao.entity.BasePhantom;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.entity.PlayerPhantom;
@@ -13,6 +14,7 @@ import com.bot.game.dao.mapper.BasePhantomMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.enums.ENAppellation;
+import com.bot.game.enums.ENCarriedStatus;
 import com.bot.game.enums.ENRarity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,14 +54,17 @@ public class GetPhantomServiceImpl extends CommonPlayer {
     }
 
     private ENRarity getRarity() {
-        int number = RandomUtil.randomInt(1,11);
-        if (Arrays.asList(BEST_NUMBER).contains(number)) {
+        int number1 = RandomUtil.randomInt(1,11);
+        int number2 = RandomUtil.randomInt(1,11);
+        int number3 = RandomUtil.randomInt(1,11);
+        int finalNumber = number1 + number2 + number3;
+        if (Arrays.asList(BEST_NUMBER).contains(finalNumber)) {
             return ENRarity.BEST;
         }
-        if (Arrays.asList(GREAT_NUMBER).contains(number)) {
+        if (Arrays.asList(GREAT_NUMBER).contains(finalNumber)) {
             return ENRarity.GREAT;
         }
-        if (Arrays.asList(GOOD_NUMBER).contains(number)) {
+        if (Arrays.asList(GOOD_NUMBER).contains(finalNumber)) {
             return ENRarity.GOOD;
         }
         return ENRarity.NORMAL;
@@ -75,7 +80,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
         PlayerPhantom playerPhantom = new PlayerPhantom();
         playerPhantom.setPlayerId(token);
         playerPhantom.setName(basePhantom.getName());
-        List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(playerPhantom);
+        List<PlayerPhantom> list = playerPhantomMapper.selectAllCarried(playerPhantom);
         if (CollectionUtil.isNotEmpty(list)) {
             // 成长 +1
             int addNumber = 1;
@@ -94,7 +99,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             // 存入
             PlayerPhantom param = new PlayerPhantom();
             param.setPlayerId(token);
-            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectBySelective(param);
+            List<PlayerPhantom> allPhantom = playerPhantomMapper.selectAllCarried(param);
             PlayerPhantom newPhantom = new PlayerPhantom();
             BeanUtil.copyProperties(basePhantom, newPhantom);
             newPhantom.setPlayerId(token);
@@ -102,6 +107,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
             newPhantom.setLevel(1);
             newPhantom.setHp(CommonPlayer.getInitHp(newPhantom));
             newPhantom.setExp(0);
+            newPhantom.setCarried(ENCarriedStatus.LOCK.getValue());
             playerPhantomMapper.insert(newPhantom);
             if (CollectionUtil.isEmpty(allPhantom)) {
                 // 获得称号

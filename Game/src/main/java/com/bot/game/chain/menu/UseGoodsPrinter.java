@@ -80,7 +80,7 @@ public class UseGoodsPrinter extends Menu {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(goodsDetailDTO.getToken());
-        List<PlayerPhantom> list = playerPhantomMapper.selectBySelective(param);
+        List<PlayerPhantom> list = playerPhantomMapper.selectAllCarried(param);
         List<PlayerPhantom> finalList = list.stream().filter(x -> {
             if (!x.getAttribute().equals(goodsDetailDTO.getAttribute())) {
                 return false;
@@ -158,7 +158,7 @@ public class UseGoodsPrinter extends Menu {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
-        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(param);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectAllCarried(param);
         for (int index=0; index < playerPhantoms.size(); index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new UseResetAttributePrinter(playerPhantoms.get(index), goodsDetailDTO));
         }
@@ -169,7 +169,7 @@ public class UseGoodsPrinter extends Menu {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
-        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(param);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectAllCarried(param);
         for (int index=0; index < playerPhantoms.size(); index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new ForgetSkillPrinter(playerPhantoms.get(index), goodsDetailDTO));
         }
