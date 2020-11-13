@@ -348,6 +348,6 @@
   <select id="getMaxLevel" resultType="java.lang.Integer">
     select max(level)
     from bot_player_phantom
-    where player_id = #{playerId}
+    where player_id = #{playerId} and carried = '0'
   </select>
 </mapper>

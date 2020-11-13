@@ -58,6 +58,7 @@ public interface GameConsts {
                 +"家乡：%s" +  StrUtil.CRLF +"速度：%s" + StrUtil.CRLF + "攻击：%s" + StrUtil.CRLF
                 + "体质：%s" + StrUtil.CRLF + "成长：%s" + StrUtil.CRLF + "简介：%s" + StrUtil.CRLF
                 + "血量：%s" + StrUtil.CRLF + "经验值：%s/%s" + StrUtil.CRLF + "技能：%s";
+        String MENU_NAME_NO_CARRIED = "【%s】[%s]%s,%s级[%s]";
     }
 
     interface MyPhantom {
@@ -107,6 +108,7 @@ public interface GameConsts {
         String MEET = "你消耗了1点体力，遭遇了%s[%s][%s级]，请选择你要出战的幻灵";
         String RUN = "逃跑";
         String NO_ACTION_POINT = "体力不足，无法探索，恢复恢复了再来试试吧~";
+        String NO_MONSTER = "你使用了道具，而此地没有等级符合限制条件的怪物，请换个地图试试~";
     }
 
     interface MyFriends {

@@ -36,7 +36,7 @@ public class ForgetSkillPrinter extends Menu {
 
     @Override
     public void initMenu() {
-        this.menuName = String.format(GameConsts.PhantomDetail.MENU_NAME, ENRarity.getLabelByValue(playerPhantom.getRarity()),
+        this.menuName = String.format(GameConsts.PhantomDetail.MENU_NAME_NO_CARRIED, ENRarity.getLabelByValue(playerPhantom.getRarity()),
                 playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel(), playerPhantom.getAttribute());
     }
 

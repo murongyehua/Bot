@@ -71,15 +71,6 @@ public class DungeonWaitMenuPrinter extends Menu {
             this.describe = GameConsts.Dungeon.DUNGEON_FINISH + myGroup.get(0).getResultMap().get(token);
             return;
         }
-        // 校验挑战次数
-        List<DungeonTryTimesDTO> times = DungeonCommonHolder.tryTimes.get(token);
-        if (times != null) {
-            Optional<DungeonTryTimesDTO> optional = times.stream().filter(x -> x.getDungeon().equals(enDungeon.getValue())).findFirst();
-            if (optional.isPresent() && optional.get().getTimes() >= 1) {
-                this.describe = GameConsts.Dungeon.REPEAT;
-                return;
-            }
-        }
         // 没有加入队伍的情况
         List<DungeonGroupDTO> finalGroups = groups.stream().filter(x -> x.getPlayers().size() < 2).collect(Collectors.toList());
         if (CollectionUtil.isEmpty(finalGroups)) {

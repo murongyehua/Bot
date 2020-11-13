@@ -75,6 +75,10 @@ public class ExploreAreaPrinter extends Menu {
         }else {
             finalList = list;
         }
+        if (CollectionUtil.isEmpty(finalList)) {
+            this.describe = GameConsts.Explore.NO_MONSTER;
+            return;
+        }
         if (!CommonPlayer.addOrSubActionPoint(token, -1)) {
             this.describe = GameConsts.Explore.NO_ACTION_POINT;
             return;

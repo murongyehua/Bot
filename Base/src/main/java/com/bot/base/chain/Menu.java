@@ -20,7 +20,7 @@ public class Menu implements MenuPrinter{
 
     protected String describe = StrUtil.EMPTY;
 
-    private static final String VERSION = "2.7.0";
+    private static final String VERSION = "2.7.1";
 
     public String print() {
         return this.printMenuMap();

@@ -40,10 +40,6 @@ public class DungeonCommonHolder {
      * 副本队伍，每日零点清空
      */
     public final static Map<String, List<DungeonGroupDTO>> DUNGEON_GROUP = new HashMap<>();
-    /**
-     * 次数统计，每日零点清空
-     */
-    public static Map<String, List<DungeonTryTimesDTO>> tryTimes = new HashMap<>();
 
     @Autowired
     private BaseMonsterMapper baseMonsterMapper;
@@ -77,9 +73,10 @@ public class DungeonCommonHolder {
             while (true) {
                 try {
                     Date now = new Date();
-                    if (DateUtil.isIn(now, DateUtil.parse("000000", DatePattern.PURE_TIME_PATTERN), DateUtil.parse("003000", DatePattern.PURE_TIME_PATTERN))) {
-                        tryTimes.clear();
-                        DUNGEON_GROUP.clear();
+                    Date endTime = DateUtil.parse(DateUtil.format(now, DatePattern.NORM_DATE_PATTERN) + StrUtil.SPACE + "00:30:00");
+                    if (DateUtil.isIn(now, DateUtil.beginOfDay(now), endTime)) {
+                        log.info("初始化副本、折扣、称号信息...");
+                        DungeonCommonHolder.DUNGEON_GROUP.clear();
                         for (ENDungeon enDungeon : enDungeons) {
                             DUNGEON_GROUP.put(enDungeon.getValue(), new LinkedList<>());
                         }
@@ -87,6 +84,7 @@ public class DungeonCommonHolder {
                         CommonPlayer.nowSale = RandomUtil.randomInt(6,11);
                         // 第一称号刷新
                         initRankTop();
+                        log.info("副本、折扣、称号信息初始化完毕");
                     }
                 }catch (Exception e) {
                     log.error("副本每日初始化任务异常", e);
