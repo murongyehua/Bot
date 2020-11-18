@@ -69,6 +69,12 @@ public class GameHandlerServiceImpl implements GameHandler {
     @Autowired
     private GameManageService gameManageService;
 
+    @Autowired
+    private MessageMapper messageMapper;
+
+    @Autowired
+    private GoodsBoxMapper goodsBoxMapper;
+
     private final static List<String> WAIT_REG = new LinkedList<>();
 
     private final static List<String> WAIT_LOGIN = new LinkedList<>();
@@ -179,6 +185,8 @@ public class GameHandlerServiceImpl implements GameHandler {
         map.put(GameConsts.MapperName.BASE_MONSTER, baseMonsterMapper);
         map.put(GameConsts.MapperName.BASE_WEAPON, baseWeaponMapper);
         map.put(GameConsts.MapperName.PLAYER_WEAPON, playerWeaponMapper);
+        map.put(GameConsts.MapperName.MESSAGE, messageMapper);
+        map.put(GameConsts.MapperName.GOODS_BOX, goodsBoxMapper);
         return map;
     }
 }

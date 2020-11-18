@@ -17,5 +17,7 @@ public interface PlayerFriendsMapper {
 
     int updateByPrimaryKey(PlayerFriends record);
 
-    List<PlayerFriends> selectBySelectvie(PlayerFriends record);
+    List<PlayerFriends> selectBySelective(PlayerFriends record);
+
+    int deleteBySelective(PlayerFriends record);
 }

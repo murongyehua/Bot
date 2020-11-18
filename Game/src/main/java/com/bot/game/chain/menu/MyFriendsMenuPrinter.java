@@ -1,9 +1,8 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerFriends;
@@ -36,19 +35,21 @@ public class MyFriendsMenuPrinter extends Menu {
         GamePlayerMapper gamePlayerMapper = (GamePlayerMapper) mapperMap.get(GameConsts.MapperName.GAME_PLAYER);
         PlayerFriends param = new PlayerFriends();
         param.setPlayerId(token);
-        List<PlayerFriends> list = playerFriendsMapper.selectBySelectvie(param);
+        List<PlayerFriends> list = playerFriendsMapper.selectBySelective(param);
+        int index = 1;
         if (CollectionUtil.isEmpty(list)) {
             this.describe = GameConsts.MyFriends.EMPTY;
         }else {
             List<String> ids = list.stream().map(PlayerFriends::getFriendId).collect(Collectors.toList());
             List<GamePlayer> friends = gamePlayerMapper.getByIds(ids);
-            StringBuilder stringBuilder = new StringBuilder();
-            friends.forEach(x -> stringBuilder.append(StrUtil.isNotEmpty(x.getAppellation()) ?
-                    String.format("[%s]%s", x.getAppellation(), x.getNickname()) : x.getNickname()).append(StrUtil.CRLF));
-            this.describe = stringBuilder.toString();
+            for (GamePlayer friend : friends) {
+                this.menuChildrenMap.put(IndexUtil.getIndex(index), new FriendDetailPrinter(friend));
+                index++;
+            }
+            this.describe = GameConsts.MyFriends.CHOOSE_TIP;
         }
         // 先重置，避免不必要的问题
         FindFriendPrinter.waitAddFriend.remove(token);
-        this.menuChildrenMap.put(BaseConsts.Menu.ONE, new FindFriendPrinter());
+        this.menuChildrenMap.put(IndexUtil.getIndex(index), new FindFriendPrinter());
     }
 }

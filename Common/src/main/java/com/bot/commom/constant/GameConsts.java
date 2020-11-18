@@ -109,6 +109,7 @@ public interface GameConsts {
         String RUN = "逃跑";
         String NO_ACTION_POINT = "体力不足，无法探索，恢复恢复了再来试试吧~";
         String NO_MONSTER = "你使用了道具，而此地没有等级符合限制条件的怪物，请换个地图试试~";
+        String EXPLORER_ALL_AREA = "游历四海(打怪升级)";
     }
 
     interface MyFriends {
@@ -119,15 +120,14 @@ public interface GameConsts {
         String NOT_FOUND = "目标玩家不存在，请确认名称正确后再次输入，或者回复数字【0】返回";
         String ADD_TIP = "输入玩家名称进行添加：";
         String REPEAT = "该玩家已经是你的好友，请勿重复添加，回复数字【0】返回";
+        String CHOOSE_TIP = "输入好友前的编号，进行更多操作";
     }
 
     interface FriendCompare {
-        String MENU_NAME = "好友切磋";
+        String MENU_NAME = "切磋";
         String DESCRIBE = "选择要切磋的好友";
         String PICK = "选择要出战的幻灵";
         String EMPTY = "你没有好友，赶紧去添加吧!";
-        String TITLE_1 = "[%s]%s,战灵力: %s";
-        String TITLE_2 = "%s,战灵力: %s";
         String FRIEND_EMPTY = "对方没有可出战的幻灵，换个好友试试吧";
         String PLAYER_EMPTY = "你没有可出战的幻灵，快去唤灵吧";
     }
@@ -153,6 +153,8 @@ public interface GameConsts {
         String BASE_MONSTER = "baseMonsterMapper";
         String BASE_WEAPON = "baseWeaponMapper";
         String PLAYER_WEAPON = "playerWeaponMapper";
+        String MESSAGE = "messageMapper";
+        String GOODS_BOX = "goodsBoxMapper";
     }
 
     interface LittlePrinter {
@@ -234,12 +236,12 @@ public interface GameConsts {
     }
 
     interface WorldBoss {
-        String TITLE = "世界Boss";
-        String NOT_IN_TIME = "当前不在开放时间内，世界Boos开放时间为每日11:00-13:00以及17:00-19:00";
-        String BOOS = "当前Boos[%s],等级[%s],属性[%s],血量[%s/%s]";
+        String TITLE = "诛神法坛(世界Boos)";
+        String NOT_IN_TIME = "当前不在开放时间内，法坛开放时间为每日11:00-13:00以及17:00-19:00";
+        String BOOS = "当前神兽[%s],等级[%s],属性[%s],血量[%s/%s]";
         String PICK = "请选择要出战的幻灵";
-        String FINISH = "当前Boos已被击退，下次早点来吧!";
-        String OVER_TIMES = "当前Boos你已经挑战得够多了，休息休息吧!";
+        String FINISH = "当前神兽已被击退，下次早点来吧!";
+        String OVER_TIMES = "当前神兽你已经挑战得够多了，休息休息吧!";
         Integer INIT_HP = 150000;
         Integer MAX_TIME = 2;
     }
@@ -257,7 +259,7 @@ public interface GameConsts {
     }
 
     interface Dungeon {
-        String MENU_TITLE = "时光溯流";
+        String MENU_TITLE = "时光溯流(副本挑战)";
         String DESCRIBE = "时光之门已开启，请选择要进入的场景";
         String DUNGEON_NAME = "[%s]建议最低等级%s";
         String NO_GROUP = "此场景当前没有还在等待的探索队伍，你可以选择创建队伍等待其他玩家加入，也可以选择返回去其他地方看看";
@@ -293,9 +295,37 @@ public interface GameConsts {
     }
 
     interface Shop {
-        String MENU_NAME = "神秘商店";
+        String MENU_NAME = "忘川鬼市(神秘商店)";
         String DESCRIBE = "当前折扣：%s折(每天凌晨刷新)" + StrUtil.CRLF + "我的灵石：%s";
         String NO_MONEY = "你的灵石不足，无法购买";
         String BUY_SUCCESS = "购买成功，消耗灵石：%s，剩余灵石：%s";
+    }
+
+    interface Message {
+        String MENU_NAME = "信使";
+        String DETAIL_TITLE = "来自%s的消息";
+        String FRIEND = "好友[%s]";
+        String SYSTEM = "系统";
+        String MESSAGE_CONTENT = "%s" + StrUtil.CRLF + "投送时间：%s" + StrUtil.CRLF;
+        String GET_ATTACH = "接收附件";
+        String ATTACH = "附件："  + StrUtil.CRLF;
+        String EMPTY = "暂时没有你的未读信件";
+        String READ_TIP = "输入编号查看信件内容" + StrUtil.CRLF + "注意：含有附件的信件读取后需要手动收取附件，否则附件将会消失";
+        String ATTACH_REPEAT = "该附件已查收，请勿重复操作哦~";
+        String WRITE_MESSAGE_DESCRIBE = "请输入所要发送的内容，你也可以输入[0]返回";
+        String WRITE_MESSAGE_MENU = "写信";
+
+        String ASK_NEED_ATTACH = "是否需要继续添加附件，请回答[是]或[否]";
+        String YES = "是";
+        String NO = "否";
+        String NOT_YES_NO = "请输入[是]或[否]";
+        String WAIT_ATTACH = "请输入要邮寄的物品与数量，按照格式[灵石*10]，物品名称不要输错哦";
+        String ERROR_ATTACH = "格式错误，请按照[灵石*10]的格式来输入物品与数量";
+        String ERROR_GOODS_NAME = "物品不存在，请检查名称是否正确后重新输入";
+        String NUMBER_NOT = "你也没这么多了，少寄点吧(请重新输入)";
+        String NUMBER_FORMAT_ERROR = "你又调皮了，数量要是数字格式的哦，重新输入吧~";
+        String NUMBER_ZERO = "邮寄的物品数量不能为0，请重新输入";
+        String NOT_HAVE = "你也没有这件物品哦，请重新输入";
+        String HAS_ADD_ATTACH = "该物品在附件中已经有了，不要重复添加同一物品，请重新输入";
     }
 }

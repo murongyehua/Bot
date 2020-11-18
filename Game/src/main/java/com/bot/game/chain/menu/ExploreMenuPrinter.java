@@ -1,5 +1,6 @@
 package com.bot.game.chain.menu;
 
+import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.commom.util.IndexUtil;
 import com.bot.game.chain.Menu;
@@ -26,13 +27,10 @@ public class ExploreMenuPrinter extends Menu {
     @Override
     public void getDescribe(String token) {
         this.describe = GameConsts.Explore.TIP;
-        ENArea[] enAreas = ENArea.values();
-        for (int index=0; index < enAreas.length; index++) {
-            this.menuChildrenMap.put(IndexUtil.getIndex(index + 1), new ExploreAreaPrinter(ENArea.getByValue(enAreas[index].getValue())));
-        }
-        this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 1), new WordBoosPrinter());
-        this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 2), new DungeonEnterMenuPrinter());
-        this.menuChildrenMap.put(IndexUtil.getIndex(enAreas.length + 3), new ShopMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.ONE, new ExploreAllAreaPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.TWO, new WordBoosPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.THREE, new DungeonEnterMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.FOUR, new ShopMenuPrinter());
     }
 
 }

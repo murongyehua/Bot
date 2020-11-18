@@ -42,7 +42,7 @@ public class PlayerInfoMenuPrinter extends Menu {
         GamePlayer gamePlayer = gamePlayerMapper.selectByPrimaryKey(token);
         PlayerPhantom param = new PlayerPhantom();
         param.setPlayerId(token);
-        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectBySelective(param);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectAllCarried(param);
         PlayerWeapon playerWeapon = playerWeaponMapper.selectByPrimaryKey(gamePlayer.getPlayerWeaponId());
         String weaponName = GameConsts.CommonTip.EMPTY;
         if (playerWeapon != null) {

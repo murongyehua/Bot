@@ -14,7 +14,6 @@ import com.bot.game.service.impl.CommonPlayer;
 public class ShopMenuPrinter extends Menu {
 
     ShopMenuPrinter() {
-
         this.initMenu();
     }
 

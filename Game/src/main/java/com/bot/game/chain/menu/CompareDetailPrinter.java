@@ -29,9 +29,7 @@ public class CompareDetailPrinter extends Menu {
 
     @Override
     public void initMenu() {
-        this.menuName = StrUtil.isEmpty(friend.getAppellation())
-                ? String.format(GameConsts.FriendCompare.TITLE_2, friend.getNickname(), friend.getSoulPower())
-                : String.format(GameConsts.FriendCompare.TITLE_1, friend.getAppellation(), friend.getNickname(), friend.getSoulPower());
+        this.menuName = GameConsts.FriendCompare.MENU_NAME;
     }
 
     @Override
@@ -51,7 +49,7 @@ public class CompareDetailPrinter extends Menu {
         PlayerPhantom paramFriend = new PlayerPhantom();
         paramFriend.setPlayerId(friend.getId());
         List<PlayerPhantom> listFriend = playerPhantomMapper.selectBySelective(paramFriend);
-        List<PlayerPhantom> newList = listFriend.stream().sorted(Comparator.comparing(PlayerPhantom::getLevel).reversed()).collect(Collectors.toList());
+        List<PlayerPhantom> newList = listFriend.stream().sorted(Comparator.comparing(PlayerPhantom::getGrow).reversed()).collect(Collectors.toList());
         this.describe = GameConsts.FriendCompare.PICK;
         for (int index=0; index < list.size(); index ++) {
             this.playServiceMap.put(IndexUtil.getIndex(index + 1), new FriendCompareServiceImpl(list.get(index), newList.get(0)));

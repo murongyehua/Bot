@@ -3,7 +3,7 @@ package com.bot.game.chain.menu;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
 import com.bot.game.chain.Menu;
-import org.springframework.stereotype.Component;
+import com.bot.game.chain.menu.message.MessageMenuPrinter;
 
 import java.util.Map;
 
@@ -12,10 +12,12 @@ import java.util.Map;
  * @author murongyehua
  * @version 1.0 2020/10/14
  */
-@Component("gameMainMenuPrinter")
 public class GameMainMenuPrinter extends Menu {
 
-    public GameMainMenuPrinter(Map<String, Object> mapperMap) {
+    private final String token;
+
+    public GameMainMenuPrinter(Map<String, Object> mapperMap, String token) {
+        this.token = token;
         Menu.mapperMap = mapperMap;
         this.initMenu();
     }
@@ -30,8 +32,8 @@ public class GameMainMenuPrinter extends Menu {
         this.menuChildrenMap.put(BaseConsts.Menu.FOUR, new GetPhantomMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.FIVE, new ExploreMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.SIX, new MyFriendsMenuPrinter());
-        this.menuChildrenMap.put(BaseConsts.Menu.SEVEN, new FriendCompareMenuPrinter());
-        this.menuChildrenMap.put(BaseConsts.Menu.EIGHT, new RankListMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.SEVEN, new RankListMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.EIGHT, new MessageMenuPrinter(token));
         this.menuChildrenMap.put(BaseConsts.Menu.NINE, new HelpMenuPrinter());
     }
 

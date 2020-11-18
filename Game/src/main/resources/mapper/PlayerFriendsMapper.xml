@@ -73,7 +73,7 @@
       get_time = #{getTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <select id="selectBySelectvie" resultMap="BaseResultMap">
+  <select id="selectBySelective" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     from bot_player_friends
     <where>
@@ -88,4 +88,8 @@
       </if>
     </where>
   </select>
+    <delete id="deleteBySelective">
+        delete from bot_player_friends
+        where player_id = #{playerId,jdbcType=VARCHAR} and friend_id = #{friendId,jdbcType=VARCHAR}
+    </delete>
 </mapper>

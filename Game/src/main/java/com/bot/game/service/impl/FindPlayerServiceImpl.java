@@ -31,7 +31,7 @@ public class FindPlayerServiceImpl extends CommonPlayer {
         PlayerFriends playerFriends = new PlayerFriends();
         playerFriends.setPlayerId(token);
         playerFriends.setFriendId(friend.getId());
-        List<PlayerFriends> friends = playerFriendsMapper.selectBySelectvie(playerFriends);
+        List<PlayerFriends> friends = playerFriendsMapper.selectBySelective(playerFriends);
         if (CollectionUtil.isNotEmpty(friends)) {
             return GameConsts.MyFriends.REPEAT;
         }
