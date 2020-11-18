@@ -1,4 +1,4 @@
-package com.bot.base.service;
+package com.bot.commom.loader;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -49,6 +49,11 @@ public class CommonTextLoader {
      */
     public static List<String> answers;
 
+    /**
+     * 游戏版本历史
+     */
+    public static String gameHistory;
+
     @Value("${text.path}")
     private String textPath;
 
@@ -80,6 +85,8 @@ public class CommonTextLoader {
         // 加载答案之书
         answers = FileUtil.readLines(textPath + "answerBook.txt", "utf-8");
         log.info("答案之书加载完毕");
+        gameHistory = FileUtil.readString(textPath + "gameHistory.txt", "utf-8");
+        log.info("游戏版本加载完毕");
         log.info("文本成功加载完毕!!");
     }
 

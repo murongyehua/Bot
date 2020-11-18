@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.base.service.impl.VoteServiceImpl;
 import com.bot.commom.constant.BaseConsts;
+import com.bot.commom.loader.CommonTextLoader;
 import com.bot.game.service.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

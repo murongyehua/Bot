@@ -3,6 +3,7 @@ package com.bot.game.chain;
 import cn.hutool.core.util.StrUtil;
 import com.bot.commom.constant.BaseConsts;
 import com.bot.commom.constant.GameConsts;
+import com.bot.commom.loader.CommonTextLoader;
 import com.bot.game.chain.menu.FindFriendPrinter;
 import com.bot.game.chain.menu.GameMainMenuPrinter;
 import com.bot.game.chain.menu.message.WriteMessageMenuPrinter;
@@ -94,6 +95,10 @@ public class GameChainCollector implements Collector{
                 if (result != null) {
                     return CommonPlayer.battleDetailMap.get(token);
                 }
+            }
+            // A查看历史版本详情
+            if (GameConsts.CommonTip.SEE_VERSION_HISTORY.equals(point)) {
+                return CommonTextLoader.gameHistory;
             }
             return GameConsts.CommonTip.UN_KNOW_POINT;
         }

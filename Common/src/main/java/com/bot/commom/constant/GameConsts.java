@@ -27,11 +27,14 @@ public interface GameConsts {
         String SKILL_WAIT_ROUND = "冷却时间%s回合";
         String SKILL_ROUND = "效果持续%s回合";
         String SEE_BATTLE_DETAIL = "Q";
+        String SEE_VERSION_HISTORY = "A";
         String TURN_BACK = "0.返回";
         String TURN_BACK_ORCONTINU = "输入【0】返回或者输入数字1-4继续召唤";
         String LOCK = "当前游戏维护中，请输入【退出】以回到聊天模式，稍后再来尝试哦~";
         String GET_APPELLATION = "获得称号[%s],若已获得过请无视这条提示";
         String MENU_TIP = "回复菜单前的数字，进入相应功能";
+        String NOW_VERSION = "当前版本：盛世凡音";
+        String SEE_VERSION_TIP = "输入[A]可查看历史版本详情";
         Integer MAX_LEVEL = 25;
     }
 

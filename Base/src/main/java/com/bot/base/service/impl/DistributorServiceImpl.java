@@ -4,7 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.bot.base.chain.Collector;
 import com.bot.base.chain.Menu;
 import com.bot.base.service.BaseService;
-import com.bot.base.service.CommonTextLoader;
+import com.bot.commom.loader.CommonTextLoader;
 import com.bot.base.service.Distributor;
 import com.bot.base.service.SystemManager;
 import com.bot.commom.constant.BaseConsts;
