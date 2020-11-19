@@ -1,11 +1,9 @@
 package com.bot.game.chain.menu;
 
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
-import com.bot.commom.util.IndexUtil;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.chain.menu.dungeon.DungeonEnterMenuPrinter;
-import com.bot.game.enums.ENArea;
 import org.springframework.stereotype.Component;
 
 /**

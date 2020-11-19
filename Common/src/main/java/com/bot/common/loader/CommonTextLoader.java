@@ -1,8 +1,8 @@
-package com.bot.commom.loader;
+package com.bot.common.loader;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
+import com.bot.common.constant.BaseConsts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

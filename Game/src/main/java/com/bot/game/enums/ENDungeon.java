@@ -1,6 +1,6 @@
 package com.bot.game.enums;
 
-import com.bot.commom.exception.BotException;
+import com.bot.common.exception.BotException;
 import lombok.Getter;
 
 /**

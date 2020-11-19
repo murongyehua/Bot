@@ -1,6 +1,6 @@
 package com.bot.game.chain.menu;
 
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dto.GoodsDetailDTO;
 import com.bot.game.enums.ENGoodEffect;

@@ -1,6 +1,6 @@
 package com.bot.game.chain.menu.message;
 
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.GoodsBox;
 import com.bot.game.dao.mapper.GoodsBoxMapper;

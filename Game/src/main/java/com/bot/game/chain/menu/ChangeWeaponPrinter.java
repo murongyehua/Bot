@@ -1,7 +1,7 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerWeapon;
 import com.bot.game.dao.mapper.PlayerWeaponMapper;

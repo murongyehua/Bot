@@ -5,8 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.base.service.BaseService;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.util.HttpSenderUtil;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.util.HttpSenderUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

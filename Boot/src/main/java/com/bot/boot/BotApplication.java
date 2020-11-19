@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 启动类
  * @author murongyehua
  */
-@SpringBootApplication(scanBasePackages = {"com.bot.boot","com.bot.base","com.bot.game"})
+@SpringBootApplication(scanBasePackages = {"com.bot.boot","com.bot.base","com.bot.game", "com.bot.common.loader"})
 @MapperScan("com.bot.game.dao.mapper")
 public class BotApplication {
 

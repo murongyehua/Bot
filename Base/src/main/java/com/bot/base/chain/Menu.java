@@ -1,8 +1,8 @@
 package com.bot.base.chain;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.exception.BotException;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.exception.BotException;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.service.BaseService;
-import com.bot.commom.constant.BaseConsts;
+import com.bot.common.constant.BaseConsts;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

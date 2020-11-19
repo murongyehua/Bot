@@ -1,18 +1,15 @@
 package com.bot.game.chain.menu;
 
-import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.GameConsts;
-import com.bot.commom.util.IndexUtil;
+import com.bot.common.constant.GameConsts;
+import com.bot.common.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.BaseSkillMapper;
 import com.bot.game.dto.GoodsDetailDTO;
-import com.bot.game.enums.ENPhantomAttribute;
 import com.bot.game.enums.ENRarity;
 import com.bot.game.service.impl.ForgetSkillServiceImpl;
-import com.bot.game.service.impl.ResetAttributeServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;

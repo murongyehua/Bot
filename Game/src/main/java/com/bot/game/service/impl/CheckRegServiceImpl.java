@@ -2,7 +2,7 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
-import com.bot.commom.enums.ENStatus;
+import com.bot.common.enums.ENStatus;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.GamePlayerMapper;

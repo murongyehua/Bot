@@ -1,7 +1,7 @@
 package com.bot.game.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.enums.ENCarriedStatus;

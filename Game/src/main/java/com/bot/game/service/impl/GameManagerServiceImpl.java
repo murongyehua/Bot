@@ -2,8 +2,7 @@ package com.bot.game.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.BaseConsts;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.GamePlayerMapper;

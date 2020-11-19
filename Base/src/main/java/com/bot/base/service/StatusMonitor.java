@@ -2,8 +2,8 @@ package com.bot.base.service;
 
 import com.bot.base.commom.MessageSender;
 import com.bot.base.dto.UserTempInfoDTO;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.util.ThreadPoolManager;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.util.ThreadPoolManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

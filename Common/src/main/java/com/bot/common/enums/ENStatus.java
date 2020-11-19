@@ -1,23 +1,23 @@
-package com.bot.commom.enums;
+package com.bot.common.enums;
 
 import lombok.Getter;
 
 /**
  * @author murongyehua
- * @version 1.0 2020/10/14
+ * @version 1.0 2020/10/15
  */
 @Getter
-public enum ENYesOrNo {
+public enum ENStatus {
 
     //
-    YES("1", "是"),
-    NO("0", "否"),;
-
+    NORMAL("0", "正常"),
+    LOCK("1", "锁定");
 
     private String value;
+
     private String label;
 
-    ENYesOrNo(String value, String label) {
+    ENStatus(String value, String label) {
         this.value = value;
         this.label = label;
     }

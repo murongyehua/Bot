@@ -1,8 +1,8 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.chain.menu.message.MessageMenuPrinter;
 
@@ -45,6 +45,6 @@ public class GameMainMenuPrinter extends Menu {
 
     @Override
     public void getDescribe(String token) {
-        this.describe = GameConsts.CommonTip.SEE_VERSION_TIP + StrUtil.CRLF + GameConsts.CommonTip.NOW_VERSION + StrUtil.CRLF + GameConsts.CommonTip.MENU_TIP;
+        this.describe = GameConsts.CommonTip.SEE_VERSION_TIP + StrUtil.CRLF + GameConsts.CommonTip.NOW_VERSION + StrUtil.CRLF + GameConsts.CommonTip.MENU_TIP + StrUtil.CRLF;
     }
 }

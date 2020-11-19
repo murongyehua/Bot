@@ -1,7 +1,6 @@
 package com.bot.game.service.impl;
 
-import com.bot.commom.constant.GameConsts;
-import com.bot.game.dao.entity.BaseWeapon;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerWeapon;
 import com.bot.game.dao.mapper.GamePlayerMapper;

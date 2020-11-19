@@ -1,6 +1,6 @@
 package com.bot.boot.aspect;
 
-import com.bot.commom.constant.BootConsts;
+import com.bot.common.constant.BootConsts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;

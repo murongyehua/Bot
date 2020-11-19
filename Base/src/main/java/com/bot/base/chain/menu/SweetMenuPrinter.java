@@ -1,7 +1,7 @@
 package com.bot.base.chain.menu;
 
 import com.bot.base.chain.Menu;
-import com.bot.commom.constant.BaseConsts;
+import com.bot.common.constant.BaseConsts;
 import org.springframework.stereotype.Component;
 
 /**

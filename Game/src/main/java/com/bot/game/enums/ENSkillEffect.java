@@ -1,7 +1,7 @@
 package com.bot.game.enums;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.exception.BotException;
+import com.bot.common.exception.BotException;
 import lombok.Getter;
 
 /**

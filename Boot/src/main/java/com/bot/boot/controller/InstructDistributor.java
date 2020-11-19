@@ -5,7 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.WeChatResp;
 import com.bot.base.dto.WeChatRespData;
 import com.bot.base.service.Distributor;
-import com.bot.commom.util.TextUtil;
+import com.bot.common.util.TextUtil;
 import com.bot.game.dto.ResultContext;
 import com.bot.game.service.CheckReg;
 import lombok.extern.slf4j.Slf4j;

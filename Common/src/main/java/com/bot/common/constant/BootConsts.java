@@ -1,4 +1,4 @@
-package com.bot.commom.constant;
+package com.bot.common.constant;
 
 /**
  * @author murongyehua

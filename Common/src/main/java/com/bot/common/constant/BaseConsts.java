@@ -1,4 +1,4 @@
-package com.bot.commom.constant;
+package com.bot.common.constant;
 
 import cn.hutool.core.util.StrUtil;
 

@@ -1,4 +1,4 @@
-package com.bot.commom.exception;
+package com.bot.common.exception;
 
 /**
  * @author murongyehua

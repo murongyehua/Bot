@@ -1,9 +1,9 @@
 package com.bot.game.chain;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.exception.BotException;
-import com.bot.commom.util.IndexUtil;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.exception.BotException;
+import com.bot.common.util.IndexUtil;
 import com.bot.game.service.impl.CommonPlayer;
 
 import java.util.HashMap;

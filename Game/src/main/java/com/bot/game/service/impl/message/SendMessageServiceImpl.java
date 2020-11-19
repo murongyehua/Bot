@@ -3,7 +3,7 @@ package com.bot.game.service.impl.message;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.menu.message.WriteMessageMenuPrinter;
 import com.bot.game.dao.entity.BaseGoods;
 import com.bot.game.dao.entity.PlayerGoods;

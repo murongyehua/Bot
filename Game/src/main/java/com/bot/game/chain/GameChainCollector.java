@@ -1,9 +1,9 @@
 package com.bot.game.chain;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
-import com.bot.commom.loader.CommonTextLoader;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.constant.GameConsts;
+import com.bot.common.loader.CommonTextLoader;
 import com.bot.game.chain.menu.FindFriendPrinter;
 import com.bot.game.chain.menu.GameMainMenuPrinter;
 import com.bot.game.chain.menu.message.WriteMessageMenuPrinter;

@@ -1,6 +1,6 @@
 package com.bot.game.service.impl;
 
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.dao.entity.BaseGoods;
 import com.bot.game.dao.mapper.BaseGoodsMapper;
 import com.bot.game.enums.ENGoodEffect;

@@ -2,8 +2,8 @@ package com.bot.base.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import com.bot.base.service.BaseService;
-import com.bot.commom.loader.CommonTextLoader;
-import com.bot.commom.constant.BaseConsts;
+import com.bot.common.loader.CommonTextLoader;
+import com.bot.common.constant.BaseConsts;
 import org.springframework.stereotype.Service;
 
 

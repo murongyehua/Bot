@@ -2,8 +2,8 @@ package com.bot.game.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
-import com.bot.commom.constant.GameConsts;
-import com.bot.commom.util.ThreadPoolManager;
+import com.bot.common.constant.GameConsts;
+import com.bot.common.util.ThreadPoolManager;
 import com.bot.game.dao.entity.BaseMonster;
 import com.bot.game.dao.entity.Game;
 import com.bot.game.dao.entity.GamePlayer;
@@ -12,7 +12,6 @@ import com.bot.game.dao.mapper.GameMapper;
 import com.bot.game.dao.mapper.GamePlayerMapper;
 import com.bot.game.dto.BattlePhantomDTO;
 import com.bot.game.enums.ENCamp;
-import com.bot.game.service.impl.CommonPlayer;
 import com.bot.game.service.impl.WorldBossServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

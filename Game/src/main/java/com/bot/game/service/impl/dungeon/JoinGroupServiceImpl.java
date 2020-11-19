@@ -1,7 +1,7 @@
 package com.bot.game.service.impl.dungeon;
 
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.GameChainCollector;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dto.DungeonGroupDTO;

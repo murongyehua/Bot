@@ -1,7 +1,7 @@
 package com.bot.game.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.dao.entity.BaseSkill;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.entity.PlayerPhantom;

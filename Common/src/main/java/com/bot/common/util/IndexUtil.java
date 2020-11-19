@@ -1,4 +1,4 @@
-package com.bot.commom.util;
+package com.bot.common.util;
 
 /**
  * @author murongyehua

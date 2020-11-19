@@ -2,8 +2,8 @@ package com.bot.game.chain.menu;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.GameConsts;
-import com.bot.commom.util.IndexUtil;
+import com.bot.common.constant.GameConsts;
+import com.bot.common.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.BaseGoods;
 import com.bot.game.dao.entity.BaseSkill;
@@ -14,7 +14,6 @@ import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dto.GoodsDetailDTO;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**

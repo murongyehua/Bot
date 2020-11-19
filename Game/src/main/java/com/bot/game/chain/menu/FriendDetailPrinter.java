@@ -1,8 +1,7 @@
 package com.bot.game.chain.menu;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.BaseConsts;
 import com.bot.game.chain.Menu;
 import com.bot.game.chain.menu.message.WriteMessageMenuPrinter;
 import com.bot.game.dao.entity.GamePlayer;

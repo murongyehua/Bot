@@ -1,12 +1,10 @@
 package com.bot.game.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.bot.commom.constant.BaseConsts;
-import com.bot.commom.constant.GameConsts;
+import com.bot.common.constant.BaseConsts;
+import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.GameChainCollector;
 import com.bot.game.dao.entity.PlayerGoods;
-import com.bot.game.dao.entity.PlayerPhantom;
-import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dao.mapper.PlayerPhantomMapper;
 import com.bot.game.dto.GoodsDetailDTO;
 import com.bot.game.dto.UseGoodsDTO;

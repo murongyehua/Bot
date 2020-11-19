@@ -2,7 +2,7 @@ package com.bot.base.chain;
 
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.chain.menu.MainMenuPrinter;
-import com.bot.commom.constant.BaseConsts;
+import com.bot.common.constant.BaseConsts;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

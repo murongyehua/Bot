@@ -1,7 +1,7 @@
 package com.bot.base.service.impl;
 
 import com.bot.base.service.BaseService;
-import com.bot.commom.util.HttpSenderUtil;
+import com.bot.common.util.HttpSenderUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

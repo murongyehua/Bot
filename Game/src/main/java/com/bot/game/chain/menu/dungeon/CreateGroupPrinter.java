@@ -1,7 +1,7 @@
 package com.bot.game.chain.menu.dungeon;
 
-import com.bot.commom.constant.GameConsts;
-import com.bot.commom.util.IndexUtil;
+import com.bot.common.constant.GameConsts;
+import com.bot.common.util.IndexUtil;
 import com.bot.game.chain.Menu;
 import com.bot.game.dao.entity.PlayerPhantom;
 import com.bot.game.dao.mapper.GamePlayerMapper;
