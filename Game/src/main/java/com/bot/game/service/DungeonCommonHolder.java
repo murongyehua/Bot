@@ -128,7 +128,13 @@ public class DungeonCommonHolder {
                         // 战斗胜利
                         group.setResult(ENDungeonResult.SUCCESS);
                         for (DungeonSinglePlayerDTO player : group.getPlayers()) {
-                            group.getResultMap().put(player.getPlayerId(), GameConsts.Dungeon.VICTORY + this.addSuccessGoods(player.getPlayerId(), enDungeon));
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(GameConsts.Dungeon.VICTORY).append(this.addSuccessGoods(player.getPlayerId(), enDungeon)).append(StrUtil.CRLF);
+                            if (!CommonPlayer.isAppellationExist(ENAppellation.A09, player.getPlayerId())) {
+                                CommonPlayer.addAppellation(ENAppellation.A09, player.getPlayerId());
+                                stringBuilder.append("恭喜你，获得了[").append(ENAppellation.A09).append("]的称号!!").append(StrUtil.CRLF);
+                            }
+                            group.getResultMap().put(player.getPlayerId(), stringBuilder.toString());
                         }
                         return;
                     }

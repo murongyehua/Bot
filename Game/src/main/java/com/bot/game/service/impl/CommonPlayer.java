@@ -180,12 +180,12 @@ public class CommonPlayer implements Player {
      * 使用物品之后调用，用于减少物品数量或移除物品
      * @param playerGoods
      */
-    public static void afterUseGoods(PlayerGoods playerGoods) {
+    public static void afterUseGoods(PlayerGoods playerGoods, int number) {
         PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
-        if (playerGoods.getNumber() == 1) {
+        if (playerGoods.getNumber() == number) {
             playerGoodsMapper.deleteByPrimaryKey(playerGoods.getId());
         }else {
-            playerGoods.setNumber(playerGoods.getNumber() - 1);
+            playerGoods.setNumber(playerGoods.getNumber() - number);
             playerGoodsMapper.updateByPrimaryKeySelective(playerGoods);
         }
     }
@@ -205,16 +205,28 @@ public class CommonPlayer implements Player {
      * @param token
      */
     public static void addAppellation(ENAppellation enAppellation, String token) {
+        if (!isAppellationExist(enAppellation, token)) {
+            PlayerAppellationMapper playerAppellationMapper = (PlayerAppellationMapper) mapperMap.get(GameConsts.MapperName.PLAYER_APPELLATION);
+            PlayerAppellation param = new PlayerAppellation();
+            param.setId(IdUtil.simpleUUID());
+            param.setGetTime(new Date());
+            playerAppellationMapper.insert(param);
+        }
+    }
+
+    /**
+     * 称号是否已拥有
+     * @param enAppellation
+     * @param token
+     * @return
+     */
+    public static boolean isAppellationExist(ENAppellation enAppellation, String token) {
         PlayerAppellationMapper playerAppellationMapper = (PlayerAppellationMapper) mapperMap.get(GameConsts.MapperName.PLAYER_APPELLATION);
         PlayerAppellation param = new PlayerAppellation();
         param.setPlayerId(token);
         param.setAppellation(enAppellation.getAppellation());
         List<PlayerAppellation> list = playerAppellationMapper.selectBySelective(param);
-        if (CollectionUtil.isEmpty(list)) {
-            param.setId(IdUtil.simpleUUID());
-            param.setGetTime(new Date());
-            playerAppellationMapper.insert(param);
-        }
+        return CollectionUtil.isNotEmpty(list);
     }
 
     /**
@@ -329,6 +341,21 @@ public class CommonPlayer implements Player {
         }
         gamePlayer.setMoney(gamePlayer.getMoney() + moneyNumber);
         gamePlayerMapper.updateByPrimaryKeySelective(gamePlayer);
+        if (gamePlayer.getMoney() > GameConsts.BaseFigure.HAS_MONEY_1) {
+            if (!isAppellationExist(ENAppellation.A05, token)) {
+                addAppellation(ENAppellation.A05, token);
+            }
+        }
+        if (gamePlayer.getMoney() > GameConsts.BaseFigure.HAS_MONEY_2) {
+            if (!isAppellationExist(ENAppellation.A06, token)) {
+                addAppellation(ENAppellation.A06, token);
+            }
+        }
+        if (gamePlayer.getMoney() > GameConsts.BaseFigure.HAS_MONEY_3) {
+            if (!isAppellationExist(ENAppellation.A07, token)) {
+                addAppellation(ENAppellation.A07, token);
+            }
+        }
         return true;
     }
 
@@ -354,6 +381,13 @@ public class CommonPlayer implements Player {
         param.setLevel(1);
         param.setId(IdUtil.simpleUUID());
         playerWeaponMapper.insert(param);
+        // 查询个数
+        int number = playerWeaponMapper.countByToken(token);
+        if (number >= GameConsts.BaseFigure.HAS_WEAPON) {
+            if (!isAppellationExist(ENAppellation.A10, token)) {
+                addAppellation(ENAppellation.A10, token);
+            }
+        }
     }
 
     /**

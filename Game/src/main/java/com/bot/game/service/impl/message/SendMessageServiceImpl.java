@@ -1,20 +1,31 @@
 package com.bot.game.service.impl.message;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.common.constant.GameConsts;
 import com.bot.game.chain.menu.message.WriteMessageMenuPrinter;
 import com.bot.game.dao.entity.BaseGoods;
+import com.bot.game.dao.entity.GoodsBox;
+import com.bot.game.dao.entity.Message;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.BaseGoodsMapper;
+import com.bot.game.dao.mapper.GoodsBoxMapper;
+import com.bot.game.dao.mapper.MessageMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
 import com.bot.game.dto.AttachDTO;
 import com.bot.game.dto.MessageDTO;
+import com.bot.game.enums.ENAppellation;
+import com.bot.game.enums.ENMessageStatus;
+import com.bot.game.enums.ENMessageType;
 import com.bot.game.enums.ENWriteMessageStatus;
 import com.bot.game.service.impl.CommonPlayer;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +38,7 @@ public class SendMessageServiceImpl extends CommonPlayer {
     private static final String ATTACH_SPILT;
 
     static {
-        ATTACH_SPILT = "*";
+        ATTACH_SPILT = "\\*";
     }
 
     public static String trySendMessage(String token, String content) {
@@ -46,7 +57,7 @@ public class SendMessageServiceImpl extends CommonPlayer {
                     // 移除
                     WriteMessageMenuPrinter.WRITE_MESSAGE.remove(token);
                     // 发送
-                    return doSendMessage(message);
+                    return doSendMessage(message, token, ENMessageType.MESSAGE);
                 } else {
                     return GameConsts.Message.NOT_YES_NO;
                 }
@@ -62,9 +73,44 @@ public class SendMessageServiceImpl extends CommonPlayer {
         }
     }
 
-    private static String doSendMessage(MessageDTO message) {
+    public static String doSendMessage(MessageDTO message, String token, ENMessageType enMessageType) {
         // 真正发送的方法
-        return null;
+        Message sendMessage = new Message();
+        String messageId = IdUtil.simpleUUID();
+        sendMessage.setId(messageId);
+        sendMessage.setStatus(ENMessageStatus.NOT_READ.getValue());
+        sendMessage.setReceiver(message.getTargetId());
+        sendMessage.setContent(message.getContent());
+        sendMessage.setSender(token);
+        sendMessage.setType(enMessageType.getValue());
+        sendMessage.setSendTime(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN));
+        MessageMapper messageMapper = (MessageMapper) mapperMap.get(GameConsts.MapperName.MESSAGE);
+        messageMapper.insert(sendMessage);
+        GoodsBoxMapper goodsBoxMapper = (GoodsBoxMapper) mapperMap.get(GameConsts.MapperName.GOODS_BOX);
+        PlayerGoodsMapper playerGoodsMapper = (PlayerGoodsMapper) mapperMap.get(GameConsts.MapperName.PLAYER_GOODS);
+        message.getAttaches().forEach(x -> {
+            GoodsBox goodsBox = new GoodsBox();
+            goodsBox.setId(IdUtil.simpleUUID());
+            goodsBox.setStatus(ENMessageStatus.NOT_READ.getValue());
+            goodsBox.setMessageId(messageId);
+            goodsBox.setGoodId(x.getGoodId());
+            goodsBox.setNumber(x.getNumber());
+            goodsBox.setPlayerId(message.getTargetId());
+            goodsBox.setType(ENMessageType.GOODS.getValue());
+            goodsBoxMapper.insert(goodsBox);
+            if (!"sys".equals(token)) {
+                PlayerGoods param = new PlayerGoods();
+                param.setPlayerId(token);
+                param.setGoodId(x.getGoodId());
+                CommonPlayer.afterUseGoods(playerGoodsMapper.selectBySelective(param).get(0), x.getNumber());
+            }
+        });
+        String temp = StrUtil.EMPTY;
+        if (!CommonPlayer.isAppellationExist(ENAppellation.A11, token)) {
+            CommonPlayer.addAppellation(ENAppellation.A11, token);
+            temp = "恭喜你，获得了[" + ENAppellation.A11 + "]的称号!!";
+        }
+        return temp + GameConsts.Message.SEND_SUCCESS;
     }
 
     private static String addAttach(MessageDTO message, String content, String token) {
@@ -74,7 +120,7 @@ public class SendMessageServiceImpl extends CommonPlayer {
             return GameConsts.Message.ERROR_ATTACH;
         }
         String name = contents.get(0);
-        int number = 0;
+        int number;
         try {
             number = Integer.parseInt(contents.get(1));
         }catch (Exception e) {

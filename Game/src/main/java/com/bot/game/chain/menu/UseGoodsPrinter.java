@@ -147,7 +147,7 @@ public class UseGoodsPrinter extends Menu {
         PlayerGoods playerGoods = new PlayerGoods();
         playerGoods.setId(goodsDetailDTO.getPlayerGoodsId());
         playerGoods.setNumber(goodsDetailDTO.getNumber());
-        CommonPlayer.afterUseGoods(playerGoods);
+        CommonPlayer.afterUseGoods(playerGoods, 1);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
         goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE).append(StrUtil.CRLF).append(GameConsts.CommonTip.TURN_BACK);
@@ -188,7 +188,7 @@ public class UseGoodsPrinter extends Menu {
             return;
         }
         // 扣除
-        CommonPlayer.afterUseGoods(playerGoods);
+        CommonPlayer.afterUseGoods(playerGoods, 1);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
         goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         stringBuilder.append(GameConsts.MyKnapsack.BUFF_USE);

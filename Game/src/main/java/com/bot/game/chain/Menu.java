@@ -70,6 +70,6 @@ public class Menu implements MenuPrinter{
 
     @Override
     public void reInitMenu(String token) {
-        // 默认什么也不干
+        this.initMenu();
     }
 }

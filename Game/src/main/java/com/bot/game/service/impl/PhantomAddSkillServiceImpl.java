@@ -47,7 +47,7 @@ public class PhantomAddSkillServiceImpl extends CommonPlayer {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(useGoodsDTO.getPlayerPhantom());
         // 扣除
-        CommonPlayer.afterUseGoods(playerGoods);
+        CommonPlayer.afterUseGoods(playerGoods, 1);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
         goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         return GameConsts.CommonTip.PLAY_SUCCESS;

@@ -48,7 +48,7 @@ public class ResetAttributeServiceImpl extends CommonPlayer {
         PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
         // 扣除
-        CommonPlayer.afterUseGoods(playerGoods);
+        CommonPlayer.afterUseGoods(playerGoods, 1);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
         goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         return GameConsts.MyKnapsack.BUFF_USE + StrUtil.CRLF + GameConsts.CommonTip.TURN_BACK;

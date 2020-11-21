@@ -94,4 +94,7 @@
       </if>
     </where>
   </select>
+  <select id="countByToken" resultType="java.lang.Integer">
+    select count(1) from bot_player_weapon where player_id = #{token, jdbcType=VARCHAR}
+  </select>
 </mapper>

@@ -6,12 +6,19 @@ import com.bot.common.constant.BaseConsts;
 import com.bot.game.dao.entity.GamePlayer;
 import com.bot.game.dao.entity.PlayerGoods;
 import com.bot.game.dao.mapper.GamePlayerMapper;
+import com.bot.game.dao.mapper.GoodsBoxMapper;
+import com.bot.game.dao.mapper.MessageMapper;
 import com.bot.game.dao.mapper.PlayerGoodsMapper;
+import com.bot.game.dto.AttachDTO;
 import com.bot.game.dto.CompensateDTO;
+import com.bot.game.dto.MessageDTO;
+import com.bot.game.enums.ENMessageType;
 import com.bot.game.service.GameManageService;
+import com.bot.game.service.impl.message.SendMessageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,24 +36,17 @@ public class GameManagerServiceImpl implements GameManageService {
 
     @Override
     public String compensate(CompensateDTO compensate) {
-        List<GamePlayer> players = gamePlayerMapper.selectBySoulPower(compensate.getSoulPowerStart(), compensate.getSoulPowerEnd());
+        List<GamePlayer> players = gamePlayerMapper.getBySoulPowerDesc();
         for (GamePlayer gamePlayer : players) {
-            PlayerGoods param = new PlayerGoods();
-            param.setPlayerId(gamePlayer.getId());
-            param.setGoodId(compensate.getGoodsId());
-            List<PlayerGoods> list = playerGoodsMapper.selectBySelective(param);
-            PlayerGoods good = new PlayerGoods();
-            good.setGoodId(compensate.getGoodsId());
-            good.setPlayerId(gamePlayer.getId());
-            good.setNumber(compensate.getNumber());
-            if (CollectionUtil.isNotEmpty(list)) {
-                good.setId(list.get(0).getId());
-                good.setNumber(list.get(0).getNumber() + compensate.getNumber());
-                playerGoodsMapper.updateByPrimaryKey(good);
-                return BaseConsts.SystemManager.SUCCESS;
-            }
-            good.setId(IdUtil.simpleUUID());
-            playerGoodsMapper.insert(good);
+            MessageDTO message = new MessageDTO();
+            message.setContent(compensate.getContent());
+            message.setTargetId(gamePlayer.getId());
+            AttachDTO attachDTO = new AttachDTO();
+            attachDTO.setGoodId(compensate.getGoodsId());
+            attachDTO.setNumber(compensate.getNumber());
+            message.setAttaches(Collections.singletonList(attachDTO));
+
+            SendMessageServiceImpl.doSendMessage(message, "sys", ENMessageType.SYSTEM);
         }
         return BaseConsts.SystemManager.SUCCESS;
     }

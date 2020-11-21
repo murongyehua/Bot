@@ -141,11 +141,9 @@ public class GameHandlerServiceImpl implements GameHandler {
             CompensateDTO compensate = new CompensateDTO();
             String content = reqContent.substring(2);
             String[] contents = content.split("\\|\\|");
-            compensate.setGoodsId(contents[0]);
-            compensate.setNumber(Integer.valueOf(contents[1]));
-            String[] powers = contents[2].split(StrUtil.DASHED);
-            compensate.setSoulPowerStart(Integer.valueOf(powers[0]));
-            compensate.setSoulPowerEnd(Integer.valueOf(powers[1]));
+            compensate.setContent(contents[0]);
+            compensate.setGoodsId(contents[1]);
+            compensate.setNumber(Integer.valueOf(contents[2]));
             return gameManageService.compensate(compensate);
         }
         return GameConsts.CommonTip.ERROR_POINT;

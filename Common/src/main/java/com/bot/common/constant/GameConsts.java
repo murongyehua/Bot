@@ -33,7 +33,7 @@ public interface GameConsts {
         String LOCK = "当前游戏维护中，请输入【退出】以回到聊天模式，稍后再来尝试哦~";
         String GET_APPELLATION = "获得称号[%s],若已获得过请无视这条提示";
         String MENU_TIP = "回复菜单前的数字，进入相应功能";
-        String NOW_VERSION = "当前版本：盛世凡音";
+        String NOW_VERSION = "当前版本：【盛世凡音】";
         String SEE_VERSION_TIP = "输入[A]可查看历史版本详情";
         Integer MAX_LEVEL = 25;
     }
@@ -198,6 +198,16 @@ public interface GameConsts {
         Integer WEAPON_LEVEL = 200;
         Integer WEAPON_MAX = 400;
         Integer HALF = 50;
+        // 人生赢家
+        Integer HAS_PHANTOM = 60;
+        // 小资生活
+        Integer HAS_MONEY_1 = 1000;
+        // 家缠万贯
+        Integer HAS_MONEY_2 = 10000;
+        // 富可敌国
+        Integer HAS_MONEY_3 = 100000;
+        // 珠光宝气
+        Integer HAS_WEAPON = 5;
     }
 
     interface Battle {
@@ -322,13 +332,14 @@ public interface GameConsts {
         String YES = "是";
         String NO = "否";
         String NOT_YES_NO = "请输入[是]或[否]";
-        String WAIT_ATTACH = "请输入要邮寄的物品与数量，按照格式[灵石*10]，物品名称不要输错哦";
-        String ERROR_ATTACH = "格式错误，请按照[灵石*10]的格式来输入物品与数量";
+        String WAIT_ATTACH = "请输入要邮寄的物品与数量，按照格式[唤灵符*10]，物品名称不要输错哦";
+        String ERROR_ATTACH = "格式错误，请按照[唤灵符*10]的格式来输入物品与数量";
         String ERROR_GOODS_NAME = "物品不存在，请检查名称是否正确后重新输入";
         String NUMBER_NOT = "你也没这么多了，少寄点吧(请重新输入)";
         String NUMBER_FORMAT_ERROR = "你又调皮了，数量要是数字格式的哦，重新输入吧~";
         String NUMBER_ZERO = "邮寄的物品数量不能为0，请重新输入";
         String NOT_HAVE = "你也没有这件物品哦，请重新输入";
         String HAS_ADD_ATTACH = "该物品在附件中已经有了，不要重复添加同一物品，请重新输入";
+        String SEND_SUCCESS = "发送成功!!";
     }
 }

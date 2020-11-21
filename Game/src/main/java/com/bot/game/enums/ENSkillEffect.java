@@ -33,6 +33,10 @@ public enum ENSkillEffect {
     D01("D01", "盗取对方一个buff", null, null),
     D02("D02", "取消一个deBuff", null, null),
 
+    U01("U01", "提升自己%10的攻击力", "buff", ENEffectType.PRE),
+    U02("U02", "提升自己%100的速度", "buff", ENEffectType.PRE),
+    U03("U03", "提升自己%30的防御", "buff", ENEffectType.PRE),
+
     W01("W01","翻天印","buff", ENEffectType.END),
     W02("W02","护灵甲","buff", ENEffectType.END),
     W03("W03","玄王佩","buff", ENEffectType.END),

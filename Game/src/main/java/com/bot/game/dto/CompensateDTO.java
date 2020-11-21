@@ -9,12 +9,10 @@ import lombok.Data;
 @Data
 public class CompensateDTO {
 
+    private String content;
+
     private String goodsId;
 
     private Integer number;
-
-    private Integer soulPowerStart;
-
-    private Integer soulPowerEnd;
 
 }

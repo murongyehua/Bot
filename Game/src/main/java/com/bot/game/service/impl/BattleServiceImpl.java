@@ -485,6 +485,39 @@ public class BattleServiceImpl extends CommonPlayer {
                 double tempC10 = phantom.getFinalSpeed() * 0.05;
                 phantom.setFinalSpeed(phantom.getFinalSpeed() - (int) tempC10);
                 break;
+            case D01:
+                if (another.getBuffs().size() > 0) {
+                    BattleEffectDTO battleEffectDTO = another.getBuffs().get(RandomUtil.randomInt(another.getBuffs().size()));
+                    phantom.getBuffs().add(battleEffectDTO);
+                    another.getBuffs().remove(battleEffectDTO);
+                    battleRecord.append(phantom.getName()).append("成功盗取了").append(another.getName()).append("的增益效果").append(StrUtil.CRLF);
+                }else {
+                    battleRecord.append(another.getName()).append("没有可供盗取的增益效果").append(StrUtil.CRLF);
+                }
+                break;
+            case D02:
+                if (phantom.getDeBuffs().size() > 0) {
+                    phantom.getDeBuffs().remove(RandomUtil.randomInt(phantom.getDeBuffs().size()));
+                    battleRecord.append(phantom.getName()).append("成功移除了一个负面效果").append(StrUtil.CRLF);
+                }else {
+                    battleRecord.append(phantom.getName()).append("没有需要移除的负面效果").append(StrUtil.CRLF);
+                }
+                break;
+            case U01:
+                double tempU01 = phantom.getFinalAttack() * 0.1;
+                phantom.setFinalAttack(phantom.getFinalAttack() + (int) tempU01);
+                battleRecord.append(phantom.getName()).append("的攻击力增加了").append((int) tempU01).append("点").append(StrUtil.CRLF);
+                break;
+            case U02:
+                double tempU02 = phantom.getFinalSpeed();
+                phantom.setFinalSpeed(phantom.getFinalSpeed() + (int) tempU02);
+                battleRecord.append(phantom.getName()).append("的速度增加了").append((int) tempU02).append("点").append(StrUtil.CRLF);
+                break;
+            case U03:
+                double tempU03 = phantom.getFinalDefense() * 0.3;
+                phantom.setFinalDefense(phantom.getFinalDefense() + (int) tempU03);
+                battleRecord.append(phantom.getName()).append("的防御增加了").append((int) tempU03).append("点").append(StrUtil.CRLF);
+                break;
                 default:
                     break;
         }
@@ -568,6 +601,12 @@ public class BattleServiceImpl extends CommonPlayer {
         int number = 1;
         CommonPlayer.addPlayerGoods(baseGoods.getId(), playerDto.getPlayerId(), number);
         int money = CommonPlayer.getBoosMoney(this.allHurt);
+        if (this.allHurt > 5500) {
+            if (!CommonPlayer.isAppellationExist(ENAppellation.A08, playerDto.getPlayerId())) {
+                CommonPlayer.addAppellation(ENAppellation.A08, playerDto.getPlayerId());
+                stringBuilder.append("恭喜你，获得了[").append(ENAppellation.A08.getAppellation()).append("]的称号!!");
+            }
+        }
         CommonPlayer.addOrSubMoney(playerDto.getPlayerId(), money);
         stringBuilder.append(String.format(GameConsts.Battle.BOOS_RESULT, this.allHurt, baseGoods.getName(),
                 ENGoodEffect.getByValue(baseGoods.getEffect()).getLabel(), money)).append(StrUtil.CRLF);

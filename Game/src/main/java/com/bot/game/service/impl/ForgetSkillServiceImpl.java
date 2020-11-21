@@ -47,7 +47,7 @@ public class ForgetSkillServiceImpl extends CommonPlayer{
         skillList.remove(baseSkill.getId());
         playerPhantom.setSkills(StringUtils.join(skillList, StrUtil.C_COMMA));
         playerPhantomMapper.updateByPrimaryKey(playerPhantom);
-        CommonPlayer.afterUseGoods(playerGoods);
+        CommonPlayer.afterUseGoods(playerGoods, 1);
         int nowNumber = goodsDetailDTO.getNumber() - 1;
         goodsDetailDTO.setNumber(Math.max(nowNumber, 0));
         return GameConsts.MyKnapsack.SKILL_FORGET_SUCCESS;

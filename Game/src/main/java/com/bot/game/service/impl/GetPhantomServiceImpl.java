@@ -28,9 +28,9 @@ public class GetPhantomServiceImpl extends CommonPlayer {
 
     private PlayerGoods playerGoods;
 
-    private final static Integer[] BEST_NUMBER = {30,3};
-    private final static Integer[] GREAT_NUMBER = {27,29,5,4};
-    private final static Integer[] GOOD_NUMBER = {6,7,8,9,10,11};
+    private final static Integer[] BEST_NUMBER = {30,29,3,4,5};
+    private final static Integer[] GREAT_NUMBER = {14,24,25,26,27,28};
+    private final static Integer[] GOOD_NUMBER = {6,7,8,9,10,11,12,13};
 
     public GetPhantomServiceImpl(String title, PlayerGoods playerGoods ) {
         this.title = title;
@@ -117,6 +117,11 @@ public class GetPhantomServiceImpl extends CommonPlayer {
                 // 获得称号
                 CommonPlayer.addAppellation(ENAppellation.A02, token);
                 stringBuilder.append(String.format(GameConsts.CommonTip.GET_APPELLATION, ENAppellation.A02.getAppellation())).append(StrUtil.CRLF);
+            }
+            if (allPhantom.size() + 1 == GameConsts.BaseFigure.HAS_PHANTOM) {
+                // 获得称号
+                CommonPlayer.addAppellation(ENAppellation.A04, token);
+                stringBuilder.append(String.format(GameConsts.CommonTip.GET_APPELLATION, ENAppellation.A04.getAppellation())).append(StrUtil.CRLF);
             }
             stringBuilder.append(GameConsts.GetPhantom.GET_2).append(StrUtil.CRLF);
             stringBuilder.append(GameConsts.CommonTip.TURN_BACK_ORCONTINU);
