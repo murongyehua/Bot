@@ -108,7 +108,7 @@ public class SendMessageServiceImpl extends CommonPlayer {
         String temp = StrUtil.EMPTY;
         if (!CommonPlayer.isAppellationExist(ENAppellation.A11, token)) {
             CommonPlayer.addAppellation(ENAppellation.A11, token);
-            temp = "恭喜你，获得了[" + ENAppellation.A11 + "]的称号!!";
+            temp = "恭喜你，获得了[" + ENAppellation.A11.getAppellation() + "]的称号!!";
         }
         return temp + GameConsts.Message.SEND_SUCCESS;
     }

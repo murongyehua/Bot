@@ -210,6 +210,8 @@ public class CommonPlayer implements Player {
             PlayerAppellation param = new PlayerAppellation();
             param.setId(IdUtil.simpleUUID());
             param.setGetTime(new Date());
+            param.setAppellation(enAppellation.getAppellation());
+            param.setPlayerId(token);
             playerAppellationMapper.insert(param);
         }
     }
