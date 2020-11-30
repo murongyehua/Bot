@@ -70,6 +70,9 @@ public class UseGoodsPrinter extends Menu {
             case WAN_7:
                 this.useAddActionPoint(stringBuilder, token, 10, ENGoodEffect.WAN_7);
                 break;
+            case WAN_8:
+                this.addResetAttribute(stringBuilder, token);
+                break;
                 default:
                     break;
         }
@@ -161,6 +164,17 @@ public class UseGoodsPrinter extends Menu {
         List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectAllCarried(param);
         for (int index=0; index < playerPhantoms.size(); index++) {
             this.menuChildrenMap.put(String.valueOf(index + 1), new UseResetAttributePrinter(playerPhantoms.get(index), goodsDetailDTO));
+        }
+    }
+
+    private void addResetAttribute(StringBuilder stringBuilder, String token) {
+        stringBuilder.append(GameConsts.MyKnapsack.CHOOSE_ADD);
+        PlayerPhantomMapper playerPhantomMapper = (PlayerPhantomMapper) mapperMap.get(GameConsts.MapperName.PLAYER_PHANTOM);
+        PlayerPhantom param = new PlayerPhantom();
+        param.setPlayerId(token);
+        List<PlayerPhantom> playerPhantoms = playerPhantomMapper.selectAllCarried(param);
+        for (int index=0; index < playerPhantoms.size(); index++) {
+            this.menuChildrenMap.put(String.valueOf(index + 1), new AddResetAttributePrinter(playerPhantoms.get(index), goodsDetailDTO));
         }
     }
 

@@ -461,11 +461,17 @@ public class BattleServiceImpl extends CommonPlayer {
                 break;
             case C06:
                 double tempC06 = phantom.getHp() * 0.02;
+                if (tempC06 > another.getFinalAttack() * 3.5) {
+                    tempC06 = another.getFinalAttack() * 3.5;
+                }
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempC06);
                 battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append((int) tempC06).append("点").append(StrUtil.CRLF);
                 break;
             case C07:
                 double tempC07 = phantom.getFinalHp() * 0.05;
+                if (tempC07 > another.getFinalAttack() * 3.5) {
+                    tempC07 = another.getFinalAttack() * 3.5;
+                }
                 phantom.setFinalHp(phantom.getFinalHp() - (int) tempC07);
                 battleRecord.append("DOT触发,").append(phantom.getName()).append("扣除血量").append((int) tempC07).append("点").append(StrUtil.CRLF);
                 break;

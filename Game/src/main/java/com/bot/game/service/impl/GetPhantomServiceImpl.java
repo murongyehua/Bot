@@ -28,9 +28,9 @@ public class GetPhantomServiceImpl extends CommonPlayer {
 
     private PlayerGoods playerGoods;
 
-    private final static Integer[] BEST_NUMBER = {30,29,3,4,5};
-    private final static Integer[] GREAT_NUMBER = {14,24,25,26,27,28};
-    private final static Integer[] GOOD_NUMBER = {6,7,8,9,10,11,12,13};
+    private final static Integer[] BEST_NUMBER = {30,29,28,27,3,4,5,6};
+    private final static Integer[] GREAT_NUMBER = {7,8,9,23,24,25,26};
+    private final static Integer[] GOOD_NUMBER = {10,11,12,13,14,15};
 
     public GetPhantomServiceImpl(String title, PlayerGoods playerGoods ) {
         this.title = title;
