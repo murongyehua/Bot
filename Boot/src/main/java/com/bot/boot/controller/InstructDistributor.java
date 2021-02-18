@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.WeChatResp;
 import com.bot.base.dto.WeChatRespData;
 import com.bot.base.service.Distributor;
+import com.bot.common.enums.ENFileType;
 import com.bot.common.util.TextUtil;
 import com.bot.game.dto.ResultContext;
 import com.bot.game.service.CheckReg;
@@ -72,32 +73,56 @@ public class InstructDistributor {
         String dataType = (String) data.get("data_type");
         String token = (String) data.get("from_wxid");
         String sendUserName = (String) data.get("from_nickname");
-        String msg = (String) data.get("msg");
+        String msg = ((String) data.get("msg")).trim();
         if ("1".equals(dataType)) {
             if ("msg::single".equals(type)) {
                 log.info("接收到微信私人消息[{}]，发送人[{}]", msg, token);
-                String response = distributor.doDistributeWithString(msg, token);
-                WeChatRespData[] weChatRespData = new WeChatRespData[]{new WeChatRespData()};
-                resp.setData(weChatRespData);
-                resp.getData()[0].setCl(1);
-                resp.setTo_user(token);
-                resp.getData()[0].setMsg(response);
+                if (msg.contains(ENFileType.HELP_IMG.getLabel())) {
+                    this.getFileResp(resp, token, 2, distributor.doDistributeWithFilePath(ENFileType.HELP_IMG));
+                }else if (msg.contains(ENFileType.GAME_FILE.getLabel())) {
+                    this.getFileResp(resp, token, 5, distributor.doDistributeWithFilePath(ENFileType.GAME_FILE));
+                }else {
+                    String response = distributor.doDistributeWithString(msg, token);
+                    this.getMsgResp(resp, token, response);
+                }
             }else if ("msg::chatroom".equals(type) && msg.startsWith("@小林Bot")){
                 String chatRoom = (String) data.get("from_chatroom_wxid");
                 String sendUser = (String) data.get("from_member_wxid");
                 log.info("接收到微信群消息[{}]，发送人[{}]", msg, sendUser);
                 msg = msg.split("\\?")[1];
                 log.info("截取后的消息: [{}]", msg);
-                String response = distributor.doDistributeWithString(msg, sendUser);
-                WeChatRespData[] weChatRespData = new WeChatRespData[]{new WeChatRespData()};
-                resp.setData(weChatRespData);
-                resp.getData()[0].setCl(1);
-                resp.setTo_user(chatRoom);
-                resp.getData()[0].setAt_someone(sendUser);
-                resp.getData()[0].setMsg(response);
+                if (msg.contains(ENFileType.HELP_IMG.getLabel())) {
+                    this.getFileResp(resp, chatRoom, 2, distributor.doDistributeWithFilePath(ENFileType.HELP_IMG));
+                }else if (msg.contains(ENFileType.GAME_FILE.getLabel())) {
+                    this.getFileResp(resp, chatRoom, 5, distributor.doDistributeWithFilePath(ENFileType.GAME_FILE));
+                }else {
+                    String response = distributor.doDistributeWithString(msg, sendUser);
+                    this.getMsgResp(resp, chatRoom, response);
+                    resp.getData()[0].setAt_someone(sendUser);
+                }
             }
         }
         return JSONUtil.toJsonStr(JSONUtil.parseObj(resp));
+    }
+
+    private void getMsgResp(WeChatResp resp, String toUser, String msg) {
+        WeChatRespData[] weChatRespData = new WeChatRespData[]{new WeChatRespData()};
+        resp.setData(weChatRespData);
+        resp.getData()[0].setCl(1);
+        resp.setTo_user(toUser);
+        resp.getData()[0].setMsg(msg);
+    }
+
+    private void getFileResp(WeChatResp resp, String toUser, int type, String filePath) {
+        WeChatRespData[] weChatRespData = new WeChatRespData[]{new WeChatRespData()};
+        resp.setData(weChatRespData);
+        resp.getData()[0].setCl(type);
+        resp.setTo_user(toUser);
+        if (type == 2) {
+            resp.getData()[0].setImg_abspath(filePath);
+        }else {
+            resp.getData()[0].setFile_abspath(filePath);
+        }
     }
 
     @PostMapping("/test")

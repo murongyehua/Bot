@@ -1,9 +1,11 @@
 package com.bot.base.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.base.chain.Collector;
 import com.bot.base.chain.Menu;
 import com.bot.base.service.BaseService;
+import com.bot.common.enums.ENFileType;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.base.service.Distributor;
 import com.bot.base.service.SystemManager;
@@ -15,6 +17,7 @@ import com.bot.base.commom.MessageSender;
 import com.bot.game.service.GameHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -48,6 +51,12 @@ public class DistributorServiceImpl implements Distributor {
     @Autowired
     private GameHandler gameHandler;
 
+    @Value("${help.img.path}")
+    private String helpImgPath;
+
+    @Value("${game.file.path}")
+    private String gameFilePath;
+
     private final static Map<String, String> GAME_TOKENS = new HashMap<>();
 
     @Override
@@ -79,6 +88,18 @@ public class DistributorServiceImpl implements Distributor {
             log.error("目标[{}],响应异常", token, e);
         }
         return null;
+    }
+
+    @Override
+    public String doDistributeWithFilePath(ENFileType enFileType) {
+        switch (enFileType) {
+            case HELP_IMG:
+                return helpImgPath;
+            case GAME_FILE:
+                return gameFilePath;
+            default:
+                return StrUtil.EMPTY;
+        }
     }
 
     private String req2Resp(String reqContent, String token) {

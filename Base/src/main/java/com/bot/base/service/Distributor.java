@@ -1,5 +1,7 @@
 package com.bot.base.service;
 
+import com.bot.common.enums.ENFileType;
+
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -22,5 +24,7 @@ public interface Distributor {
      * @param token
      */
     String doDistributeWithString(String reqContent, String token);
+
+    String doDistributeWithFilePath(ENFileType enFileType);
 
 }

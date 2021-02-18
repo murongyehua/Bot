@@ -16,5 +16,7 @@ public class WeChatRespData {
     private String at_someone;
     private Integer cl;
     private String msg;
+    private String img_abspath;
+    private String file_abspath;
 
 }
