@@ -102,6 +102,7 @@ public class InstructDistributor {
                 }
             }
         }
+        log.info(JSONUtil.toJsonStr(JSONUtil.parseObj(resp)));
         return JSONUtil.toJsonStr(JSONUtil.parseObj(resp));
     }
 
@@ -114,14 +115,16 @@ public class InstructDistributor {
     }
 
     private void getFileResp(WeChatResp resp, String toUser, int type, String filePath) {
-        WeChatRespData[] weChatRespData = new WeChatRespData[]{new WeChatRespData()};
+        WeChatRespData[] weChatRespData = new WeChatRespData[]{new WeChatRespData(), new WeChatRespData()};
         resp.setData(weChatRespData);
-        resp.getData()[0].setCl(type);
+        resp.getData()[0].setCl(1);
+        resp.getData()[0].setMsg("");
+        resp.getData()[1].setCl(type);
         resp.setTo_user(toUser);
         if (type == 2) {
-            resp.getData()[0].setImg_abspath(filePath);
+            resp.getData()[1].setImg_abspath(filePath);
         }else {
-            resp.getData()[0].setFile_abspath(filePath);
+            resp.getData()[1].setFile_abspath(filePath);
         }
     }
 

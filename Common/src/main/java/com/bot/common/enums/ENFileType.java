@@ -11,7 +11,7 @@ public enum ENFileType {
 
     //
     HELP_IMG("0", "功能大全"),
-    GAME_FILE("1", "游戏文件");
+    GAME_FILE("1", "游戏文件下载");
 
     private String value;
 
