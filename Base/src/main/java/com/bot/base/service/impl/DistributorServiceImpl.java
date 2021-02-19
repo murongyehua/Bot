@@ -2,6 +2,7 @@ package com.bot.base.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.bot.base.chain.Collector;
 import com.bot.base.chain.Menu;
 import com.bot.base.service.BaseService;
@@ -14,6 +15,7 @@ import com.bot.common.enums.ENUserGameStatus;
 import com.bot.common.enums.ENYesOrNo;
 import com.bot.common.exception.BotException;
 import com.bot.base.commom.MessageSender;
+import com.bot.common.util.HttpSenderUtil;
 import com.bot.game.service.GameHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

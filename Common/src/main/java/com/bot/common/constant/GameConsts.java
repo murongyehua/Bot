@@ -11,7 +11,7 @@ public interface GameConsts {
     interface CommonTip {
         String EXIT_SUCCESS = "退出成功";
         String REG_TIP = "检测到您是第一次进入游戏，请输入昵称完成注册：";
-        String LOGIN_TIP = "欢迎回来,[%s],回复数字【1】进入游戏,当前公告："+ StrUtil.CRLF + "新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "1.2.9.1版本更新内容\n" +
+        String LOGIN_TIP = "欢迎回来,[%s],回复数字【1】进入游戏,当前公告："+ StrUtil.CRLF + "新用户注册登录即送3张唤灵符" + StrUtil.CRLF + "1.2.10.0版本更新内容\n" +
                 "【基础变更】\n" +
                 "1. 所有百分比伤害设置了伤害上限，最多造成3.5倍伤害(反弹伤害除外)\n" +
                 "2. 世界boos伤害削弱\n" +

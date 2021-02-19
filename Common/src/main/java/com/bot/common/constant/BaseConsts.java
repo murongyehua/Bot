@@ -147,4 +147,8 @@ public interface BaseConsts {
         String ILL_REX_3 = "）";
     }
 
+    interface Picture {
+        String SUFFIX = "头像";
+    }
+
 }

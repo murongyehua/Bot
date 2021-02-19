@@ -83,7 +83,11 @@ public class InstructDistributor {
                     this.getFileResp(resp, token, 5, distributor.doDistributeWithFilePath(ENFileType.GAME_FILE));
                 }else {
                     String response = distributor.doDistributeWithString(msg, token);
-                    this.getMsgResp(resp, token, response);
+                    if (response != null && response.startsWith("http")) {
+                        this.getFileResp(resp, token, 2, response);
+                    }else {
+                        this.getMsgResp(resp, token, response);
+                    }
                 }
             }else if ("msg::chatroom".equals(type) && msg.startsWith("@小林Bot")){
                 String chatRoom = (String) data.get("from_chatroom_wxid");
@@ -97,8 +101,13 @@ public class InstructDistributor {
                     this.getFileResp(resp, chatRoom, 5, distributor.doDistributeWithFilePath(ENFileType.GAME_FILE));
                 }else {
                     String response = distributor.doDistributeWithString(msg, sendUser);
-                    this.getMsgResp(resp, chatRoom, response);
-                    resp.getData()[0].setAt_someone(sendUser);
+                    if (response!= null && response.startsWith("http")) {
+                        this.getFileResp(resp, chatRoom, 2, response);
+                    }else {
+                        this.getMsgResp(resp, chatRoom, response);
+                        resp.getData()[0].setAt_someone(sendUser);
+                    }
+
                 }
             }
         }

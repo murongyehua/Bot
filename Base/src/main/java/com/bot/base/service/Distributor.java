@@ -25,6 +25,11 @@ public interface Distributor {
      */
     String doDistributeWithString(String reqContent, String token);
 
+    /**
+     * 返回文件
+     * @param enFileType
+     * @return
+     */
     String doDistributeWithFilePath(ENFileType enFileType);
 
 }

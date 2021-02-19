@@ -4,3 +4,4 @@
 情话=sweetServiceImpl
 音乐,歌=cloudMusicServiceImpl
 投票=voteServiceImpl
+头像,男头,女头=pictureServiceImpl
