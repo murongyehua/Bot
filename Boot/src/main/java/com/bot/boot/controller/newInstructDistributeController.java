@@ -59,22 +59,23 @@ public class newInstructDistributeController {
         // 群聊
         if (StrUtil.equals("80001", messageType)) {
             if (msg.startsWith("@小林Bot")) {
+                log.info(String.format("消息体：%s", message));
                 log.info(String.format("收到群消息: %s", msg));
                 String groupId = (String) data.get("fromGroup");
-                String effectMsg = msg.split("\\?")[1];
+                String effectMsg = msg.split("\u2005")[1];
                 if (effectMsg.contains(ENFileType.HELP_IMG.getLabel())) {
-                    SendMsgUtil.sendGroupMsg(groupId, helpImg, userId);
+                    SendMsgUtil.sendImg(groupId, helpImg);
                     return;
                 }
                 if (effectMsg.contains(ENFileType.GAME_FILE.getLabel())) {
-                    SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，如果有需要请联系我主人哦~", userId);
+                    SendMsgUtil.sendMsg(groupId, "游戏pc端已停止维护，不再提供下载，如果有需要请联系我主人哦~");
                     return;
                 }
                 String resp = distributor.doDistributeWithString(effectMsg, userId);
                 if (resp != null && resp.startsWith("http")) {
-                    SendMsgUtil.sendMsg(groupId, resp);
+                    SendMsgUtil.sendImg(groupId, resp);
                 }else {
-                    SendMsgUtil.sendGroupMsg(groupId, resp, userId);
+                    SendMsgUtil.sendMsg(groupId, resp);
                 }
             }
         }
