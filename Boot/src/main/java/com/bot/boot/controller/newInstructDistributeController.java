@@ -67,7 +67,7 @@ public class newInstructDistributeController {
                     SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，如果有需要请联系我主人哦~", userId);
                     return;
                 }
-                String resp = distributor.doDistributeWithString(msg, userId);
+                String resp = distributor.doDistributeWithString(effectMsg, userId);
                 if (resp != null && resp.startsWith("http")) {
                     SendMsgUtil.sendMsg(groupId, resp);
                 }else {
