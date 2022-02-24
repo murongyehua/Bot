@@ -7,6 +7,7 @@ import com.bot.base.service.Distributor;
 import com.bot.common.enums.ENFileType;
 import com.bot.common.util.SendMsgUtil;
 import com.bot.game.service.SystemConfigHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/newInstruct")
+@Slf4j
 public class newInstructDistributeController {
 
     @Resource
@@ -57,6 +59,7 @@ public class newInstructDistributeController {
         // 群聊
         if (StrUtil.equals("80001", messageType)) {
             if (msg.startsWith("@小林Bot")) {
+                log.info(String.format("收到群消息: %s", msg));
                 String groupId = (String) data.get("fromGroup");
                 String effectMsg = msg.split("\\?")[1];
                 if (effectMsg.contains(ENFileType.HELP_IMG.getLabel())) {
