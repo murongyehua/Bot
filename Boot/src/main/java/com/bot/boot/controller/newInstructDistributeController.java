@@ -58,7 +58,7 @@ public class newInstructDistributeController {
         if (StrUtil.equals("80001", messageType)) {
             if (msg.startsWith("@小林Bot")) {
                 String groupId = (String) data.get("fromGroup");
-                String effectMsg = msg.replaceAll("@小林Bot", "");
+                String effectMsg = msg.split("\\?")[1];
                 if (effectMsg.contains(ENFileType.HELP_IMG.getLabel())) {
                     SendMsgUtil.sendGroupMsg(groupId, helpImg, userId);
                     return;

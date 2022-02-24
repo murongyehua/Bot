@@ -1,5 +1,6 @@
 package com.bot.common.util;
 
+import com.bot.common.config.SystemConfigCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -61,7 +62,7 @@ public class HttpSenderUtil {
     }
 
     public static String httpPost(String url, HttpEntity reqEntity) {
-    	CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
         String result = "";
         HttpPost httppost = new HttpPost(url);
         httppost.setConfig(defaultConfig);
@@ -117,7 +118,7 @@ public class HttpSenderUtil {
             throw new Exception("请求失败");
         }
     }
-    
+
     /**
      * post xmlData
      *
@@ -128,16 +129,16 @@ public class HttpSenderUtil {
      * @author raozj  v1.0   2017年11月20日
      */
     public static String postXmlDataWithSSLContext(String url, String xmlData) throws Exception {
-    	//采用绕过验证的方式处理https请求  
-        SSLContext sslcontext = createIgnoreVerifySSL();  
-          
-		// 设置协议http和https对应的处理socket链接工厂的对象
-		Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
-				.register("http", PlainConnectionSocketFactory.INSTANCE)
-				.register("https", new SSLConnectionSocketFactory(sslcontext)).build();
-		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        //采用绕过验证的方式处理https请求
+        SSLContext sslcontext = createIgnoreVerifySSL();
+
+        // 设置协议http和https对应的处理socket链接工厂的对象
+        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .register("https", new SSLConnectionSocketFactory(sslcontext)).build();
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         HttpClients.custom().setConnectionManager(connManager).build();
-        CloseableHttpClient client = HttpClients.createDefault(); 
+        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(url);
         post.setConfig(defaultConfig);
         post.addHeader("Content-Type", "text/xml");
@@ -154,7 +155,7 @@ public class HttpSenderUtil {
             throw new Exception("请求失败");
         }
     }
-    
+
     /**
      * post jsonData
      *
@@ -169,6 +170,7 @@ public class HttpSenderUtil {
         HttpPost post = new HttpPost(url);
         post.setConfig(defaultConfig);
         post.addHeader("Content-Type", "application/json");
+        post.addHeader("Authorization", SystemConfigCache.token);
         StringEntity stringEntity = new StringEntity(jsonData, CHARSET);
         stringEntity.setContentEncoding(CHARSET);
         post.setEntity(stringEntity);
@@ -182,7 +184,7 @@ public class HttpSenderUtil {
             throw new Exception("请求失败");
         }
     }
-    
+
     /**
      * post xmlData
      *
@@ -282,7 +284,7 @@ public class HttpSenderUtil {
         }
         return null;
     }
-    
+
     /**
      * post key-value对
      * @param url
@@ -292,10 +294,10 @@ public class HttpSenderUtil {
      * @author raozj  v1.0   2018年4月17日
      */
     public static String postNameValuePairs(String url, Map<String, String> params) throws Exception{
-    	HttpClient httpclient = HttpClients.createDefault();
+        HttpClient httpclient = HttpClients.createDefault();
         HttpPost post = new HttpPost(url);
         post.setConfig(defaultConfig);
-    	if(null != params) {
+        if(null != params) {
             List<NameValuePair> nvps = new ArrayList<NameValuePair>();
             for (String name : params.keySet()) {
                 nvps.add(new BasicNameValuePair(name, params.get(name)));
@@ -305,8 +307,8 @@ public class HttpSenderUtil {
             u.setContentEncoding(CHARSET);
             post.setEntity(u);
         }
-    	HttpResponse response = httpclient.execute(post);
-    	if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+        HttpResponse response = httpclient.execute(post);
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             String result = EntityUtils.toString(response.getEntity(), "UTF-8");
             return result;
         } else {
@@ -314,39 +316,39 @@ public class HttpSenderUtil {
             throw new Exception("请求失败");
         }
     }
-    
-    /** 
-     * 绕过验证 
-     *   
-     * @return 
-     * @throws NoSuchAlgorithmException  
-     * @throws KeyManagementException  
-     */  
-    public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException {  
-        SSLContext sc = SSLContext.getInstance("SSLv3");  
-      
-        // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法  
-        X509TrustManager trustManager = new X509TrustManager() {  
-            @Override  
-            public void checkClientTrusted(  
-                    java.security.cert.X509Certificate[] paramArrayOfX509Certificate,  
-                    String paramString) throws CertificateException {  
-            }  
-      
-            @Override  
-            public void checkServerTrusted(  
-                    java.security.cert.X509Certificate[] paramArrayOfX509Certificate,  
-                    String paramString) throws CertificateException {  
-            }  
-      
-            @Override  
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {  
-                return null;  
-            }  
-        };  
-      
-        sc.init(null, new TrustManager[] { trustManager }, null);  
-        return sc;  
+
+    /**
+     * 绕过验证
+     *
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException
+     */
+    public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sc = SSLContext.getInstance("SSLv3");
+
+        // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法
+        X509TrustManager trustManager = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(
+                    java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
+                    String paramString) throws CertificateException {
+            }
+
+            @Override
+            public void checkServerTrusted(
+                    java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
+                    String paramString) throws CertificateException {
+            }
+
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        sc.init(null, new TrustManager[] { trustManager }, null);
+        return sc;
     }
 
     public static String nativePost(String url, String param) throws IOException {
@@ -393,47 +395,48 @@ public class HttpSenderUtil {
         }
         return result;
     }
-    
+
     /**
-	 * 下载指定地址的文件到本地
-	 *
-	 * @param downLoadUrl 文件地址
-	 * @param expectPath 本地文件路径
-	 * @throws IOException
-	 */
-	public static void download(String downLoadUrl, String expectPath) throws IOException {
-		URL url = null;
-		HttpURLConnection httpUrlConnection = null;
-		InputStream fis = null;
-		FileOutputStream fos = null;
-		try {
-			url = new URL(downLoadUrl);
-			httpUrlConnection = (HttpURLConnection) url.openConnection();
-			httpUrlConnection.setConnectTimeout(5 * 1000);
-			httpUrlConnection.setDoInput(true);
-			httpUrlConnection.setDoOutput(true);
-			httpUrlConnection.setUseCaches(false);
-			httpUrlConnection.setRequestMethod("GET");
-			httpUrlConnection.setRequestProperty("Charsert", "UTF-8");
-			httpUrlConnection.connect();
-			fis = httpUrlConnection.getInputStream();
-			byte[] temp = new byte[1024];
-			int b;
-			fos = new FileOutputStream(new File(expectPath));
-			while ((b = fis.read(temp)) != -1) {
-				fos.write(temp, 0, b);
-				fos.flush();
-			}
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			try {
-				if (fis != null) {fis.close();}
-				if (fos != null) {fos.close();}
-				if (httpUrlConnection != null){ httpUrlConnection.disconnect();}
-			} catch (IOException e) {
-				log.error("下载异常：", e);
-			}
-		}
-	}
+     * 下载指定地址的文件到本地
+     *
+     * @param downLoadUrl 文件地址
+     * @param expectPath 本地文件路径
+     * @throws IOException
+     */
+    public static void download(String downLoadUrl, String expectPath) throws IOException {
+        URL url = null;
+        HttpURLConnection httpUrlConnection = null;
+        InputStream fis = null;
+        FileOutputStream fos = null;
+        try {
+            url = new URL(downLoadUrl);
+            httpUrlConnection = (HttpURLConnection) url.openConnection();
+            httpUrlConnection.setConnectTimeout(5 * 1000);
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.setRequestMethod("GET");
+            httpUrlConnection.setRequestProperty("Charsert", "UTF-8");
+            httpUrlConnection.connect();
+            fis = httpUrlConnection.getInputStream();
+            byte[] temp = new byte[1024];
+            int b;
+            fos = new FileOutputStream(new File(expectPath));
+            while ((b = fis.read(temp)) != -1) {
+                fos.write(temp, 0, b);
+                fos.flush();
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                if (fis != null) {fis.close();}
+                if (fos != null) {fos.close();}
+                if (httpUrlConnection != null){ httpUrlConnection.disconnect();}
+            } catch (IOException e) {
+                log.error("下载异常：", e);
+            }
+        }
+    }
+
 }
