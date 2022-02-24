@@ -25,6 +25,7 @@ public class SystemConfigHolder {
         SystemConfigCache.baseUrl = configMap.get(ENSystemConfig.BASE_URL.getValue());
         SystemConfigCache.wId = configMap.get(ENSystemConfig.WID.getValue());
         SystemConfigCache.token = configMap.get(ENSystemConfig.TOKEN.getValue());
+        SystemConfigCache.inviteCode = configMap.get(ENSystemConfig.INVITE_CODE.getValue());
     }
 
 }
