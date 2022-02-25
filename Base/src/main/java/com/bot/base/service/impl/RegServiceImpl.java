@@ -55,6 +55,8 @@ public class RegServiceImpl implements RegService {
         if (ObjectUtil.notEqual(SystemConfigCache.tempInviteCode, inviteCode)) {
             return BaseConsts.SystemManager.INVITE_CODE_ERROR;
         }
+        // 清除邀请码
+        SystemConfigCache.tempInviteCode = "";
         // 先看之前是否用过
         if (SystemConfigCache.userDateMap.containsKey(activeId)) {
             // 用过 需要根据之前的过期时间来判断从哪个时间上加
