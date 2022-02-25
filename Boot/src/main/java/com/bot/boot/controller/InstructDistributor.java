@@ -82,7 +82,7 @@ public class InstructDistributor {
                 }else if (msg.contains(ENFileType.GAME_FILE.getLabel())) {
                     this.getFileResp(resp, token, 5, distributor.doDistributeWithFilePath(ENFileType.GAME_FILE));
                 }else {
-                    String response = distributor.doDistributeWithString(msg, token);
+                    String response = distributor.doDistributeWithString(msg, token, null);
                     if (response != null && response.startsWith("http")) {
                         this.getFileResp(resp, token, 2, response);
                     }else {
@@ -100,7 +100,7 @@ public class InstructDistributor {
                 }else if (msg.contains(ENFileType.GAME_FILE.getLabel())) {
                     this.getFileResp(resp, chatRoom, 5, distributor.doDistributeWithFilePath(ENFileType.GAME_FILE));
                 }else {
-                    String response = distributor.doDistributeWithString(msg, sendUser);
+                    String response = distributor.doDistributeWithString(msg, sendUser, null);
                     if (response!= null && response.startsWith("http")) {
                         this.getFileResp(resp, chatRoom, 2, response);
                     }else {
@@ -140,13 +140,13 @@ public class InstructDistributor {
     @PostMapping("/test")
     public String test(String msg) {
         String token = "test123";
-        return distributor.doDistributeWithString(msg, token);
+        return distributor.doDistributeWithString(msg, token, null);
     }
 
     @PostMapping("/testOther")
     public String testOther(String msg) {
         String token = "test321";
-        return distributor.doDistributeWithString(msg, token);
+        return distributor.doDistributeWithString(msg, token, null);
     }
 
     @PostMapping("/checkReg")
@@ -162,7 +162,7 @@ public class InstructDistributor {
 
     @PostMapping("/client")
     public String clientGame(String token, String msg) {
-        return distributor.doDistributeWithString(msg, token);
+        return distributor.doDistributeWithString(msg, token, null);
     }
 
 }

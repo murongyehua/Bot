@@ -6,7 +6,10 @@ import cn.hutool.http.HttpUtil;
 import com.bot.base.chain.Collector;
 import com.bot.base.chain.Menu;
 import com.bot.base.service.BaseService;
+import com.bot.base.service.RegService;
+import com.bot.common.config.SystemConfigCache;
 import com.bot.common.enums.ENFileType;
+import com.bot.common.enums.ENRegType;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.base.service.Distributor;
 import com.bot.base.service.SystemManager;
@@ -21,7 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +59,9 @@ public class DistributorServiceImpl implements Distributor {
     @Autowired
     private GameHandler gameHandler;
 
+    @Resource
+    private RegService regService;
+
     @Value("${help.img.path}")
     private String helpImgPath;
 
@@ -65,7 +74,7 @@ public class DistributorServiceImpl implements Distributor {
     public void doDistribute(HttpServletResponse response, String reqContent, String token) {
         try{
             response.setCharacterEncoding("utf-8");
-            String resp = this.req2Resp(reqContent, token);
+            String resp = this.req2Resp(reqContent, token, null);
             log.info("回复[{}],[{}]", token, resp);
             if (resp.contains(BaseConsts.Distributor.AND_REG)) {
                 String[] responseContents = resp.split(BaseConsts.Distributor.AND_REG);
@@ -81,9 +90,14 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     @Override
-    public String doDistributeWithString(String reqContent, String token) {
+    public String doDistributeWithString(String reqContent, String token, String groupId) {
         try{
-            String resp = this.req2Resp(reqContent, token);
+            // 判断用户状态
+            String checkResult = this.checkUserStatus(groupId == null ? token : groupId);
+            if (checkResult != null) {
+                return checkResult;
+            }
+            String resp = this.req2Resp(reqContent, token, groupId);
             log.info("回复[{}],[{}]", token, resp);
             return resp;
         }catch (Exception e) {
@@ -104,7 +118,7 @@ public class DistributorServiceImpl implements Distributor {
         }
     }
 
-    private String req2Resp(String reqContent, String token) {
+    private String req2Resp(String reqContent, String token, String groupId) {
         // 判断是不是进入管理模式
         if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {
             return SystemManager.tryIntoManager(token);
@@ -113,12 +127,23 @@ public class DistributorServiceImpl implements Distributor {
         if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
             return systemManager.managerDistribute(reqContent);
         }
+        // 开通服务
+        if (reqContent.startsWith(BaseConsts.SystemManager.TEMP_REG_PREFIX)) {
+            return regService.tryTempReg(groupId == null ? token : groupId,
+                    reqContent.replaceAll(BaseConsts.SystemManager.TEMP_REG_PREFIX, StrUtil.EMPTY),
+                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP);
+        }
+        if (reqContent.startsWith(BaseConsts.SystemManager.REG_PREFIX)) {
+            return regService.tryReg(groupId == null ? token : groupId,
+                    reqContent.replaceAll(BaseConsts.SystemManager.REG_PREFIX, StrUtil.EMPTY),
+                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP);
+        }
         // 获取token
         if (BaseConsts.SystemManager.GET_TOKEN.equals(reqContent)) {
             return token;
         }
         // 是不是处于游戏模式
-        if (GAME_TOKENS.keySet().contains(token)) {
+        if (GAME_TOKENS.containsKey(token)) {
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.JOINED.getValue()) && BaseConsts.SystemManager.EXIT_GAME.equals(reqContent)) {
                 // 退出游戏模式
                 GAME_TOKENS.remove(token);
@@ -210,6 +235,14 @@ public class DistributorServiceImpl implements Distributor {
         List<String> responses = CommonTextLoader.someResponseMap.get(keyword);
         int index = RandomUtil.randomInt(0, responses.size());
         return responses.get(index);
+    }
+
+    private String checkUserStatus(String activeId) {
+        Date deadLineDate = SystemConfigCache.userDateMap.get(activeId);
+        if (deadLineDate == null || deadLineDate.before(new Date())) {
+            return BaseConsts.SystemManager.OVER_TIME_TIP;
+        }
+        return null;
     }
 
 }

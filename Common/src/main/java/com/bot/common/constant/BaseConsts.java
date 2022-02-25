@@ -128,6 +128,13 @@ public interface BaseConsts {
                 + "回复数字【1】进入，数字【0】返回";
         String EXIT_GAME = "退出";
         String GET_TOKEN = "我的专属token";
+        String CREATE_INVITE_CODE = "生成邀请码";
+        String TEMP_REG_PREFIX = "#试用";
+        String REG_PREFIX = "#开通";
+        String REPEAT_TEMP_REG_TIP = "你已经用过小林了，不能再参加试用哦~";
+        String INVITE_CODE_ERROR = "你的邀请码不对，请仔细核对后再试哦~";
+        String REG_SUCCESS = "恭喜成为小林的新玩伴！截止日期为%s，在此之前小林都会一直在哦~";
+        String OVER_TIME_TIP = "你的服务未开通或者已到期，请联系我的主人进行开通哦~";
     }
 
     interface Sweet {

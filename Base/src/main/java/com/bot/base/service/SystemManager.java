@@ -2,9 +2,11 @@ package com.bot.base.service;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.base.service.impl.VoteServiceImpl;
+import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.game.service.GameHandler;
@@ -81,6 +83,12 @@ public class SystemManager {
             userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
             commonTextLoader.loadText();
             return BaseConsts.SystemManager.SUCCESS;
+        }
+        // 生成邀请码
+        if (BaseConsts.SystemManager.CREATE_INVITE_CODE.equals(reqContent)) {
+            String inviteCode = IdUtil.nanoId(8);
+            SystemConfigCache.tempInviteCode = inviteCode;
+            return inviteCode;
         }
         // 清空投票
         if (BaseConsts.SystemManager.CLEAR_VOTE.equals(reqContent)) {

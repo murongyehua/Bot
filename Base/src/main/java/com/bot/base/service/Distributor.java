@@ -23,7 +23,7 @@ public interface Distributor {
      * @param reqContent
      * @param token
      */
-    String doDistributeWithString(String reqContent, String token);
+    String doDistributeWithString(String reqContent, String token, String groupId);
 
     /**
      * 返回文件

@@ -46,10 +46,10 @@ public class newInstructDistributeController {
                 return;
             }
             if (msg.contains(ENFileType.GAME_FILE.getLabel())) {
-                SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，如果有需要请联系我主人哦~");
+                SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩，如果真有需要请联系我主人哦~");
                 return;
             }
-            String resp = distributor.doDistributeWithString(msg, userId);
+            String resp = distributor.doDistributeWithString(msg, userId, null);
             if (resp != null && resp.startsWith("http")) {
                 SendMsgUtil.sendImg(userId, resp);
             }else {
@@ -68,14 +68,14 @@ public class newInstructDistributeController {
                     return;
                 }
                 if (effectMsg.contains(ENFileType.GAME_FILE.getLabel())) {
-                    SendMsgUtil.sendMsg(groupId, "游戏pc端已停止维护，不再提供下载，如果有需要请联系我主人哦~");
+                    SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩，如果真有需要请联系我主人哦~", userId);
                     return;
                 }
-                String resp = distributor.doDistributeWithString(effectMsg, userId);
+                String resp = distributor.doDistributeWithString(effectMsg, userId, groupId);
                 if (resp != null && resp.startsWith("http")) {
                     SendMsgUtil.sendImg(groupId, resp);
                 }else {
-                    SendMsgUtil.sendMsg(groupId, resp);
+                    SendMsgUtil.sendGroupMsg(groupId, resp, userId);
                 }
             }
         }
