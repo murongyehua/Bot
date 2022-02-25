@@ -1,5 +1,6 @@
 package com.bot.common.util;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -54,7 +55,7 @@ public class SendMsgUtil {
             SendGroupDTO sendGroup = new SendGroupDTO();
             sendGroup.setWId(SystemConfigCache.wId);
             sendGroup.setAt(userId);
-            sendGroup.setContent(String.format("@%s\u2005", getGroupNickName(groupId, userId)) + msg);
+            sendGroup.setContent(String.format("@%s\u2005", getGroupNickName(groupId, userId)) + StrUtil.CRLF + msg);
             sendGroup.setWcId(groupId);
             HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendGroup));
         }catch (Exception e) {

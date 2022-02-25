@@ -92,11 +92,6 @@ public class DistributorServiceImpl implements Distributor {
     @Override
     public String doDistributeWithString(String reqContent, String token, String groupId) {
         try{
-            // 判断用户状态
-            String checkResult = this.checkUserStatus(groupId == null ? token : groupId);
-            if (checkResult != null) {
-                return checkResult;
-            }
             String resp = this.req2Resp(reqContent, token, groupId);
             log.info("回复[{}],[{}]", token, resp);
             return resp;
@@ -137,6 +132,11 @@ public class DistributorServiceImpl implements Distributor {
             return regService.tryReg(groupId == null ? token : groupId,
                     reqContent.replaceAll(BaseConsts.SystemManager.REG_PREFIX, StrUtil.EMPTY),
                     groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP);
+        }
+        // 判断用户状态
+        String checkResult = this.checkUserStatus(groupId == null ? token : groupId);
+        if (checkResult != null) {
+            return checkResult;
         }
         // 获取token
         if (BaseConsts.SystemManager.GET_TOKEN.equals(reqContent)) {
