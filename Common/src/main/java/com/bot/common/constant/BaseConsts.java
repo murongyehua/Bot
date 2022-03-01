@@ -158,4 +158,8 @@ public interface BaseConsts {
         String SUFFIX = "头像";
     }
 
+    interface Constellation {
+        String ERROR = "你的问法有问题，换个方式问问吧~";
+    }
+
 }
