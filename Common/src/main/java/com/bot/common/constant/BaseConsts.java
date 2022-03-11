@@ -160,6 +160,16 @@ public interface BaseConsts {
 
     interface Constellation {
         String ERROR = "你的问法有问题，换个方式问问吧~";
+        String TODAY_FORMAT = "%s" + StrUtil.CRLF + "%s" + StrUtil.CRLF +
+                "亲近星座：%s" + StrUtil.CRLF +
+                "幸运色：%s" + StrUtil.CRLF +
+                "健康：%s" + StrUtil.CRLF +
+                "爱情：%s" + StrUtil.CRLF +
+                "工作：%s" + StrUtil.CRLF +
+                "金钱：%s" + StrUtil.CRLF +
+                "综合运势：%s" + StrUtil.CRLF +
+                "幸运数字：%s" + StrUtil.CRLF +
+                "综述：%s";
     }
 
 }

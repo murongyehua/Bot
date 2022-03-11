@@ -49,8 +49,10 @@ public class ConstellationServiceImpl implements BaseService {
             String all = (String) jsonObject.get("all");
             Integer number = (Integer) jsonObject.get("number");
             String summary = (String) jsonObject.get("summary");
+            return String.format(BaseConsts.Constellation.TODAY_FORMAT, consName, dateTime, friend, color, health, love, work, money, all, number, summary);
         }
         // 其他
+
         return null;
     }
 
