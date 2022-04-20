@@ -286,7 +286,12 @@ public class BattleServiceImpl extends CommonPlayer {
         this.buffDone(tempPhantom, tempAnother, skill, ENEffectType.PRE, 0);
         if (tempPhantom.getStop()) {
             battleRecord.append(tempPhantom.getName()).append("此回合停止行动，攻击无效").append(StrUtil.CRLF);
-            tempPhantom.setStop(false);
+            nowAttackPhantom.setStop(false);
+            nowAttackPhantom.setBuffs(tempPhantom.getBuffs());
+            nowAttackPhantom.setDeBuffs(tempPhantom.getDeBuffs());
+            another.setStop(tempAnother.getStop());
+            another.setBuffs(tempAnother.getBuffs());
+            another.setDeBuffs(tempAnother.getDeBuffs());
             return;
         }
         this.finalAttack(tempPhantom, tempAnother);
@@ -298,6 +303,7 @@ public class BattleServiceImpl extends CommonPlayer {
         another.setBuffs(tempAnother.getBuffs());
         another.setDeBuffs(tempAnother.getDeBuffs());
     }
+
 
     private void finalAttack(BattlePhantomDTO tempPhantom, BattlePhantomDTO tempAnother) {
         int hurt = tempPhantom.getFinalAttack() - tempAnother.getFinalDefense();
