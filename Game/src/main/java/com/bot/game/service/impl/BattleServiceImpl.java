@@ -291,8 +291,12 @@ public class BattleServiceImpl extends CommonPlayer {
         }
         this.finalAttack(tempPhantom, tempAnother);
         nowAttackPhantom.setFinalHp(tempPhantom.getFinalHp());
+        nowAttackPhantom.setBuffs(tempPhantom.getBuffs());
+        nowAttackPhantom.setDeBuffs(tempPhantom.getDeBuffs());
         another.setFinalHp(tempAnother.getFinalHp());
         another.setStop(tempAnother.getStop());
+        another.setBuffs(tempAnother.getBuffs());
+        another.setDeBuffs(tempAnother.getDeBuffs());
     }
 
     private void finalAttack(BattlePhantomDTO tempPhantom, BattlePhantomDTO tempAnother) {
