@@ -177,10 +177,10 @@ public class DistributorServiceImpl implements Distributor {
         // 先判断命中服务
         for (String keyword : CommonTextLoader.serviceInstructMap.keySet()) {
             if (reqContent.startsWith(keyword)) {
-                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, token);
+                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId);
             }
             if (reqContent.contains(keyword)) {
-                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, token);
+                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId);
             }
         }
         // 再判断命中菜单 目前只有一个主菜单 后续可能有多个主菜单

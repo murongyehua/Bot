@@ -35,7 +35,10 @@ public class DriverServiceImpl implements BaseService {
             cache.remove(token);
             return answer;
         }
-        String response = HttpSenderUtil.get(url + String.format("?type=c1&subject=1&pagesize=1&pagenum=1&sort=normal&appkey=%s", key), null);
+        if (cache.get(token) != null) {
+            return "上一道题还没获取答案呢！";
+        }
+        String response = HttpSenderUtil.get(url + String.format("?type=c1&subject=1&pagesize=1&pagenum=1&sort=rand&appkey=%s", key), null);
         JSONObject jsonObject = JSONUtil.parseObj(response);
         JSONObject result = (JSONObject) jsonObject.get("result");
         JSONObject resultDetail = (JSONObject) result.get("result");
@@ -56,7 +59,7 @@ public class DriverServiceImpl implements BaseService {
         String option4 = (String) content.get("option4");
         String question = (String) content.get("question");
         if (StrUtil.isEmpty(option1)) {
-            return question;
+            return "判断题:\r\n" + question;
         }
         return String.format("%s\r\n%s\r\n%s\r\n%s\r\n%s", question, option1, option2, option3, option4);
     }
