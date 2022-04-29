@@ -55,7 +55,11 @@ public class SendMsgUtil {
             SendGroupDTO sendGroup = new SendGroupDTO();
             sendGroup.setWId(SystemConfigCache.wId);
             sendGroup.setAt(userId);
-            sendGroup.setContent(String.format("@%s\u2005", getGroupNickName(groupId, userId)) + StrUtil.CRLF + msg);
+            if (StrUtil.isEmpty(userId)) {
+                sendGroup.setContent(msg);
+            }else {
+                sendGroup.setContent(String.format("@%s\u2005", getGroupNickName(groupId, userId)) + StrUtil.CRLF + msg);
+            }
             sendGroup.setWcId(groupId);
             HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendGroup));
         }catch (Exception e) {
