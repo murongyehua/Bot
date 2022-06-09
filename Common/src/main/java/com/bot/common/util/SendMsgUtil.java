@@ -69,6 +69,9 @@ public class SendMsgUtil {
     }
 
     private static String getGroupNickName(String groupId, String userId) {
+        if (userId.equals("notify@all")) {
+            return "所有人";
+        }
         try {
             QueryGroupUserDTO queryGroupUser = new QueryGroupUserDTO();
             queryGroupUser.setWId(SystemConfigCache.wId);
