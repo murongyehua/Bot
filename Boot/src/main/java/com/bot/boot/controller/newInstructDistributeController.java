@@ -50,8 +50,10 @@ public class newInstructDistributeController {
                 return;
             }
             String resp = distributor.doDistributeWithString(msg, userId, null);
-            if (resp != null && resp.startsWith("http")) {
+            if (resp != null && resp.endsWith(".jpg")) {
                 SendMsgUtil.sendImg(userId, resp);
+            }else if (resp != null && resp.startsWith("http")) {
+                SendMsgUtil.sendFile(userId, resp);
             }else {
                 SendMsgUtil.sendMsg(userId, resp);
             }
@@ -72,8 +74,10 @@ public class newInstructDistributeController {
                     return;
                 }
                 String resp = distributor.doDistributeWithString(effectMsg, userId, groupId);
-                if (resp != null && resp.startsWith("http")) {
+                if (resp != null && resp.endsWith(".jpg")) {
                     SendMsgUtil.sendImg(groupId, resp);
+                }else if (resp != null && resp.startsWith("http")){
+                    SendMsgUtil.sendFile(userId, resp);
                 }else {
                     SendMsgUtil.sendGroupMsg(groupId, resp, userId);
                 }

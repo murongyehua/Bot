@@ -172,4 +172,24 @@ public interface BaseConsts {
                 "综述：%s";
     }
 
+    interface Work {
+        String ENTRY = "开始核算";
+        String ENTRY_TIPS = "成功进入核算工作模式，从现在起您的所有消息都会被认为是核算信息，当核算信息发送完毕之后请发送【结束】来获取当日核算文件，确认无误后可以发送【提取】来提取当日结果信息。\r\n" +
+                "在这个过程中您可以随时发送【退出】来离开核算工作模式，您提交的数据不会因退出而消失。每日0点自动退出核算工作模式并清空提交数据。";
+        String FINISH = "结束";
+        String FETCH = "提取";
+        String EXIT = "退出";
+        String EXIT_SUCCESS = "退出成功，感谢您的使用";
+        String ERROR = "未检测到工作文件，请退出后重新进入工作模式再尝试~";
+        String ILL_INFO = "数据格式不正确，请检查后重试，若未找到问题，请联系我主人~";
+        String GET_INFO_SUCCESS = "数据收集成功，请继续发送或发送【结束】提取当前文件，若数据有误，修正后重新发送即可实现覆盖";
+        String FILE_NOT_EXIST = "出问题啦，请退出工作模式重新进入尝试，若问题仍然存在，请联系我主人~";
+        String EXCEPTION = "出现未知异常，请及时联系我主人";
+        String START_DEAL = "处理";
+        String START_DEAL_TIP = "好的，现在开始处理数据，处理完成后我会通知您，请耐心等待...";
+        String SAVE_DATA_TIP = "收集数据成功，当前已收集%s条数据，如已收集完毕请发送【处理】进行下一步操作。";
+        String DEAL_SUCCESS_RESULT = "数据处理完毕，累计处理%s条数据，全部处理成功，请发送【结束】提取当前文件，您也可以继续发送数据处理。";
+        String DEAL_FAIL_RESULT = "数据处理完毕，累计处理%s条数据，成功%s条，失败%s条，处理失败的数据将在此条提示发送后单独发送给您，您可以核对后重新发送处理，也可以直接发送【结束】提取当前文件。";
+    }
+
 }

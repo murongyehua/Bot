@@ -13,4 +13,8 @@ public class SendMsgDTO {
 
     private String content;
 
+    private String path;
+
+    private String fileName;
+
 }

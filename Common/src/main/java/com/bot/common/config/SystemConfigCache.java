@@ -27,6 +27,8 @@ public class SystemConfigCache {
 
     public static final String SEND_IMG_URL = "/sendImage2";
 
+    public static final String SEND_FILE_URL = "/sendFile";
+
     public static final String QUERY_GROUP_USER_URL = "/getChatRoomMemberInfo";
 
     public static final String OWNER_ID = "wxid_gt9s4k14zz7l22";

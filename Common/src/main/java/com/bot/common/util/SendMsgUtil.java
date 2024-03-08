@@ -1,5 +1,6 @@
 package com.bot.common.util;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -49,6 +50,22 @@ public class SendMsgUtil {
             System.out.println("发送消息失败");
         }
     }
+
+    public static void sendFile(String userId, String url) {
+        try {
+            SendMsgDTO sendMsg = new SendMsgDTO();
+            sendMsg.setPath(url);
+            String[] arr = url.split("\\.");
+            sendMsg.setFileName(DateUtil.now() + StrUtil.DOT + arr[arr.length - 1]);
+            sendMsg.setWcId(userId);
+            sendMsg.setWId(SystemConfigCache.wId);
+            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_FILE_URL, JSONUtil.toJsonStr(sendMsg));
+        }catch (Exception e) {
+            System.out.println("发送消息失败");
+        }
+    }
+
+
 
     public static void sendGroupMsg(String groupId, String msg, String userId) {
         try{

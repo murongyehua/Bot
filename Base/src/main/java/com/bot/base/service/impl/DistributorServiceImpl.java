@@ -5,14 +5,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.bot.base.chain.Collector;
 import com.bot.base.chain.Menu;
-import com.bot.base.service.BaseService;
-import com.bot.base.service.RegService;
+import com.bot.base.service.*;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.enums.ENFileType;
 import com.bot.common.enums.ENRegType;
 import com.bot.common.loader.CommonTextLoader;
-import com.bot.base.service.Distributor;
-import com.bot.base.service.SystemManager;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENUserGameStatus;
 import com.bot.common.enums.ENYesOrNo;
@@ -27,10 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 指令分发
@@ -55,6 +49,9 @@ public class DistributorServiceImpl implements Distributor {
 
     @Autowired
     private SystemManager systemManager;
+
+    @Resource
+    private WorkManager workManager;
 
     @Autowired
     private GameHandler gameHandler;
@@ -167,6 +164,14 @@ public class DistributorServiceImpl implements Distributor {
         if (BaseConsts.SystemManager.GAME.equals(reqContent)) {
             GAME_TOKENS.put(token, ENUserGameStatus.WAIT_JOIN.getValue());
             return BaseConsts.SystemManager.JOIN_GAME_WARN;
+        }
+        // 是不是处于工作模式
+        if (WorkManager.WORK_TOKENS.contains(token)) {
+           return workManager.doWork(reqContent, token);
+        }
+        // 是不是进入工作模式
+        if (BaseConsts.Work.ENTRY.equals(reqContent)) {
+            return workManager.entryWork(token);
         }
         // 固定回答最优先 完全一致才命中
         for (String keyword : CommonTextLoader.someResponseMap.keySet()) {

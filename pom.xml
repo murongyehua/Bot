@@ -30,6 +30,7 @@
         <http.version>4.5.5</http.version>
         <druid.version>1.1.0</druid.version>
         <spring.mybatis.version>1.2.0</spring.mybatis.version>
+        <alibaba.easyexcel.version>3.0.5</alibaba.easyexcel.version>
     </properties>
 
     <dependencies>
@@ -81,6 +82,17 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>${alibaba.easyexcel.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.belerweb</groupId>
