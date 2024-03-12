@@ -41,12 +41,13 @@ public class newInstructDistributeController {
         }
         // 私聊
         if (StrUtil.equals("60001", messageType)) {
+            log.info(String.format("收到来自[%s]的私聊消息：[%s]", userId, msg));
             if (msg.contains(ENFileType.HELP_IMG.getLabel())) {
                 SendMsgUtil.sendImg(userId, helpImg);
                 return;
             }
             if (msg.contains(ENFileType.GAME_FILE.getLabel())) {
-                SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩，如果真有需要请联系我主人哦~");
+                SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。");
                 return;
             }
             String resp = distributor.doDistributeWithString(msg, userId, null);
@@ -70,7 +71,7 @@ public class newInstructDistributeController {
                     return;
                 }
                 if (effectMsg.contains(ENFileType.GAME_FILE.getLabel())) {
-                    SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩，如果真有需要请联系我主人哦~", userId);
+                    SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。", userId);
                     return;
                 }
                 String resp = distributor.doDistributeWithString(effectMsg, userId, groupId);

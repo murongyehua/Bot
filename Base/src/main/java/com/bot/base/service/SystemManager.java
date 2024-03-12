@@ -3,11 +3,12 @@ package com.bot.base.service;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
-import com.bot.base.service.impl.VoteServiceImpl;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.enums.ENRegDay;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.game.service.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * 系统管理
@@ -85,22 +84,24 @@ public class SystemManager {
             return BaseConsts.SystemManager.SUCCESS;
         }
         // 生成邀请码
-        if (BaseConsts.SystemManager.CREATE_INVITE_CODE.equals(reqContent)) {
-            String inviteCode = IdUtil.nanoId(8);
-            SystemConfigCache.tempInviteCode = inviteCode;
-            return inviteCode;
-        }
-        // 清空投票
-        if (BaseConsts.SystemManager.CLEAR_VOTE.equals(reqContent)) {
-            VoteServiceImpl.votes = new HashMap<>();
-            VoteServiceImpl.voted = new LinkedList<>();
-            return BaseConsts.SystemManager.SUCCESS;
-        }
-        // 查看票数
-        if (BaseConsts.SystemManager.LOOK_VOTE.equals(reqContent)) {
+        if (reqContent.startsWith(BaseConsts.SystemManager.CREATE_INVITE_CODE)) {
+            // 生成邀请码 类型 数量
+            String[] contentArr = reqContent.split(StrUtil.SPACE);
+            if (contentArr.length != 3) {
+                return BaseConsts.SystemManager.ILL_CODE;
+            }
+            ENRegDay enRegDay = ENRegDay.getRegDayByType(contentArr[1]);
+            if (enRegDay == null) {
+                return BaseConsts.SystemManager.ILL_CODE;
+            }
+            if (!NumberUtil.isNumber(contentArr[2])) {
+                return BaseConsts.SystemManager.ILL_CODE;
+            }
             StringBuilder stringBuilder = new StringBuilder();
-            for (String name : VoteServiceImpl.votes.keySet()) {
-                stringBuilder.append(name).append(":").append(VoteServiceImpl.votes.get(name)).append(StrUtil.CRLF);
+            for (int index = 0; index < Integer.parseInt(contentArr[2]); index++) {
+                String inviteCode = IdUtil.nanoId(8);
+                SystemConfigCache.tempInviteCode.put(inviteCode, enRegDay);
+                stringBuilder.append(inviteCode).append(StrUtil.CRLF);
             }
             return stringBuilder.toString();
         }

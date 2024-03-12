@@ -135,6 +135,10 @@ public class DistributorServiceImpl implements Distributor {
         if (checkResult != null) {
             return checkResult;
         }
+        // 查询到期时间
+        if (reqContent.contains(BaseConsts.SystemManager.QUERY_DEADLINE_DATE)) {
+            return regService.queryDeadLineDate(groupId == null ? token : groupId);
+        }
         // 获取token
         if (BaseConsts.SystemManager.GET_TOKEN.equals(reqContent)) {
             return token;

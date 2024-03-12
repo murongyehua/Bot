@@ -1,6 +1,8 @@
 package com.bot.common.config;
 
 
+import com.bot.common.enums.ENRegDay;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ public class SystemConfigCache {
     /**
      * 临时邀请码-使用后失效-用于成为正式用户
      */
-    public static String tempInviteCode = "";
+    public static Map<String, ENRegDay> tempInviteCode = new HashMap<>();
 
     public static final String SEND_TEXT_URL = "/sendText";
 

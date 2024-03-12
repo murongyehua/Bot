@@ -9,49 +9,7 @@ import cn.hutool.core.util.StrUtil;
 public interface BaseConsts {
 
     interface ClassBeanName {
-        String WEATHER = "weatherServiceImpl";
         String ANSWER_BOOK = "answerBookServiceImpl";
-    }
-
-    interface Weather {
-        String CITY_NAME = "city";
-        String KEY_NAME = "appkey";
-        String QUERY_STATUS = "ok";
-
-        String KEYWORD_NOW = "现在";
-        String KEYWORD_TODAY = "今天";
-        String KEYWORD_TOMORROW = "明天";
-        String KEYWORD_AFTER_TOMORROW = "后天";
-        String SUGGEST = "建议";
-
-        String LAST_UPDATE_TIME = "最后更新时间: ";
-        String DAY_COND = "白天: ";
-        String NIGHT_COND = "夜晚: ";
-        String DEG = "温度: ";
-        String WIND = "风力: ";
-        String DATE = "日期: ";
-        String NOW_TEXT = "现在外面[%s],温度[%s],[%s]";
-
-        String AIR = "空气: ";
-        String COMF = "舒适: ";
-        String CW = "洗车: ";
-        String DRSG = "穿衣: ";
-        String FLU = "流感: ";
-        String SPORT = "运动: ";
-        String TRAV = "旅游: ";
-        String UV = "日晒: ";
-
-
-
-        String DESCRIBE = "你可以发送"+ StrUtil.CRLF +
-                "【武汉今天天气怎么样】" + StrUtil.CRLF +
-                "【武汉明天天气怎么样】" + StrUtil.CRLF +
-                "【武汉后天天气怎么样】" + StrUtil.CRLF +
-                "【武汉天气建议】" + StrUtil.CRLF +
-                "等类似指令来获取天气相关的信息" + StrUtil.CRLF +
-                "不过，我只能给你提供最多近3天的天气信息";
-
-        String FAIL_QUERY = "哎呀，我也不知道了，你要不换个方式问问";
     }
 
     interface Menu {
@@ -115,8 +73,7 @@ public interface BaseConsts {
         String MANAGER_PASSWORD_RIGHT = "密码正确，成功进入管理模式";
 
         String MANAGER_CODE_RELOAD_TEXT = "重载文本";
-        String CLEAR_VOTE = "清空投票";
-        String LOOK_VOTE = "投票结果";
+        String ILL_CODE = "指令格式有误";
         String GAME_MANAGER = "游戏";
         String UN_KNOW_MANAGER_CODE = "未知管理指令";
         String SUCCESS = "操作成功";
@@ -132,9 +89,11 @@ public interface BaseConsts {
         String TEMP_REG_PREFIX = "#试用";
         String REG_PREFIX = "#开通";
         String REPEAT_TEMP_REG_TIP = "你已经用过小林了，不能再参加试用哦~";
-        String INVITE_CODE_ERROR = "你的邀请码不对，请仔细核对后再试哦~";
+        String INVITE_CODE_ERROR = "你的邀请码不正确，或已被使用，请仔细核对后再试哦~";
         String REG_SUCCESS = "恭喜成为小林的新玩伴！截止日期为%s，在此之前小林都会一直在哦~";
-        String OVER_TIME_TIP = "你的服务未开通或者已到期，请联系我的主人进行开通哦~";
+        String OVER_TIME_TIP = "你的服务未开通或者已到期，请先进行开通哦~";
+        String CONTINUE_TIPS = "您的服务时间即将到期，如果还有需求请及时续期，感谢您的使用。";
+        String QUERY_DEADLINE_DATE = "到期时间";
     }
 
     interface Sweet {
@@ -156,6 +115,7 @@ public interface BaseConsts {
 
     interface Picture {
         String SUFFIX = "头像";
+        String FAIL_QUERY = "哎呀，我也不知道了，你要不换个方式问问";
     }
 
     interface Constellation {

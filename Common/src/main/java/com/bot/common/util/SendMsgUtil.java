@@ -21,7 +21,7 @@ public class SendMsgUtil {
             sendMsg.setContent(msg);
             sendMsg.setWcId(userId);
             sendMsg.setWId(SystemConfigCache.wId);
-             HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendMsg));
+            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendMsg));
         }catch (Exception e) {
             System.out.println("发送消息失败");
         }

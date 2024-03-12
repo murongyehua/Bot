@@ -32,10 +32,10 @@ public class WorkManager {
     private String baseFilePath;
 
     private final static Map<String, Integer> TARGET_MAP = new HashMap<String, Integer>(){{
-        put("现金扫对公：", 1);
-        put("支付宝扫对公户：", 2);
-        put("微信扫对公户：", 3);
-        put("单日耗卡：", 4);
+        put("现金扫对公", 1);
+        put("支付宝扫对公户", 2);
+        put("微信扫对公户", 3);
+        put("单日耗卡", 4);
     }};
 
 
@@ -116,11 +116,10 @@ public class WorkManager {
                 String option = (String) reader.readCellValue(workExcelLocation.getBaseIndexX(), workExcelLocation.getTotalY() + number);
                 if (StrUtil.isEmpty(option)) {
                     blankCount++;
-                    // 每次遇到空白 增加一个空行
-                    result.append(StrUtil.CRLF);
                     if (blankCount == 2) {
                         break;
                     }
+                    result.append(StrUtil.CRLF);
                     continue;
                 }
                 // 不为空的时候要重置计数
@@ -129,6 +128,7 @@ public class WorkManager {
                 result.append(option);
                 // 数据
                 result.append(reader.readCellValue(workExcelLocation.getBaseIndexX() + DateUtil.thisDayOfMonth(), workExcelLocation.getTotalY() + number)).append("元");
+                result.append(StrUtil.CRLF);
             }
         }
 

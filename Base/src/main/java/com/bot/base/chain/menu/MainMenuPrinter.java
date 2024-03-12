@@ -19,7 +19,6 @@ public class MainMenuPrinter extends Menu{
     @Override
     public void initMenu() {
         this.menuName = BaseConsts.Menu.MAIN_MENU_NAME;
-        this.menuChildrenMap.put(BaseConsts.Menu.ONE, new WeatherMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.TWO, new AnswerMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.THREE, new LuckMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.FOUR, new SweetMenuPrinter());

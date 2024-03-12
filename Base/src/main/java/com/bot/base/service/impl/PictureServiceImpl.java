@@ -25,12 +25,12 @@ public class PictureServiceImpl implements BaseService {
         String msg = reqContent.replaceAll(BaseConsts.Picture.SUFFIX, StrUtil.EMPTY);
         String response = HttpSenderUtil.get(url + "?lx=" + ENPictureType.getValueByContainLabel(msg) + "&format=json", null);
         if (StrUtil.isEmpty(response)) {
-            return BaseConsts.Weather.FAIL_QUERY;
+            return BaseConsts.Picture.FAIL_QUERY;
         }
         JSONObject object = JSONUtil.parseObj(response);
         String code = (String) object.get("code");
         if (!"200".equals(code)) {
-            return BaseConsts.Weather.FAIL_QUERY;
+            return BaseConsts.Picture.FAIL_QUERY;
         }
         return (String) object.get("imgurl");
     }

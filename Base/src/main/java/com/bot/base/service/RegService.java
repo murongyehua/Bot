@@ -18,4 +18,11 @@ public interface RegService {
      */
     String tryReg(String activeId, String inviteCode, ENRegType regType);
 
+    /**
+     * 查询到期时间
+     * @param token
+     * @return
+     */
+    String queryDeadLineDate(String token);
+
 }

@@ -22,7 +22,8 @@ public class ConstellationServiceImpl implements BaseService {
     public String doQueryReturn(String reqContent, String token) {
         try {
             String consName = reqContent.substring(0, 3);
-            String type = reqContent.substring(3, 4);
+            // 懒得接其他的了，只支持查询日运势，其他的有需要再说
+            String type = "日";
             String typeValue = ENConstellationType.getValueByLabel(type);
             if (typeValue != null) {
                 return this.sendQuery(consName, typeValue);
@@ -53,7 +54,7 @@ public class ConstellationServiceImpl implements BaseService {
         }
         // 其他
 
-        return null;
+        return BaseConsts.Constellation.ERROR;
     }
 
 }
