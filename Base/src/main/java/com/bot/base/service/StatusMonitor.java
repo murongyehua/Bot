@@ -3,6 +3,7 @@ package com.bot.base.service;
 import com.bot.base.commom.MessageSender;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.util.SendMsgUtil;
 import com.bot.common.util.ThreadPoolManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,6 @@ import java.util.Date;
 @Component
 public class StatusMonitor {
 
-    @Autowired
-    private MessageSender messageSender;
-
     @PostConstruct
     public void systemManagerMonitor () {
         ThreadPoolManager.addBaseTask(() -> {
@@ -32,7 +30,7 @@ public class StatusMonitor {
                     Date now = new Date();
                     if (userTempInfo != null && now.getTime() - userTempInfo.getOutTime().getTime() > 0 ) {
                         SystemManager.userTempInfo = null;
-                        messageSender.send(userTempInfo.getToken(), BaseConsts.SystemManager.MANAGE_OUT_TIME);
+                        SendMsgUtil.sendMsg(userTempInfo.getToken(), BaseConsts.SystemManager.MANAGE_OUT_TIME);
                     }
                     Thread.sleep(2000);
                 }

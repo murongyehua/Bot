@@ -19,10 +19,15 @@ public class MainMenuPrinter extends Menu{
     @Override
     public void initMenu() {
         this.menuName = BaseConsts.Menu.MAIN_MENU_NAME;
+        this.menuChildrenMap.put(BaseConsts.Menu.ONE, new ChatMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.TWO, new AnswerMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.THREE, new LuckMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.FOUR, new SweetMenuPrinter());
         this.menuChildrenMap.put(BaseConsts.Menu.FIVE, new CloudMusicMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.SIX, new PhotoMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.SEVEN, new ConstellationMenuPrinter());
+        this.menuChildrenMap.put(BaseConsts.Menu.EIGHT, new GameMenuPrinter());
+
     }
 
     @Override

@@ -27,11 +27,14 @@ public interface BaseConsts {
         String DOUBLE_ZERO = "00";
 
         String MAIN_MENU_NAME = "菜单";
-        String WEATHER_MENU_NAME = "天气";
+        String GAME = "游戏";
         String ANSWER_BOOK = "答案之书";
         String LUCK_NAME = "运势占卜";
         String SWEET = "情话Boy";
         String MUSIC = "听音乐";
+
+        String GAME_TIP = "目前内置游戏为【山海见闻】，向小林发送游戏名即可进入游戏模式。";
+
 
         String TURN_BACK = "返回";
         String TURN_BACK_MAIN = "返回主菜单";
@@ -111,14 +114,20 @@ public interface BaseConsts {
         String ILL_REX_1 = "src";
         String ILL_REX_2 = "（";
         String ILL_REX_3 = "）";
+        String CHAT = "闲聊";
+        String TIP = "无聊的时候，就来找小林聊天吧。";
     }
 
     interface Picture {
         String SUFFIX = "头像";
+        String PICTURE = "头像推荐";
+        String TIP = "可以通过发送【头像】【男头】【女头】，来让小林给你推荐头像。";
         String FAIL_QUERY = "哎呀，我也不知道了，你要不换个方式问问";
     }
 
     interface Constellation {
+        String CONSTELLATION = "星座";
+        String TIP = "小林可以帮你查询星座运势，快来询问试试吧。";
         String ERROR = "你的问法有问题，换个方式问问吧~";
         String TODAY_FORMAT = "%s" + StrUtil.CRLF + "%s" + StrUtil.CRLF +
                 "亲近星座：%s" + StrUtil.CRLF +
