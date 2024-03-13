@@ -3,7 +3,6 @@ package com.bot.base.service.impl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.bot.base.service.RegService;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
@@ -11,7 +10,6 @@ import com.bot.common.enums.ENRegDay;
 import com.bot.common.enums.ENRegStatus;
 import com.bot.common.enums.ENRegType;
 import com.bot.game.dao.entity.BotUser;
-import com.bot.game.dao.entity.BotUserExample;
 import com.bot.game.dao.mapper.BotUserMapper;
 import com.bot.game.service.SystemConfigHolder;
 import org.springframework.stereotype.Service;
@@ -51,7 +49,7 @@ public class RegServiceImpl implements RegService {
     @Override
     public String tryReg(String activeId, String inviteCode, ENRegType regType) {
         // 检查邀请码
-        if (SystemConfigCache.tempInviteCode.containsKey(inviteCode)) {
+        if (!SystemConfigCache.tempInviteCode.containsKey(inviteCode)) {
             return BaseConsts.SystemManager.INVITE_CODE_ERROR;
         }
         ENRegDay enRegDay = SystemConfigCache.tempInviteCode.get(inviteCode);
@@ -63,7 +61,7 @@ public class RegServiceImpl implements RegService {
                BotUser botUser = new BotUser();
                botUser.setId(activeId);
                botUser.setStatus(ENRegStatus.FOREVER.getValue());
-               botUser.setDeadLineDate(DateUtil.offsetDay(SystemConfigCache.userDateMap.get(activeId), enRegDay.getDatNumber()));
+               botUser.setDeadLineDate(DateUtil.offsetDay(SystemConfigCache.userDateMap.get(activeId), enRegDay.getDayNumber()));
                botUserMapper.updateByPrimaryKeySelective(botUser);
                systemConfigHolder.loadUsers();
                return String.format(BaseConsts.SystemManager.REG_SUCCESS, DateUtil.format(botUser.getDeadLineDate(), DatePattern.NORM_DATETIME_FORMAT));
@@ -72,7 +70,7 @@ public class RegServiceImpl implements RegService {
             BotUser botUser = new BotUser();
             botUser.setId(activeId);
             botUser.setStatus(ENRegStatus.FOREVER.getValue());
-            botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), enRegDay.getDatNumber()));
+            botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), enRegDay.getDayNumber()));
             botUserMapper.updateByPrimaryKeySelective(botUser);
             systemConfigHolder.loadUsers();
             return String.format(BaseConsts.SystemManager.REG_SUCCESS, DateUtil.format(botUser.getDeadLineDate(), DatePattern.NORM_DATETIME_FORMAT));
@@ -82,7 +80,7 @@ public class RegServiceImpl implements RegService {
         botUser.setId(activeId);
         botUser.setStatus(ENRegStatus.FOREVER.getValue());
         botUser.setType(regType.getValue());
-        botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 30));
+        botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), enRegDay.getDayNumber()));
         botUserMapper.insert(botUser);
         systemConfigHolder.loadUsers();
         // 清除邀请码

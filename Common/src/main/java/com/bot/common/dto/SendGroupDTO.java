@@ -15,4 +15,10 @@ public class SendGroupDTO {
 
     private String content;
 
+    private String path;
+
+    private String fileName;
+
+    private String thumbPath;
+
 }

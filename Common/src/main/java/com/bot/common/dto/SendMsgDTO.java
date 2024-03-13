@@ -17,4 +17,6 @@ public class SendMsgDTO {
 
     private String fileName;
 
+    private String thumbPath;
+
 }

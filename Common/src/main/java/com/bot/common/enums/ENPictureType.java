@@ -11,11 +11,11 @@ import lombok.Getter;
 public enum  ENPictureType {
 
     //
-    MAN("a1", "男"),
-    WOMAN("b1", "女"),
+    MAN("a1", "男头"),
+    WOMAN("b1", "女头"),
     DM("c1", "动漫"),
-    DM_WOMAN("c3", "动漫男"),
-    DM_WAN("c2", "动漫女")
+    DM_WOMAN("c3", "动漫男头"),
+    DM_WAN("c2", "动漫女头")
     ;
 
     private String value;

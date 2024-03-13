@@ -4,8 +4,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.bot.base.service.Distributor;
+import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENFileType;
 import com.bot.common.util.SendMsgUtil;
+import com.bot.common.util.ThreadPoolManager;
 import com.bot.game.service.SystemConfigHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +55,10 @@ public class newInstructDistributeController {
             String resp = distributor.doDistributeWithString(msg, userId, null);
             if (resp != null && resp.endsWith(".jpg")) {
                 SendMsgUtil.sendImg(userId, resp);
+            }else if (resp != null && resp.endsWith(".mp4")) {
+                // 要发视频的时候先提醒耐心等待 再异步慢慢发
+                SendMsgUtil.sendMsg(userId, BaseConsts.GirlVideo.SUCCESS);
+                ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendVideo(userId, resp));
             }else if (resp != null && resp.startsWith("http")) {
                 SendMsgUtil.sendFile(userId, resp);
             }else {
@@ -77,6 +83,10 @@ public class newInstructDistributeController {
                 String resp = distributor.doDistributeWithString(effectMsg, userId, groupId);
                 if (resp != null && resp.endsWith(".jpg")) {
                     SendMsgUtil.sendImg(groupId, resp);
+                }else if (resp != null && resp.endsWith(".mp4")) {
+                    // 要发视频的时候先提醒耐心等待 再异步慢慢发
+                    SendMsgUtil.sendGroupMsg(groupId, BaseConsts.GirlVideo.SUCCESS, userId);
+                    ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendGroupVideo(groupId, resp, userId));
                 }else if (resp != null && resp.startsWith("http")){
                     SendMsgUtil.sendFile(userId, resp);
                 }else {

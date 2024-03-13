@@ -13,7 +13,7 @@ public enum ENRegDay {
 
     private final String dayType;
 
-    private final Integer datNumber;
+    private final Integer dayNumber;
 
     public static ENRegDay getRegDayByType(String type) {
         for (ENRegDay enRegDay : ENRegDay.values()) {

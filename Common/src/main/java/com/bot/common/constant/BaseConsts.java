@@ -161,4 +161,8 @@ public interface BaseConsts {
         String DEAL_FAIL_RESULT = "数据处理完毕，累计处理%s条数据，成功%s条，失败%s条，处理失败的数据将在此条提示发送后单独发送给您，您可以核对后重新发送处理，也可以直接发送【结束】提取当前文件。";
     }
 
+    interface GirlVideo {
+        String SUCCESS = "好好好，视频发得慢，请不要一直发，耐心等待哈。(如果很久都没等到，再重新尝试~)";
+    }
+
 }

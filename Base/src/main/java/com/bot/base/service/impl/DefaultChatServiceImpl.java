@@ -1,10 +1,12 @@
 package com.bot.base.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.base.service.BaseService;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.loader.CommonTextLoader;
 import com.bot.common.util.HttpSenderUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class DefaultChatServiceImpl implements BaseService {
             String content = (String) json.get("content");
             return this.dealResponse(content);
         }
-        return null;
+        return CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size()));
     }
 
     /**

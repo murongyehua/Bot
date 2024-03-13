@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SendMsgUtil {
 
+    private static final String THUMB_PATH = "https://img31.mtime.cn/pi/2016/09/12/104656.40455111_1000X1000.jpg";
+
     public static void sendMsg(String userId, String msg) {
         try {
             SendMsgDTO sendMsg = new SendMsgDTO();
@@ -61,6 +63,36 @@ public class SendMsgUtil {
             sendMsg.setWId(SystemConfigCache.wId);
             HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_FILE_URL, JSONUtil.toJsonStr(sendMsg));
         }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送消息失败");
+        }
+    }
+
+    public static void sendVideo(String userId, String url) {
+        try {
+            SendMsgDTO sendMsg = new SendMsgDTO();
+            sendMsg.setPath(url);
+            sendMsg.setWcId(userId);
+            sendMsg.setWId(SystemConfigCache.wId);
+            sendMsg.setThumbPath(THUMB_PATH);
+            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_VIDEO_URL, JSONUtil.toJsonStr(sendMsg));
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送消息失败");
+        }
+    }
+
+    public static void sendGroupVideo(String groupId, String url, String userId) {
+        try{
+            SendGroupDTO sendGroup = new SendGroupDTO();
+            sendGroup.setWId(SystemConfigCache.wId);
+            sendGroup.setAt(userId);
+            sendGroup.setWcId(groupId);
+            sendGroup.setPath(url);
+            sendGroup.setThumbPath(THUMB_PATH);
+            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_VIDEO_URL, JSONUtil.toJsonStr(sendGroup));
+        }catch (Exception e) {
+            e.printStackTrace();
             System.out.println("发送消息失败");
         }
     }
@@ -80,6 +112,7 @@ public class SendMsgUtil {
             sendGroup.setWcId(groupId);
             HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendGroup));
         }catch (Exception e) {
+            e.printStackTrace();
             System.out.println("发送消息失败");
         }
 
@@ -103,6 +136,7 @@ public class SendMsgUtil {
             }
             return (String) data.get("nickName");
         }catch (Exception e) {
+            e.printStackTrace();
             System.out.println("发送消息失败");
         }
         return "";
