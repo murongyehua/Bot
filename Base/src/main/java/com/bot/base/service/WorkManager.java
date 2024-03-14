@@ -7,7 +7,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.bot.base.dto.CommonResp;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.enums.ENRespType;
 import com.bot.common.enums.ENWorkExcelLocation;
 import com.bot.common.util.SendMsgUtil;
 import com.bot.common.util.ThreadPoolManager;
@@ -65,28 +67,28 @@ public class WorkManager {
      * @param content
      * @return
      */
-    public String doWork(String content, String token) {
+    public CommonResp doWork(String content, String token) {
         // 退出
         if (BaseConsts.Work.EXIT.equals(content)) {
             WorkManager.WORK_TOKENS.remove(token);
-            return BaseConsts.Work.EXIT_SUCCESS;
+            return new CommonResp(BaseConsts.Work.EXIT_SUCCESS, ENRespType.TEXT.getType());
         }
         // 结束
         if (BaseConsts.Work.FINISH.equals(content)) {
-            return getExcelFile();
+            return new CommonResp(getExcelFile(), ENRespType.FILE.getType());
         }
         // 提取
         if (BaseConsts.Work.FETCH.equals(content)) {
-            return fetchData();
+            return new CommonResp(fetchData(), ENRespType.TEXT.getType());
         }
         // 处理
         if (BaseConsts.Work.START_DEAL.equals(content)) {
             ThreadPoolManager.addBaseTask(this::autoAnalysis);
-            return BaseConsts.Work.START_DEAL_TIP;
+            return new CommonResp(BaseConsts.Work.START_DEAL_TIP, ENRespType.TEXT.getType());
         }
         // 默认 收集数据
         WAIT_DEAL_DATA_LIST.add(content);
-        return String.format(BaseConsts.Work.SAVE_DATA_TIP, WAIT_DEAL_DATA_LIST.size());
+        return new CommonResp(String.format(BaseConsts.Work.SAVE_DATA_TIP, WAIT_DEAL_DATA_LIST.size()), ENRespType.TEXT.getType());
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.bot.base.service.impl;
 
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.BaseService;
+import com.bot.common.enums.ENRespType;
 import com.bot.common.util.HttpSenderUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,8 @@ public class SweetServiceImpl implements BaseService {
     private String url;
 
     @Override
-    public String doQueryReturn(String reqContent, String token) {
-        return HttpSenderUtil.get(url, null);
+    public CommonResp doQueryReturn(String reqContent, String token) {
+        return new CommonResp(HttpSenderUtil.get(url, null), ENRespType.TEXT.getType());
     }
 
 }

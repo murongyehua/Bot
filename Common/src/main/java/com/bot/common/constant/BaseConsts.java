@@ -165,4 +165,8 @@ public interface BaseConsts {
         String SUCCESS = "好好好，视频发得慢，请不要一直发，耐心等待哈。(如果很久都没等到，再重新尝试~)";
     }
 
+    interface Dog{
+        String NAME = "舔狗日记";
+    }
+
 }

@@ -2,10 +2,11 @@ package com.bot.base.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.BaseService;
+import com.bot.common.enums.ENRespType;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.common.util.HttpSenderUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,17 +22,17 @@ public class GirlVideoServiceImpl implements BaseService {
     private String girlKey;
 
     @Override
-    public String doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token) {
         JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(girlUrl + girlKey, null));
         Integer code = (Integer) json.get("code");
         if (code != 200) {
-            return CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size()));
+            return new CommonResp(CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size())), ENRespType.TEXT.getType());
         }
         String url = (String) json.get("video");
         if (StrUtil.isEmpty(url)) {
-            return CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size()));
+            return new CommonResp(CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size())), ENRespType.TEXT.getType());
         }
-        return url;
+        return new CommonResp(url, ENRespType.VIDEO.getType());
     }
 
 }

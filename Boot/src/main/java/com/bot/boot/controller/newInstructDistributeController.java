@@ -3,9 +3,11 @@ package com.bot.boot.controller;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.Distributor;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENFileType;
+import com.bot.common.enums.ENRespType;
 import com.bot.common.util.SendMsgUtil;
 import com.bot.common.util.ThreadPoolManager;
 import com.bot.game.service.SystemConfigHolder;
@@ -52,17 +54,17 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。");
                 return;
             }
-            String resp = distributor.doDistributeWithString(msg, userId, null);
-            if (resp != null && resp.endsWith(".jpg")) {
-                SendMsgUtil.sendImg(userId, resp);
-            }else if (resp != null && resp.endsWith(".mp4")) {
+            CommonResp resp = distributor.doDistributeWithString(msg, userId, null);
+            if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
+                SendMsgUtil.sendImg(userId, resp.getMsg());
+            }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
                 // 要发视频的时候先提醒耐心等待 再异步慢慢发
                 SendMsgUtil.sendMsg(userId, BaseConsts.GirlVideo.SUCCESS);
-                ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendVideo(userId, resp));
-            }else if (resp != null && resp.startsWith("http")) {
-                SendMsgUtil.sendFile(userId, resp);
+                ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendVideo(userId, resp.getMsg()));
+            }else if (resp != null && ENRespType.FILE.getType().equals(resp.getType())) {
+                SendMsgUtil.sendFile(userId, resp.getMsg());
             }else {
-                SendMsgUtil.sendMsg(userId, resp);
+                SendMsgUtil.sendMsg(userId, resp.getMsg());
             }
         }
         // 群聊
@@ -80,17 +82,17 @@ public class newInstructDistributeController {
                     SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。", userId);
                     return;
                 }
-                String resp = distributor.doDistributeWithString(effectMsg, userId, groupId);
-                if (resp != null && resp.endsWith(".jpg")) {
-                    SendMsgUtil.sendImg(groupId, resp);
-                }else if (resp != null && resp.endsWith(".mp4")) {
+                CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId);
+                if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
+                    SendMsgUtil.sendImg(groupId, resp.getMsg());
+                }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
                     // 要发视频的时候先提醒耐心等待 再异步慢慢发
                     SendMsgUtil.sendGroupMsg(groupId, BaseConsts.GirlVideo.SUCCESS, userId);
-                    ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendGroupVideo(groupId, resp, userId));
-                }else if (resp != null && resp.startsWith("http")){
-                    SendMsgUtil.sendFile(userId, resp);
+                    ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendGroupVideo(groupId, resp.getMsg(), userId));
+                }else if (resp != null && ENRespType.FILE.getType().equals(resp.getType())){
+                    SendMsgUtil.sendFile(userId, resp.getMsg());
                 }else {
-                    SendMsgUtil.sendGroupMsg(groupId, resp, userId);
+                    SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
                 }
             }
         }

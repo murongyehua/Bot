@@ -5,14 +5,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.bot.base.chain.Collector;
 import com.bot.base.chain.Menu;
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.*;
 import com.bot.common.config.SystemConfigCache;
-import com.bot.common.enums.ENFileType;
-import com.bot.common.enums.ENRegType;
+import com.bot.common.enums.*;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.common.constant.BaseConsts;
-import com.bot.common.enums.ENUserGameStatus;
-import com.bot.common.enums.ENYesOrNo;
 import com.bot.common.exception.BotException;
 import com.bot.base.commom.MessageSender;
 import com.bot.common.util.HttpSenderUtil;
@@ -71,10 +69,10 @@ public class DistributorServiceImpl implements Distributor {
     public void doDistribute(HttpServletResponse response, String reqContent, String token) {
         try{
             response.setCharacterEncoding("utf-8");
-            String resp = this.req2Resp(reqContent, token, null);
+            CommonResp resp = this.req2Resp(reqContent, token, null);
             log.info("回复[{}],[{}]", token, resp);
-            if (resp.contains(BaseConsts.Distributor.AND_REG)) {
-                String[] responseContents = resp.split(BaseConsts.Distributor.AND_REG);
+            if (resp.getMsg().contains(BaseConsts.Distributor.AND_REG)) {
+                String[] responseContents = resp.getMsg().split(BaseConsts.Distributor.AND_REG);
                 for (String responseContent : responseContents) {
                     messageSender.send(token, responseContent);
                 }
@@ -87,10 +85,10 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     @Override
-    public String doDistributeWithString(String reqContent, String token, String groupId) {
+    public CommonResp doDistributeWithString(String reqContent, String token, String groupId) {
         try{
-            String resp = this.req2Resp(reqContent, token, groupId);
-            log.info("回复[{}],[{}]", token, resp);
+            CommonResp resp = this.req2Resp(reqContent, token, groupId);
+            log.info("回复[{}],[{}]", token, resp.getMsg());
             return resp;
         }catch (Exception e) {
             log.error("目标[{}],响应异常", token, e);
@@ -110,51 +108,51 @@ public class DistributorServiceImpl implements Distributor {
         }
     }
 
-    private String req2Resp(String reqContent, String token, String groupId) {
+    private CommonResp req2Resp(String reqContent, String token, String groupId) {
         // 判断是不是进入管理模式
         if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {
-            return SystemManager.tryIntoManager(token);
+            return new CommonResp(SystemManager.tryIntoManager(token), ENRespType.TEXT.getType());
         }
         // 判断是不是处于管理模式
         if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
-            return systemManager.managerDistribute(reqContent);
+            return new CommonResp(systemManager.managerDistribute(reqContent), ENRespType.TEXT.getType());
         }
         // 开通服务
         if (reqContent.startsWith(BaseConsts.SystemManager.TEMP_REG_PREFIX)) {
-            return regService.tryTempReg(groupId == null ? token : groupId,
+            return new CommonResp(regService.tryTempReg(groupId == null ? token : groupId,
                     reqContent.replaceAll(BaseConsts.SystemManager.TEMP_REG_PREFIX, StrUtil.EMPTY),
-                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP);
+                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP), ENRespType.TEXT.getType());
         }
         if (reqContent.startsWith(BaseConsts.SystemManager.REG_PREFIX)) {
-            return regService.tryReg(groupId == null ? token : groupId,
+            return new CommonResp(regService.tryReg(groupId == null ? token : groupId,
                     reqContent.replaceAll(BaseConsts.SystemManager.REG_PREFIX, StrUtil.EMPTY),
-                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP);
+                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP), ENRespType.TEXT.getType());
         }
         // 判断用户状态
         String checkResult = this.checkUserStatus(groupId == null ? token : groupId);
         if (checkResult != null) {
-            return checkResult;
+            return new CommonResp(checkResult, ENRespType.TEXT.getType());
         }
         // 查询到期时间
         if (reqContent.contains(BaseConsts.SystemManager.QUERY_DEADLINE_DATE)) {
-            return regService.queryDeadLineDate(groupId == null ? token : groupId);
+            return new CommonResp(regService.queryDeadLineDate(groupId == null ? token : groupId), ENRespType.TEXT.getType());
         }
         // 获取token
         if (BaseConsts.SystemManager.GET_TOKEN.equals(reqContent)) {
-            return token;
+            return new CommonResp(StrUtil.isEmpty(groupId) ? token : groupId, ENRespType.TEXT.getType());
         }
         // 是不是处于游戏模式
         if (GAME_TOKENS.containsKey(token)) {
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.JOINED.getValue()) && BaseConsts.SystemManager.EXIT_GAME.equals(reqContent)) {
                 // 退出游戏模式
                 GAME_TOKENS.remove(token);
-                return gameHandler.exit(token);
+                return new CommonResp(gameHandler.exit(token), ENRespType.TEXT.getType());
             }
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.WAIT_JOIN.getValue())) {
                 // 二次确认时不进入游戏模式
                 if (ENYesOrNo.NO.getValue().equals(reqContent.trim())) {
                     GAME_TOKENS.remove(token);
-                    return BaseConsts.SystemManager.SUCCESS;
+                    return new CommonResp(BaseConsts.SystemManager.SUCCESS, ENRespType.TEXT.getType());
                 }
                 // 进入
                 if (ENYesOrNo.YES.getValue().equals(reqContent.trim())) {
@@ -162,12 +160,12 @@ public class DistributorServiceImpl implements Distributor {
                 }
             }
             // 正常游戏模式调用
-            return gameHandler.play(reqContent, token);
+            return new CommonResp(gameHandler.play(reqContent, token), ENRespType.TEXT.getType());
         }
         // 是不是进入游戏模式
         if (BaseConsts.SystemManager.GAME.equals(reqContent)) {
             GAME_TOKENS.put(token, ENUserGameStatus.WAIT_JOIN.getValue());
-            return BaseConsts.SystemManager.JOIN_GAME_WARN;
+            return new CommonResp(BaseConsts.SystemManager.JOIN_GAME_WARN, ENRespType.TEXT.getType());
         }
         // 是不是处于工作模式
         if (WorkManager.WORK_TOKENS.contains(token)) {
@@ -175,12 +173,12 @@ public class DistributorServiceImpl implements Distributor {
         }
         // 是不是进入工作模式
         if (BaseConsts.Work.ENTRY.equals(reqContent)) {
-            return workManager.entryWork(token);
+            return new CommonResp(workManager.entryWork(token), ENRespType.TEXT.getType());
         }
         // 固定回答最优先 完全一致才命中
         for (String keyword : CommonTextLoader.someResponseMap.keySet()) {
             if (keyword.equals(reqContent)) {
-                return this.getResponseByKey(keyword);
+                return new CommonResp(this.getResponseByKey(keyword), ENRespType.TEXT.getType());
             }
         }
         // 先判断命中服务
@@ -196,13 +194,13 @@ public class DistributorServiceImpl implements Distributor {
         for (String keyword : CommonTextLoader.menuInstructMap.keySet()) {
             if (reqContent.contains(keyword)) {
                 // 构建菜单调用链路
-                return collector.buildCollector(token);
+                return new CommonResp(collector.buildCollector(token), ENRespType.TEXT.getType());
             }
         }
         // 非服务 非主菜单 可能是菜单链路内调用
         String maybeResp = collector.toNextOrPrevious(token, reqContent.trim());
         if (maybeResp != null) {
-            return maybeResp;
+            return new CommonResp(maybeResp, ENRespType.TEXT.getType());
         }
         // 全部未命中
         return geyDefaultMsg(reqContent, token);
@@ -230,14 +228,14 @@ public class DistributorServiceImpl implements Distributor {
         return menu;
     }
 
-    private String geyDefaultMsg(String reqContent, String token) {
+    private CommonResp geyDefaultMsg(String reqContent, String token) {
         BaseService service = serviceMap.get("defaultChatServiceImpl");
-        String resp = service.doQueryReturn(reqContent, token);
+        CommonResp resp = service.doQueryReturn(reqContent, token);
         if (resp != null) {
             return resp;
         }
         int index = RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size());
-        return CommonTextLoader.defaultResponseMsg.get(index);
+        return new CommonResp(CommonTextLoader.defaultResponseMsg.get(index), ENRespType.TEXT.getType());
     }
 
     private String getResponseByKey(String keyword) {

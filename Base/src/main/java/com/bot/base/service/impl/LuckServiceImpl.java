@@ -3,8 +3,10 @@ package com.bot.base.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.BaseService;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.enums.ENRespType;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,10 +23,10 @@ public class LuckServiceImpl implements BaseService {
     public static Map<String, String> luckCacheMap = new HashMap<>();
 
     @Override
-    public String doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token) {
         String key = token + StrUtil.UNDERLINE + DateUtil.today();
         String resp = luckCacheMap.computeIfAbsent(key, k -> this.getLuck());
-        return BaseConsts.Luck.TEXT_COMMON + resp;
+        return new CommonResp(BaseConsts.Luck.TEXT_COMMON + resp, ENRespType.TEXT.getType());
     }
 
     private String getLuck() {

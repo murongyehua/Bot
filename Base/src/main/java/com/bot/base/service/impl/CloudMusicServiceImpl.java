@@ -4,8 +4,10 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.BaseService;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.enums.ENRespType;
 import com.bot.common.util.HttpSenderUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class CloudMusicServiceImpl implements BaseService {
     private String url;
 
     @Override
-    public String doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token) {
         int index = RandomUtil.randomInt(0, BaseConsts.Music.SORT.length);
         String sort = BaseConsts.Music.SORT[index];
         String finalUrl = url + "?sort=" + sort + "&format=json";
@@ -36,9 +38,9 @@ public class CloudMusicServiceImpl implements BaseService {
             stringBuilder.append(name).append(StrUtil.CRLF);
             stringBuilder.append(url).append(StrUtil.CRLF);
             stringBuilder.append(BaseConsts.Music.TIP);
-            return stringBuilder.toString();
+            return new CommonResp(stringBuilder.toString(), ENRespType.TEXT.getType());
         }
-        return BaseConsts.Music.ERROR;
+        return new CommonResp(BaseConsts.Music.ERROR, ENRespType.TEXT.getType());
     }
 
 }

@@ -1,7 +1,9 @@
 package com.bot.base.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import com.bot.base.dto.CommonResp;
 import com.bot.base.service.BaseService;
+import com.bot.common.enums.ENRespType;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.common.constant.BaseConsts;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,8 @@ import org.springframework.stereotype.Service;
 public class AnswerBookServiceImpl implements BaseService {
 
     @Override
-    public String doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token) {
         int index = RandomUtil.randomInt(0, CommonTextLoader.answers.size());
-        return CommonTextLoader.answers.get(index);
+        return new CommonResp(CommonTextLoader.answers.get(index), ENRespType.TEXT.getType());
     }
 }

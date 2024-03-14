@@ -1,5 +1,7 @@
 package com.bot.base.service;
 
+import com.bot.base.dto.CommonResp;
+
 /**
  * @author murongyehua
  * @version 1.0 2020/9/22
@@ -11,6 +13,6 @@ public interface BaseService {
      * @param reqContent 请求内容
      * @return
      */
-    String doQueryReturn(String reqContent,String token);
+    CommonResp doQueryReturn(String reqContent, String token);
 
 }
