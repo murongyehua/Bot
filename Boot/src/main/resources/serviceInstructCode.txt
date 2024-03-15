@@ -7,3 +7,5 @@
 美女=girlVideoServiceImpl
 舔狗=dogServiceImpl
 保安=guardServiceImpl
+白丝=baiSiServiceImpl
+黑丝=heiSiServiceImpl

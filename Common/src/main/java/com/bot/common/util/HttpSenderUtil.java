@@ -172,7 +172,7 @@ public class HttpSenderUtil {
         post.addHeader("Content-Type", "application/json");
         post.addHeader("Authorization", SystemConfigCache.token);
         StringEntity stringEntity = new StringEntity(jsonData, CHARSET);
-        stringEntity.setContentEncoding(CHARSET);
+//        stringEntity.setContentEncoding(CHARSET);
         post.setEntity(stringEntity);
         CloseableHttpResponse response = httpclient.execute(post);
 

@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.CommonResp;
+import com.bot.base.dto.TencentChatReq;
 import com.bot.base.service.BaseService;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENRespType;
@@ -21,11 +22,28 @@ import org.springframework.stereotype.Service;
 @Service("defaultChatServiceImpl")
 public class DefaultChatServiceImpl implements BaseService {
 
-    @Value("${chat.url}")
+    @Value("${tencent.chat.url}")
     private String url;
+
+    @Value("${tencent.appkey}")
+    private String appKey;
+
+    @Value(("${tencent.uid}"))
+    private String uid;
 
     @Override
     public CommonResp doQueryReturn(String reqContent, String token) {
+        try {
+            JSONObject json = JSONUtil.parseObj(HttpSenderUtil.postJsonData(url, JSONUtil.toJsonStr(new TencentChatReq(reqContent, 0, appKey, uid))));
+            Integer code = (Integer) json.get("code");
+            if (0 == code) {
+                String content = (String) ((JSONObject)((JSONObject) json.get("data")).get("result")).get("Content");
+                return new CommonResp(content, ENRespType.TEXT.getType());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 到这里说明混元服务不可用 走免费聊天逻辑
         String finalUrl = url + reqContent;
         JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(finalUrl, null));
         Integer code = (Integer) json.get("result");

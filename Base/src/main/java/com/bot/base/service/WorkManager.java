@@ -199,7 +199,7 @@ public class WorkManager {
                         // 需要填到对应表里的值 兼容中英文冒号
                         String[] contentArr = lineContent.trim().split("：").length > 1 ? lineContent.trim().split("：") : lineContent.trim().split(":");
                         String finalNumber = contentArr[1].trim().replace("元", "");
-                        writer.writeCellValue(x, y + TARGET_MAP.get(key), finalNumber);
+                        writer.writeCellValue(x, y + TARGET_MAP.get(key), StrUtil.isBlank(finalNumber) ? "0" : finalNumber);
                     }
                 }
             }
