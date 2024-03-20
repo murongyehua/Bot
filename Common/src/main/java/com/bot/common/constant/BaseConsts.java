@@ -165,8 +165,14 @@ public interface BaseConsts {
         String SUCCESS = "好好好，视频发得慢，请不要一直发，耐心等待哈。(如果很久都没等到，再重新尝试~)";
     }
 
-    interface Dog{
+    interface Dog {
         String NAME = "舔狗日记";
+    }
+
+    interface Change {
+        String CHANGE = "切换";
+        String NO_ENGINE = "未能识别需要切换的引擎，已为您切换至默认聊天引擎。（群聊内会统一切换）";
+        String CHANGE_SUCCESS_FORMAT = "已为您切换至%s引擎。（群聊内会统一切换）";
     }
 
 }

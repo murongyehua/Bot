@@ -4,7 +4,7 @@
 <generatorConfiguration>
 
     <!-- 指定数据连接驱动jar地址  不知道为什么获取不到 暂时写死 -->
-    <classPathEntry location="C:\\Users\\Administrator\\.m2\\repository\\mysql\\mysql-connector-java\\8.0.21\\mysql-connector-java-8.0.21.jar"/>
+    <classPathEntry location="D:\\repo\\mysql\\mysql-connector-java\\8.0.21\\mysql-connector-java-8.0.21.jar"/>
 
     <context id="test" targetRuntime="MyBatis3">
         <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"></plugin>
@@ -23,8 +23,8 @@
         </commentGenerator>
         <!--数据库链接URL，用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://39.99.216.184:3306/bot?characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone=UTC&amp;nullCatalogMeansCurrent = true"
-                        userId="root" password="murongyehua123">
+                        connectionURL="jdbc:mysql://47.92.127.30:3306/bot?characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone=UTC&amp;nullCatalogMeansCurrent = true"
+                        userId="root" password="gouzaizi@123">
         </jdbcConnection>
 
         <!-- 指定时间类型为LocalDate-->
@@ -51,7 +51,7 @@
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-        <table tableName="bot_notice" domainObjectName="BotNotice"
+        <table tableName="bot_user_config" domainObjectName="BotUserConfig"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableSelectByPrimaryKey="true">

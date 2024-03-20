@@ -1,1 +1,1 @@
-菜单,帮助=mainMenuPrinter
+菜单,帮助,功能大全=mainMenuPrinter

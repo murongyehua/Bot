@@ -1,6 +1,7 @@
 package com.bot.common.config;
 
 
+import com.bot.common.enums.ENChatEngine;
 import com.bot.common.enums.ENRegDay;
 
 import java.util.Date;
@@ -41,5 +42,10 @@ public class SystemConfigCache {
      * 用户到期时间
      */
     public static final Map<String, Date> userDateMap = new HashMap<>();
+
+    /**
+     * 用户聊天引擎
+     */
+    public static final Map<String, ENChatEngine> userCharEngine = new HashMap<>();
 
 }

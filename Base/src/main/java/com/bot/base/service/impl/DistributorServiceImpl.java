@@ -190,20 +190,21 @@ public class DistributorServiceImpl implements Distributor {
                 return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId);
             }
         }
+        // 菜单取消了，都走服务
         // 再判断命中菜单 目前只有一个主菜单 后续可能有多个主菜单
-        for (String keyword : CommonTextLoader.menuInstructMap.keySet()) {
-            if (reqContent.contains(keyword)) {
-                // 构建菜单调用链路
-                return new CommonResp(collector.buildCollector(token), ENRespType.TEXT.getType());
-            }
-        }
+//        for (String keyword : CommonTextLoader.menuInstructMap.keySet()) {
+//            if (reqContent.contains(keyword)) {
+//                // 构建菜单调用链路
+//                return new CommonResp(collector.buildCollector(token), ENRespType.TEXT.getType());
+//            }
+//        }
         // 非服务 非主菜单 可能是菜单链路内调用
         String maybeResp = collector.toNextOrPrevious(token, reqContent.trim());
         if (maybeResp != null) {
             return new CommonResp(maybeResp, ENRespType.TEXT.getType());
         }
         // 全部未命中
-        return geyDefaultMsg(reqContent, token);
+        return geyDefaultMsg(reqContent, token, groupId);
     }
 
     private BaseService getService(String className) {
@@ -228,9 +229,9 @@ public class DistributorServiceImpl implements Distributor {
         return menu;
     }
 
-    private CommonResp geyDefaultMsg(String reqContent, String token) {
+    private CommonResp geyDefaultMsg(String reqContent, String token, String groupId) {
         BaseService service = serviceMap.get("defaultChatServiceImpl");
-        CommonResp resp = service.doQueryReturn(reqContent, token);
+        CommonResp resp = service.doQueryReturn(reqContent, groupId == null ? token : groupId);
         if (resp != null) {
             return resp;
         }
