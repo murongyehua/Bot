@@ -1,6 +1,7 @@
 package com.bot.game.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.enums.ENChatEngine;
 import com.bot.common.enums.ENSystemConfig;
@@ -54,8 +55,10 @@ public class SystemConfigHolder {
         if (CollectionUtil.isEmpty(userConfigList)) {
             return;
         }
-        SystemConfigCache.userCharEngine.clear();
-        SystemConfigCache.userCharEngine.putAll(userConfigList.stream().collect(Collectors.toMap(BotUserConfig::getUserId, x -> ENChatEngine.getByValue(x.getChatEngine()))));
+        SystemConfigCache.userChatEngine.clear();
+        SystemConfigCache.userChatEngine.putAll(userConfigList.stream().collect(Collectors.toMap(BotUserConfig::getUserId, x -> ENChatEngine.getByValue(x.getChatEngine()))));
+        SystemConfigCache.userMorningMap.clear();
+        SystemConfigCache.userMorningMap.putAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getMorningType())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getMorningType)));
     }
 
 }

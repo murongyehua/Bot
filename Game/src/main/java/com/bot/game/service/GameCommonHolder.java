@@ -69,9 +69,7 @@ public class GameCommonHolder {
             while (true) {
                 try {
                     List<GamePlayer> list = gamePlayerMapper.getBySoulPowerDesc();
-                    list.forEach(x -> {
-                        addActionPoint(x.getId(), 1);
-                    });
+                    list.forEach(x -> addActionPoint(x.getId(), 1));
                 }catch (Exception e) {
                     log.error("任务异常", e);
                 }finally {

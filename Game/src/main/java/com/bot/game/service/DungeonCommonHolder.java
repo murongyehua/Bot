@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.GameConsts;
 import com.bot.common.util.ThreadPoolManager;
 import com.bot.game.dao.entity.*;
@@ -84,6 +85,8 @@ public class DungeonCommonHolder {
                         // 第一称号刷新
                         initRankTop();
                         log.info("副本、折扣、称号信息初始化完毕");
+                        // 清空晨报发送记录
+                        SystemConfigCache.morningSendMap.clear();
                     }
                 }catch (Exception e) {
                     log.error("副本每日初始化任务异常", e);

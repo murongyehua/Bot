@@ -11,3 +11,4 @@
 黑丝=heiSiServiceImpl
 切换=changeChatEngineServiceImpl
 菜单,帮助,功能大全=helpServiceImpl
+日报=morningServiceImpl

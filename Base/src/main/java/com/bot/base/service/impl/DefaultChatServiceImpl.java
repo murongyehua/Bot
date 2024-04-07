@@ -45,7 +45,7 @@ public class DefaultChatServiceImpl implements BaseService {
 
     @Override
     public CommonResp doQueryReturn(String reqContent, String token) {
-        ENChatEngine engine = SystemConfigCache.userCharEngine.get(token);
+        ENChatEngine engine = SystemConfigCache.userChatEngine.get(token);
         if (engine == null) {
             engine = ENChatEngine.DEFAULT;
         }

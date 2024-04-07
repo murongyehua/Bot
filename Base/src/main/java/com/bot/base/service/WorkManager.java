@@ -38,6 +38,8 @@ public class WorkManager {
         put("支付宝扫对公户", 2);
         put("微信扫对公户", 3);
         put("单日耗卡", 4);
+        put("美团支付", 5);
+        put("抖音支付", 6);
     }};
 
 

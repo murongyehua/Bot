@@ -80,7 +80,7 @@ public interface BaseConsts {
         String GAME_MANAGER = "游戏";
         String UN_KNOW_MANAGER_CODE = "未知管理指令";
         String SUCCESS = "操作成功";
-        String MANAGE_OUT_TIME = "超过1分钟未发现有效操作，已自动退出管理模式";
+        String MANAGE_OUT_TIME = "未发现有效操作，已自动退出管理模式";
         String GAME = "山海见闻";
         String JOIN_GAME_WARN = "即将进入游戏模式" + StrUtil.CRLF
                 + "一旦进入后，您所有的消息都会默认作为游戏指令" + StrUtil.CRLF
@@ -173,6 +173,24 @@ public interface BaseConsts {
         String CHANGE = "切换";
         String NO_ENGINE = "未能识别需要切换的引擎，已为您切换至默认聊天引擎。（群聊内会统一切换）";
         String CHANGE_SUCCESS_FORMAT = "已为您切换至%s引擎。（群聊内会统一切换）";
+    }
+
+    interface Morning {
+        String MORNING = "日报";
+        String PICK = "订阅日报";
+        String CANCEL = "取消订阅日报";
+        String PICK_SUCCESS = "订阅成功，每天8:30-9:00推送早报，14:00-14:30推送午报，18:00-18:30推送晚报，可以通过发送【取消订阅日报】来暂停推送，" +
+                "默认订阅全天，共三次推送。如果您只想接收部分时段的新闻，可以发送【日报】+【早/午/晚】来进行更改，支持选择多个，比如发送【日报早晚】就可以去掉午报的推送。";
+        String MORNING_FORMAT = "★小林日报" + StrUtil.CRLF +
+                "%s好!" + StrUtil.CRLF +
+                "今天是%s月%s日 星期%s" + StrUtil.CRLF +
+                "历史上的今天%s" + StrUtil.CRLF +
+                "以下是当前热点：" + StrUtil.CRLF +
+                "%s" + StrUtil.CRLF + StrUtil.CRLF +
+                "%s";
+        String CANCEL_SUCCESS = "好的，我将暂停日报推送，若再有需要可以发送【订阅日报】恢复。";
+        String CHANGE_SUCCESS_FORMAT = "设置成功日报为%s（若之前未订阅日报，此时已自动为您订阅）";
+        String CHANGE_FAIL = "未找到目标类型，设置日报失败";
     }
 
 }

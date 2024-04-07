@@ -2,8 +2,9 @@ package com.bot.game.dao.mapper;
 
 import com.bot.game.dao.entity.BotUserConfig;
 import com.bot.game.dao.entity.BotUserConfigExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface BotUserConfigMapper {
     /**

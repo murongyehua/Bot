@@ -4,9 +4,7 @@ package com.bot.common.config;
 import com.bot.common.enums.ENChatEngine;
 import com.bot.common.enums.ENRegDay;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SystemConfigCache {
 
@@ -46,6 +44,15 @@ public class SystemConfigCache {
     /**
      * 用户聊天引擎
      */
-    public static final Map<String, ENChatEngine> userCharEngine = new HashMap<>();
+    public static final Map<String, ENChatEngine> userChatEngine = new HashMap<>();
+    /**
+     * 晨报订阅情况
+     */
+    public static final Map<String, String> userMorningMap = new HashMap<>();
+
+    /**
+     * 日报发送情况
+     */
+    public static final Map<String, List<String>> morningSendMap = new HashMap<>();
 
 }

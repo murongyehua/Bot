@@ -403,6 +403,76 @@ public class BotUserConfigExample {
             addCriterion("chat_engine not between", value1, value2, "chatEngine");
             return (Criteria) this;
         }
+
+        public Criteria andMorningTypeIsNull() {
+            addCriterion("morning_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeIsNotNull() {
+            addCriterion("morning_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeEqualTo(String value) {
+            addCriterion("morning_type =", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeNotEqualTo(String value) {
+            addCriterion("morning_type <>", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeGreaterThan(String value) {
+            addCriterion("morning_type >", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("morning_type >=", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeLessThan(String value) {
+            addCriterion("morning_type <", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeLessThanOrEqualTo(String value) {
+            addCriterion("morning_type <=", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeLike(String value) {
+            addCriterion("morning_type like", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeNotLike(String value) {
+            addCriterion("morning_type not like", value, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeIn(List<String> values) {
+            addCriterion("morning_type in", values, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeNotIn(List<String> values) {
+            addCriterion("morning_type not in", values, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeBetween(String value1, String value2) {
+            addCriterion("morning_type between", value1, value2, "morningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMorningTypeNotBetween(String value1, String value2) {
+            addCriterion("morning_type not between", value1, value2, "morningType");
+            return (Criteria) this;
+        }
     }
 
     /**
