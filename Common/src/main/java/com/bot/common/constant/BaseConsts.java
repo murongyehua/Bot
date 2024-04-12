@@ -97,6 +97,7 @@ public interface BaseConsts {
         String OVER_TIME_TIP = "你的服务未开通或者已到期，请先进行开通哦~";
         String CONTINUE_TIPS = "您的服务时间即将到期，如果还有需求请及时续期，感谢您的使用。";
         String QUERY_DEADLINE_DATE = "到期时间";
+        String SEND_NOTICE_FORMAT = "公告";
     }
 
     interface Sweet {

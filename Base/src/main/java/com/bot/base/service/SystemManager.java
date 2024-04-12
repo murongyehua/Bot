@@ -10,6 +10,7 @@ import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENRegDay;
 import com.bot.common.loader.CommonTextLoader;
+import com.bot.common.util.SendMsgUtil;
 import com.bot.game.service.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,10 +78,20 @@ public class SystemManager {
             userTempInfo = null;
             return BaseConsts.SystemManager.SUCCESS;
         }
-        // 目前只支持刷新文本
+        // 刷新文本
         if (BaseConsts.SystemManager.MANAGER_CODE_RELOAD_TEXT.equals(reqContent)) {
             userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
             commonTextLoader.loadText();
+            return BaseConsts.SystemManager.SUCCESS;
+        }
+        // 发布公告
+        if (reqContent.startsWith(BaseConsts.SystemManager.SEND_NOTICE_FORMAT)) {
+            String[] contentArr = reqContent.split(StrUtil.SPACE);
+            if (contentArr.length != 2) {
+                return BaseConsts.SystemManager.ILL_CODE;
+            }
+            String noticeContent = contentArr[1];
+            send2AllUser(noticeContent);
             return BaseConsts.SystemManager.SUCCESS;
         }
         // 生成邀请码
@@ -111,6 +122,16 @@ public class SystemManager {
         }
         userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
         return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;
+    }
+
+    private void send2AllUser(String content) {
+        for(String token : SystemConfigCache.userDateMap.keySet()) {
+            if (token.contains("@chatroom")) {
+                SendMsgUtil.sendGroupMsg(token, content, null);
+                continue;
+            }
+            SendMsgUtil.sendMsg(token, content);
+        }
     }
 
 }
