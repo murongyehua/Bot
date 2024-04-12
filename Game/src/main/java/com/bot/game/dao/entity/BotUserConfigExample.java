@@ -473,6 +473,76 @@ public class BotUserConfigExample {
             addCriterion("morning_type not between", value1, value2, "morningType");
             return (Criteria) this;
         }
+
+        public Criteria andWorkDailyConfigIsNull() {
+            addCriterion("work_daily_config is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigIsNotNull() {
+            addCriterion("work_daily_config is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigEqualTo(String value) {
+            addCriterion("work_daily_config =", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigNotEqualTo(String value) {
+            addCriterion("work_daily_config <>", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigGreaterThan(String value) {
+            addCriterion("work_daily_config >", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigGreaterThanOrEqualTo(String value) {
+            addCriterion("work_daily_config >=", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigLessThan(String value) {
+            addCriterion("work_daily_config <", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigLessThanOrEqualTo(String value) {
+            addCriterion("work_daily_config <=", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigLike(String value) {
+            addCriterion("work_daily_config like", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigNotLike(String value) {
+            addCriterion("work_daily_config not like", value, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigIn(List<String> values) {
+            addCriterion("work_daily_config in", values, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigNotIn(List<String> values) {
+            addCriterion("work_daily_config not in", values, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigBetween(String value1, String value2) {
+            addCriterion("work_daily_config between", value1, value2, "workDailyConfig");
+            return (Criteria) this;
+        }
+
+        public Criteria andWorkDailyConfigNotBetween(String value1, String value2) {
+            addCriterion("work_daily_config not between", value1, value2, "workDailyConfig");
+            return (Criteria) this;
+        }
     }
 
     /**

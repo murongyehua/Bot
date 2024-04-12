@@ -12,3 +12,4 @@
 切换=changeChatEngineServiceImpl
 菜单,帮助,功能大全=helpServiceImpl
 日报=morningServiceImpl
+打工日历=workDailyServiceImpl

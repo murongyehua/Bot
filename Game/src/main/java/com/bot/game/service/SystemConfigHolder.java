@@ -59,6 +59,8 @@ public class SystemConfigHolder {
         SystemConfigCache.userChatEngine.putAll(userConfigList.stream().collect(Collectors.toMap(BotUserConfig::getUserId, x -> ENChatEngine.getByValue(x.getChatEngine()))));
         SystemConfigCache.userMorningMap.clear();
         SystemConfigCache.userMorningMap.putAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getMorningType())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getMorningType)));
+        SystemConfigCache.userWorkDaily.clear();
+        SystemConfigCache.userWorkDaily.addAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getWorkDailyConfig())).map(BotUserConfig::getUserId).collect(Collectors.toList()));
     }
 
 }

@@ -194,4 +194,12 @@ public interface BaseConsts {
         String CHANGE_FAIL = "未找到目标类型，设置日报失败";
     }
 
+    interface WorkDaily {
+        String ACTIVE_WORK_DAILY = "激活打工日历";
+        String DAILY_ACTIVE_SUCCESS = "激活成功，如果需要关闭，请发送【关闭打工日历】";
+        String CLOSE_WORK_DAILY = "关闭打工日历";
+        String DAILY_CLOSE_SUCCESS = "关闭成功，如果需要激活，请发送【激活打工日历】";
+        String ILL_CONTENT = "指令有误，请检查";
+    }
+
 }

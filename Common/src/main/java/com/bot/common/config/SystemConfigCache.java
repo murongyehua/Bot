@@ -46,7 +46,7 @@ public class SystemConfigCache {
      */
     public static final Map<String, ENChatEngine> userChatEngine = new HashMap<>();
     /**
-     * 晨报订阅情况
+     * 日报订阅情况
      */
     public static final Map<String, String> userMorningMap = new HashMap<>();
 
@@ -54,5 +54,10 @@ public class SystemConfigCache {
      * 日报发送情况
      */
     public static final Map<String, List<String>> morningSendMap = new HashMap<>();
+
+    /**
+     * 激活了打工日历的用户
+     */
+    public static final List<String> userWorkDaily = new ArrayList<>();
 
 }
