@@ -9,10 +9,12 @@ import com.bot.game.dao.entity.*;
 import com.bot.game.dao.mapper.BotUserConfigMapper;
 import com.bot.game.dao.mapper.BotUserMapper;
 import com.bot.game.dao.mapper.SystemConfigMapper;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +39,7 @@ public class SystemConfigHolder {
         SystemConfigCache.wId = configMap.get(ENSystemConfig.WID.getValue());
         SystemConfigCache.token = configMap.get(ENSystemConfig.TOKEN.getValue());
         SystemConfigCache.inviteCode = configMap.get(ENSystemConfig.INVITE_CODE.getValue());
+        SystemConfigCache.topToken = Arrays.asList(configMap.get(ENSystemConfig.TOP_TOKEN.getValue()).split(","));
         this.loadUsers();
         this.loadUserConfig();
     }

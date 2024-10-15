@@ -202,4 +202,16 @@ public interface BaseConsts {
         String ILL_CONTENT = "指令有误，请检查";
     }
 
+    interface Activity {
+        String ACTIVITY_JX3 = "剑三";
+        String ACTIVITY_BIND = "绑定";
+        String ACTIVITY_GET_AWARD = "抽奖";
+        String ACTIVITY_MY_AWARD = "中奖";
+        String ACTIVITY_ALL_AWARD = "中奖汇总";
+        String ACTIVITY_START = "抽奖开始";
+        String ACTIVITY_FINISH = "抽奖结束";
+        String UN_KNOW = "未知活动指令，请检查";
+        String REPEAT = "您当轮抽奖次数已达最大值，请不要重复操作。";
+    }
+
 }

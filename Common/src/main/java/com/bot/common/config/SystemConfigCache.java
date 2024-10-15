@@ -1,10 +1,12 @@
 package com.bot.common.config;
 
 
+import com.bot.common.dto.ActivityAwardDTO;
 import com.bot.common.enums.ENChatEngine;
 import com.bot.common.enums.ENRegDay;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SystemConfigCache {
 
@@ -18,6 +20,8 @@ public class SystemConfigCache {
      * 试用邀请码-长期有效-每人仅能使用一次
      */
     public static String inviteCode = "";
+
+    public static List<String> topToken;
 
     /**
      * 临时邀请码-使用后失效-用于成为正式用户
@@ -59,5 +63,10 @@ public class SystemConfigCache {
      * 激活了打工日历的用户
      */
     public static final List<String> userWorkDaily = new ArrayList<>();
+
+    /**
+     * 当前开启的抽奖活动奖品
+     */
+    public static final CopyOnWriteArrayList<ActivityAwardDTO> activityAwardList = new CopyOnWriteArrayList<>();
 
 }

@@ -57,6 +57,12 @@ public class DistributorServiceImpl implements Distributor {
     @Resource
     private RegService regService;
 
+    @Resource
+    private TopTokenServiceImpl topTokenService;
+
+    @Resource
+    private ActivityServiceImpl activityService;
+
     @Value("${help.img.path}")
     private String helpImgPath;
 
@@ -109,6 +115,10 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     private CommonResp req2Resp(String reqContent, String token, String groupId) {
+        // 顶级token 走专属逻辑
+        if (SystemConfigCache.topToken.contains(groupId == null ? token : groupId)) {
+            return topTokenService.doQueryReturn(reqContent, groupId == null ? token : groupId);
+        }
         // 判断是不是进入管理模式
         if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {
             return new CommonResp(SystemManager.tryIntoManager(token), ENRespType.TEXT.getType());
@@ -116,6 +126,10 @@ public class DistributorServiceImpl implements Distributor {
         // 判断是不是处于管理模式
         if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
             return new CommonResp(systemManager.managerDistribute(reqContent), ENRespType.TEXT.getType());
+        }
+        // 抽奖
+        if (reqContent.startsWith(BaseConsts.Activity.ACTIVITY_JX3)) {
+            return activityService.doQueryReturn(reqContent, token);
         }
         // 开通服务
         if (reqContent.startsWith(BaseConsts.SystemManager.TEMP_REG_PREFIX)) {

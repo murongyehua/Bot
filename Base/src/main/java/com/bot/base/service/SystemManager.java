@@ -1,5 +1,6 @@
 package com.bot.base.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
@@ -8,15 +9,26 @@ import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
+import com.bot.common.dto.ActivityAwardDTO;
 import com.bot.common.enums.ENRegDay;
+import com.bot.common.enums.ENYesOrNo;
 import com.bot.common.loader.CommonTextLoader;
 import com.bot.common.util.SendMsgUtil;
+import com.bot.game.dao.entity.*;
+import com.bot.game.dao.mapper.BotActivityAwardMapper;
+import com.bot.game.dao.mapper.BotActivityMapper;
+import com.bot.game.dao.mapper.BotAwardMapper;
 import com.bot.game.service.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * 系统管理
@@ -39,6 +51,15 @@ public class SystemManager {
 
     @Autowired
     private GameHandler gameHandler;
+
+    @Resource
+    private BotActivityMapper botActivityMapper;
+
+    @Resource
+    private BotActivityAwardMapper activityAwardMapper;
+
+    @Resource
+    private BotAwardMapper awardMapper;
 
     /**
      * 尝试进入管理模式
@@ -119,6 +140,61 @@ public class SystemManager {
         // 游戏管理
         if (reqContent.startsWith(BaseConsts.SystemManager.GAME_MANAGER)) {
             return gameHandler.manage(reqContent.substring(2));
+        }
+        // 抽奖管理
+        if (reqContent.startsWith(BaseConsts.Activity.ACTIVITY_JX3)) {
+            String[] reqs = reqContent.split(StrUtil.SPACE);
+            if (reqs.length != 3) {
+                return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;
+            }
+            // 开始
+            if (reqs[1].equals(BaseConsts.Activity.ACTIVITY_START)) {
+                if (CollectionUtil.isNotEmpty(SystemConfigCache.activityAwardList)) {
+                    return "当前抽奖未结束，请先结束。";
+                }
+                BotActivity botActivity = new BotActivity();
+                botActivity.setStatus(ENYesOrNo.YES.getValue());
+                BotActivityExample example = new BotActivityExample();
+                example.createCriteria().andNameEqualTo(reqs[2]);
+                int resultCount = botActivityMapper.updateByExampleSelective(botActivity, example);
+                if (resultCount == 1) {
+                    // 开启成功的情况下，更新奖品缓存
+                    BotActivity activity = botActivityMapper.selectByExample(example).get(0);
+                    BotActivityAwardExample activityAwardExample = new BotActivityAwardExample();
+                    activityAwardExample.createCriteria().andActivityIdEqualTo(activity.getId());
+                    List<BotActivityAward> activityAwards = activityAwardMapper.selectByExample(activityAwardExample);
+                    // 转缓存实体
+                    Map<String, String> botAwardMap = awardMapper.selectByExample(new BotAwardExample()).stream().collect(Collectors.toMap(BotAward::getId, BotAward::getName));
+                    SystemConfigCache.activityAwardList.addAll(activityAwards.stream().map(x -> {
+                        ActivityAwardDTO activityAwardDTO = new ActivityAwardDTO();
+                        activityAwardDTO.setId(x.getId());
+                        activityAwardDTO.setActivityId(x.getActivityId());
+                        activityAwardDTO.setPercent(x.getPercent());
+                        activityAwardDTO.setPrefix(x.getPrefix());
+                        activityAwardDTO.setType(x.getType());
+                        activityAwardDTO.setAwardName(botAwardMap.get(x.getAwardId()));
+                        activityAwardDTO.setNumber(Integer.parseInt(x.getNumber()));
+                        return activityAwardDTO;
+                    }).collect(Collectors.toList()));
+                    return BaseConsts.SystemManager.SUCCESS;
+                }else {
+                    return "开启条数不为1，可能存在问题，请检查数据“;                            ";
+                }
+            }
+            // 结束
+            if (reqs[1].equals(BaseConsts.Activity.ACTIVITY_FINISH)) {
+                BotActivity botActivity = new BotActivity();
+                botActivity.setStatus(ENYesOrNo.NO.getValue());
+                BotActivityExample example = new BotActivityExample();
+                example.createCriteria().andNameEqualTo(reqs[2]);
+                int resultCount = botActivityMapper.updateByExampleSelective(botActivity, example);
+                if (resultCount == 1) {
+                    SystemConfigCache.activityAwardList.clear();
+                    return BaseConsts.SystemManager.SUCCESS;
+                }else {
+                    return "结束条数不为1，可能存在问题，请检查数据“;                            ";
+                }
+            }
         }
         userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
         return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;

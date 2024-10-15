@@ -83,6 +83,13 @@ public class newInstructDistributeController {
                 }else {
                     SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
                 }
+            }else if (msg.startsWith(BaseConsts.Activity.ACTIVITY_JX3)) {
+                // 增加抽奖逻辑
+                log.info(String.format("消息体：%s", message));
+                log.info(String.format("收到群消息: %s", msg));
+                String groupId = (String) data.get("fromGroup");
+                CommonResp resp = distributor.doDistributeWithString(msg, userId, groupId);
+                SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
             }
         }
     }
