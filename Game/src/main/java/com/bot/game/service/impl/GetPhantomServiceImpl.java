@@ -90,6 +90,7 @@ public class GetPhantomServiceImpl extends CommonPlayer {
                 addNumber = 0;
             }
             hasPhantom.setGrow(hasPhantom.getGrow() + addNumber);
+            hasPhantom.setGrowLevel(hasPhantom.getGrowLevel() == null ? "1" : String.valueOf(Integer.parseInt(hasPhantom.getGrowLevel()) + addNumber));
             playerPhantomMapper.updateByPrimaryKey(hasPhantom);
             CommonPlayer.afterAddGrow(hasPhantom, null);
             CommonPlayer.computeAndUpdateSoulPower(token);

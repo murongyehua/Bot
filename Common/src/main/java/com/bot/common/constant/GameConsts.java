@@ -65,7 +65,7 @@ public interface GameConsts {
     }
 
     interface PhantomDetail {
-        String MENU_NAME = "【%s】[%s]%s,%s级[%s][%s]";
+        String MENU_NAME = "【%s】[%s]%s(x%s),%s级[%s][%s]";
         String DESCRIBE = "名称：%s" + StrUtil.CRLF + "等级：%s" + StrUtil.CRLF + "稀有度：%s" + StrUtil.CRLF
                 + "称号：%s" + StrUtil.CRLF + "属性：%s" + StrUtil.CRLF +"阵营：%s" + StrUtil.CRLF
                 +"家乡：%s" +  StrUtil.CRLF +"速度：%s" + StrUtil.CRLF + "攻击：%s" + StrUtil.CRLF
@@ -109,7 +109,7 @@ public interface GameConsts {
         String SUCCESS = "唤灵成功，当前唤灵符数量: %s，此时返回不会消耗唤灵符!";
         String GET_1 = "【%s】幻灵，[%s]%s，觐见!";
         String GET_2 = "详细资料可前往[我的幻灵]菜单查看";
-        String REPEAT = "该幻灵已拥有，自动转为成长值+1，若已达到该稀有度所能承受的成长上限，则不会再增加!";
+        String REPEAT = "该幻灵已拥有，自动转为强化等级+1，若已达到该稀有度所能承受的成长上限，则不会再增加!";
         String WAIT_1 = "天";
         String WAIT_2 = "地";
         String WAIT_3 = "玄";

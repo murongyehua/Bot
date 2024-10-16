@@ -30,7 +30,7 @@ public class PhantomDetailMenuPrinter extends Menu {
     @Override
     public void initMenu() {
         this.menuName = String.format(GameConsts.PhantomDetail.MENU_NAME, ENRarity.getLabelByValue(playerPhantom.getRarity()),
-                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getLevel(), playerPhantom.getAttribute(),
+                playerPhantom.getAppellation(), playerPhantom.getName(), playerPhantom.getGrowLevel() == null ? '0' : playerPhantom.getGrowLevel(),playerPhantom.getLevel(), playerPhantom.getAttribute(),
                 ENCarriedStatus.NORMAL.getValue().equals(playerPhantom.getCarried()) ? "已携带" : "空闲中" );
     }
 

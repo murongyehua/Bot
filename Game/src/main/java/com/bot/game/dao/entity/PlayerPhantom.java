@@ -104,5 +104,10 @@ public class PlayerPhantom implements Serializable {
      */
     private String carried;
 
+    /**
+     * 成长等级
+     */
+    private String growLevel;
+
     private static final long serialVersionUID = 1L;
 }

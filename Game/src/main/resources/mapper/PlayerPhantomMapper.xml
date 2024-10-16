@@ -21,10 +21,11 @@
     <result column="hp" jdbcType="INTEGER" property="hp" />
     <result column="exp" jdbcType="INTEGER" property="exp" />
     <result column="carried" jdbcType="CHAR" property="carried" />
+    <result column="grow_level" jdbcType="VARCHAR" property="growLevel" />
   </resultMap>
   <sql id="Base_Column_List">
     id, player_id, name, level, appellation, rarity, attribute, camp, area, speed,
-    attack, physique, grow, skills, `describe`, line, hp, exp, carried
+    attack, physique, grow, skills, `describe`, line, hp, exp, carried, grow_level
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -41,12 +42,12 @@
       appellation, rarity, attribute,
       camp, area, speed, attack, 
       physique, grow, skills, 
-      `describe`, line, hp, exp, carried)
+      `describe`, line, hp, exp, carried, growLevel)
     values (#{id,jdbcType=VARCHAR}, #{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER},
       #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, #{attribute,jdbcType=CHAR}, 
       #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, #{attack,jdbcType=INTEGER}, 
       #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{exp,jdbcType=INTEGER}, #{carried,jdbcType=CHAR})
+      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{exp,jdbcType=INTEGER}, #{carried,jdbcType=CHAR}, #{grow_level,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
     insert into bot_player_phantom
@@ -99,6 +100,9 @@
       <if test="carried != null">
         carried
       </if>
+      <if test="growLevel != null">
+        grow_level
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="playerId != null">
@@ -148,6 +152,9 @@
       </if>
       <if test="carried != null">
         #{carried,jdbcType=CHAR}
+      </if>
+      <if test="growLevel != null">
+        #{growLevel,jdbcType=CHAR}
       </if>
     </trim>
   </insert>
@@ -208,6 +215,9 @@
       <if test="carried != null">
         carried = #{carried, jdbcType=CHAR}
       </if>
+      <if test="growLevel != null">
+        grow_level = #{growLevel, jdbcType=CHAR}
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -230,7 +240,8 @@
       line = #{line,jdbcType=VARCHAR},
       hp = #{hp,jdbcType=INTEGER},
       exp = #{exp,jdbcType=INTEGER},
-      carried = #{carried, jdbcType=CHAR}
+      carried = #{carried, jdbcType=CHAR},
+      grow_level = #{growLevel, jdbcType=CHAR},
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectBySelective" resultMap="BaseResultMap">
