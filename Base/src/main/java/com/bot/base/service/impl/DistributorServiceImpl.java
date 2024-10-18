@@ -72,10 +72,11 @@ public class DistributorServiceImpl implements Distributor {
     private final static Map<String, String> GAME_TOKENS = new HashMap<>();
 
     @Override
+    @Deprecated
     public void doDistribute(HttpServletResponse response, String reqContent, String token) {
         try{
             response.setCharacterEncoding("utf-8");
-            CommonResp resp = this.req2Resp(reqContent, token, null);
+            CommonResp resp = this.req2Resp(reqContent, token, null, false);
             log.info("回复[{}],[{}]", token, resp);
             if (resp.getMsg().contains(BaseConsts.Distributor.AND_REG)) {
                 String[] responseContents = resp.getMsg().split(BaseConsts.Distributor.AND_REG);
@@ -91,9 +92,9 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     @Override
-    public CommonResp doDistributeWithString(String reqContent, String token, String groupId) {
+    public CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at) {
         try{
-            CommonResp resp = this.req2Resp(reqContent, token, groupId);
+            CommonResp resp = this.req2Resp(reqContent, token, groupId, at);
             log.info("回复[{}],[{}]", token, resp.getMsg());
             return resp;
         }catch (Exception e) {
@@ -114,7 +115,7 @@ public class DistributorServiceImpl implements Distributor {
         }
     }
 
-    private CommonResp req2Resp(String reqContent, String token, String groupId) {
+    private CommonResp req2Resp(String reqContent, String token, String groupId, boolean at) {
         // 顶级token 走专属逻辑
         if (SystemConfigCache.topToken.contains(groupId == null ? token : groupId)) {
             return topTokenService.doQueryReturn(reqContent, groupId == null ? token : groupId);
@@ -218,7 +219,11 @@ public class DistributorServiceImpl implements Distributor {
             return new CommonResp(maybeResp, ENRespType.TEXT.getType());
         }
         // 全部未命中
-        return geyDefaultMsg(reqContent, token, groupId);
+        // 非群聊 或 群聊艾特 认为是闲聊
+        if (groupId == null || at) {
+            return geyDefaultMsg(reqContent, token, groupId);
+        }
+        return null;
     }
 
     private BaseService getService(String className) {
@@ -249,8 +254,7 @@ public class DistributorServiceImpl implements Distributor {
         if (resp != null) {
             return resp;
         }
-        int index = RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size());
-        return new CommonResp(CommonTextLoader.defaultResponseMsg.get(index), ENRespType.TEXT.getType());
+        return null;
     }
 
     private String getResponseByKey(String keyword) {

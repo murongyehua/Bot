@@ -18,17 +18,14 @@ public class GirlVideoServiceImpl implements BaseService {
     @Value("${girl.url}")
     private String girlUrl;
 
-    @Value("${girl.key}")
-    private String girlKey;
-
     @Override
     public CommonResp doQueryReturn(String reqContent, String token) {
-        JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(girlUrl + girlKey, null));
+        JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(girlUrl, null));
         Integer code = (Integer) json.get("code");
         if (code != 200) {
             return new CommonResp(CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size())), ENRespType.TEXT.getType());
         }
-        String url = (String) json.get("video");
+        String url = (String) json.get("data");
         if (StrUtil.isEmpty(url)) {
             return new CommonResp(CommonTextLoader.defaultResponseMsg.get(RandomUtil.randomInt(0, CommonTextLoader.defaultResponseMsg.size())), ENRespType.TEXT.getType());
         }

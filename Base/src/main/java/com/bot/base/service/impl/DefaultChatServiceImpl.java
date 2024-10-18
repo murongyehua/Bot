@@ -92,9 +92,9 @@ public class DefaultChatServiceImpl implements BaseService {
     private String defaultChat(String reqContent) {
         String finalUrl = defaultUrl + reqContent;
         JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(finalUrl, null));
-        Integer code = (Integer) json.get("result");
-        if (0 == code) {
-            String content = (String) json.get("content");
+        Integer code = (Integer) json.get("code");
+        if (200 == code) {
+            String content = (String) json.get("data");
             return this.dealResponse(content);
         }
         return null;

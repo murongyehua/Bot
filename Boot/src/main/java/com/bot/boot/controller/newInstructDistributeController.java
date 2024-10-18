@@ -47,7 +47,7 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。");
                 return;
             }
-            CommonResp resp = distributor.doDistributeWithString(msg, userId, null);
+            CommonResp resp = distributor.doDistributeWithString(msg, userId, null, false);
             if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
                 SendMsgUtil.sendImg(userId, resp.getMsg());
             }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
@@ -56,22 +56,27 @@ public class newInstructDistributeController {
                 ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendVideo(userId, resp.getMsg()));
             }else if (resp != null && ENRespType.FILE.getType().equals(resp.getType())) {
                 SendMsgUtil.sendFile(userId, resp.getMsg());
-            }else {
+            }else if (resp != null){
                 SendMsgUtil.sendMsg(userId, resp.getMsg());
             }
         }
         // 群聊
         if (StrUtil.equals("80001", messageType)) {
-            if (msg.startsWith("@小林Bot")) {
+//            if (msg.startsWith("@小林Bot")) {
                 log.info(String.format("消息体：%s", message));
                 log.info(String.format("收到群消息: %s", msg));
                 String groupId = (String) data.get("fromGroup");
-                String effectMsg = msg.split("\u2005")[1];
+                String effectMsg = msg;
+                boolean at = false;
+                if (msg.startsWith("@小林Bot")) {
+                    at = true;
+                    effectMsg = msg.split("\u2005")[1];
+                }
                 if (effectMsg.contains(ENFileType.GAME_FILE.getLabel())) {
                     SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。", userId);
                     return;
                 }
-                CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId);
+                CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId, at);
                 if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
                     SendMsgUtil.sendImg(groupId, resp.getMsg());
                 }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
@@ -80,17 +85,18 @@ public class newInstructDistributeController {
                     ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendGroupVideo(groupId, resp.getMsg(), userId));
                 }else if (resp != null && ENRespType.FILE.getType().equals(resp.getType())){
                     SendMsgUtil.sendFile(userId, resp.getMsg());
-                }else {
+                }else if (resp != null) {
                     SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
                 }
-            }else if (msg.startsWith(BaseConsts.Activity.ACTIVITY_JX3)) {
-                // 增加抽奖逻辑
-                log.info(String.format("消息体：%s", message));
-                log.info(String.format("收到群消息: %s", msg));
-                String groupId = (String) data.get("fromGroup");
-                CommonResp resp = distributor.doDistributeWithString(msg, userId, groupId);
-                SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
-            }
+//            }
+//            else if (msg.startsWith(BaseConsts.Activity.ACTIVITY_JX3)) {
+//                // 增加抽奖逻辑
+//                log.info(String.format("消息体：%s", message));
+//                log.info(String.format("收到群消息: %s", msg));
+//                String groupId = (String) data.get("fromGroup");
+//                CommonResp resp = distributor.doDistributeWithString(msg, userId, groupId);
+//                SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
+//            }
         }
     }
 

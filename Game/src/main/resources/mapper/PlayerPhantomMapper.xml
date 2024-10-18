@@ -42,12 +42,12 @@
       appellation, rarity, attribute,
       camp, area, speed, attack, 
       physique, grow, skills, 
-      `describe`, line, hp, exp, carried, growLevel)
+      `describe`, line, hp, exp, carried, grow_level)
     values (#{id,jdbcType=VARCHAR}, #{playerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER},
       #{appellation,jdbcType=VARCHAR}, #{rarity,jdbcType=CHAR}, #{attribute,jdbcType=CHAR}, 
       #{camp,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{speed,jdbcType=INTEGER}, #{attack,jdbcType=INTEGER}, 
       #{physique,jdbcType=INTEGER}, #{grow,jdbcType=INTEGER}, #{skills,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{exp,jdbcType=INTEGER}, #{carried,jdbcType=CHAR}, #{grow_level,jdbcType=VARCHAR})
+      #{describe,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{exp,jdbcType=INTEGER}, #{carried,jdbcType=CHAR}, #{growLevel,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.bot.game.dao.entity.PlayerPhantom" useGeneratedKeys="true">
     insert into bot_player_phantom
@@ -241,7 +241,7 @@
       hp = #{hp,jdbcType=INTEGER},
       exp = #{exp,jdbcType=INTEGER},
       carried = #{carried, jdbcType=CHAR},
-      grow_level = #{growLevel, jdbcType=CHAR},
+      grow_level = #{growLevel, jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectBySelective" resultMap="BaseResultMap">
