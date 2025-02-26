@@ -1,15 +1,9 @@
-请问,答案之书=answerBookServiceImpl
-占卜,运势占卜,运势=luckServiceImpl
+答案之书=answerBookServiceImpl
 情话=sweetServiceImpl
-音乐,歌=cloudMusicServiceImpl
-头像,男头,女头=pictureServiceImpl
 白羊座,金牛座,双子座,巨蟹座,狮子座,处女座,天秤座,天蝎座,射手座,摩羯座,水瓶座,双鱼座=constellationServiceImpl
 美女=girlVideoServiceImpl
 舔狗=dogServiceImpl
-保安=guardServiceImpl
 白丝=baiSiServiceImpl
 黑丝=heiSiServiceImpl
-切换=changeChatEngineServiceImpl
 菜单,帮助,功能大全=helpServiceImpl
-日报=morningServiceImpl
 打工日历=workDailyServiceImpl

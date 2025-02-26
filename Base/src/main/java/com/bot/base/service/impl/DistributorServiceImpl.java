@@ -183,8 +183,10 @@ public class DistributorServiceImpl implements Distributor {
         }
         // 是不是进入游戏模式
         if (BaseConsts.SystemManager.GAME.equals(reqContent)) {
-            GAME_TOKENS.put(token, ENUserGameStatus.WAIT_JOIN.getValue());
-            return new CommonResp(BaseConsts.SystemManager.JOIN_GAME_WARN, ENRespType.TEXT.getType());
+            return new CommonResp("山海见闻游戏已无限期停止，感谢您的游玩和支持，有缘再见。", ENRespType.TEXT.getType());
+            // 游戏停用了
+//            GAME_TOKENS.put(token, ENUserGameStatus.WAIT_JOIN.getValue());
+//            return new CommonResp(BaseConsts.SystemManager.JOIN_GAME_WARN, ENRespType.TEXT.getType());
         }
         // 是不是处于工作模式
         if (WorkManager.WORK_TOKENS.contains(token)) {

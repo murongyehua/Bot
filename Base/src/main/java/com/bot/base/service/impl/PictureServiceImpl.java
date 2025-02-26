@@ -23,6 +23,7 @@ public class PictureServiceImpl implements BaseService {
     private String url;
 
     @Override
+    @Deprecated
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         String msg = reqContent.replaceAll(BaseConsts.Picture.SUFFIX, StrUtil.EMPTY);
         String response = HttpSenderUtil.get(url + "?lx=" + ENPictureType.getValueByContainLabel(msg) + "&format=json", null);

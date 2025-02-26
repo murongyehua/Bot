@@ -23,6 +23,7 @@ public class LuckServiceImpl implements BaseService {
     public static Map<String, String> luckCacheMap = new HashMap<>();
 
     @Override
+    @Deprecated
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         String key = token + StrUtil.UNDERLINE + DateUtil.today();
         String resp = luckCacheMap.computeIfAbsent(key, k -> this.getLuck());

@@ -28,6 +28,7 @@ public class MorningServiceImpl implements BaseService {
     private BotUserConfigMapper userConfigMapper;
 
     @Override
+    @Deprecated
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         switch (reqContent) {
             case BaseConsts.Morning.PICK:

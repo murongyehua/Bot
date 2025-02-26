@@ -18,6 +18,7 @@ public class GuardServiceImpl implements BaseService {
     private String url;
 
     @Override
+    @Deprecated
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(url, null));
         int code = (Integer)json.get("code");
