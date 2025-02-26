@@ -11,6 +11,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.MorningReq;
 import com.bot.base.dto.UserTempInfoDTO;
+import com.bot.base.service.impl.DefaultChatServiceImpl;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENChineseNumber;
@@ -41,18 +42,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class StatusMonitor {
-
-    @Value("${morning.url}")
-    private String morningUrl;
-
-    @Value("${history.today.url}")
-    private String historyUrl;
-
-    @Value("${history.today.key}")
-    private String historyKey;
-
-    @Value("${wenroutxt.url}")
-    private String wenroutxt;
 
     @Value("${work.daily.urls}")
     private String workDailyUrls;
@@ -89,6 +78,8 @@ public class StatusMonitor {
     private void workDailySender() {
         // 是否过了当日10点
         if (new Date().getTime() > DateUtil.parse(DateUtil.today() + " 10:00:00", DatePattern.NORM_DATETIME_PATTERN).getTime()) {
+            // 清除慢生图记录
+            DefaultChatServiceImpl.SLOW_CREATE_TOKEN_TIMES_MAP.clear();
             // 查询当天发送情况
             Map<String, String> userWorkDailySendMap = userConfigMapper.selectByExample(new BotUserConfigExample()).stream().filter(botUserConfig -> StrUtil.isNotBlank(botUserConfig.getWorkDailyConfig())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getWorkDailyConfig));
             String today = DateUtil.today();
@@ -111,88 +102,5 @@ public class StatusMonitor {
         }
     }
 
-    /**
-     * 日报发送
-     */
-    private void morningSender() {
-        Date now = new Date();
-        String day = DateUtil.format(now, DatePattern.NORM_DATE_PATTERN);
-        boolean isInMorningTime = DateUtil.isIn(now, DateUtil.parse(day + " 08:30:00", DatePattern.NORM_DATETIME_PATTERN), DateUtil.parse(day + " 09:00:00", DatePattern.NORM_DATETIME_PATTERN));
-        boolean isInAfternoonTime = DateUtil.isIn(now, DateUtil.parse(day + " 14:00:00", DatePattern.NORM_DATETIME_PATTERN), DateUtil.parse(day + " 14:30:00", DatePattern.NORM_DATETIME_PATTERN));
-        boolean isInEveningTime = DateUtil.isIn(now, DateUtil.parse(day + " 18:00:00", DatePattern.NORM_DATETIME_PATTERN), DateUtil.parse(day + " 18:30:00", DatePattern.NORM_DATETIME_PATTERN));
-
-        if (isInMorningTime) {
-            // 获取内容
-            String content = this.fetchMorningContent();
-            this.doSendContent(content, ENMorningType.MORNING);
-        }
-        if (isInAfternoonTime) {
-            // 获取内容
-            String content = this.fetchMorningContent();
-            this.doSendContent(content, ENMorningType.AFTERNOON);
-        }
-        if (isInEveningTime) {
-            // 获取内容
-            String content = this.fetchMorningContent();
-            this.doSendContent(content, ENMorningType.EVENING);
-        }
-
-    }
-
-    private void doSendContent(String content, ENMorningType morningType) {
-        if (CollectionUtil.isEmpty(SystemConfigCache.userMorningMap)) {
-            return;
-        }
-        SystemConfigCache.morningSendMap.computeIfAbsent(morningType.getValue(), k -> new ArrayList<>());
-        for (String token : SystemConfigCache.userMorningMap.keySet()) {
-            String types = SystemConfigCache.userMorningMap.get(token);
-            if (!types.contains(morningType.getValue())) {
-                continue;
-            }
-            if (SystemConfigCache.morningSendMap.get(morningType.getValue()).contains(token)) {
-                continue;
-            }
-            JSONArray array = (JSONArray) JSONUtil.parseObj(HttpSenderUtil.get(historyUrl + "?format=json&apiKey=" + historyKey, null)).get("content");
-            String msg = String.format(BaseConsts.Morning.MORNING_FORMAT,
-                    morningType.getFull(),
-                    DateUtil.thisMonth() + 1,
-                    DateUtil.thisDayOfMonth(),
-                    ENChineseNumber.getLabelByValue(String.valueOf(DateUtil.thisDayOfWeek() - 1)),
-                    array.get(RandomUtil.randomInt(0, array.size() - 1)),
-                    content,
-                    HttpSenderUtil.get(wenroutxt, null));
-            if (token.contains("@chatroom")) {
-                SendMsgUtil.sendGroupMsg(token, msg, null);
-                SystemConfigCache.morningSendMap.get(morningType.getValue()).add(token);
-                continue;
-            }
-            SendMsgUtil.sendMsg(token, msg);
-            SystemConfigCache.morningSendMap.get(morningType.getValue()).add(token);
-        }
-    }
-
-    private String fetchMorningContent() {
-        return this.getMorning("weibo") +
-                this.getMorning("baidu") +
-                this.getMorning("zhihu");
-    }
-
-    private String getMorning(String type) {
-        try {
-            String weiboResponse = HttpSenderUtil.get(String.format(morningUrl, type), null);
-            JSONArray dataList = (JSONArray) JSONUtil.parseObj(weiboResponse).get("data");
-            StringBuilder stringBuilder = new StringBuilder();
-            for(int index = 0; index < 8; index++) {
-                JSONObject object = (JSONObject) dataList.get(index);
-                stringBuilder.append(StrUtil.CRLF);
-                stringBuilder.append("『").append((String) object.get("title")).append("』").append(StrUtil.CRLF);
-                stringBuilder.append((String) object.get("mobilUrl"));
-            }
-            return stringBuilder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 }

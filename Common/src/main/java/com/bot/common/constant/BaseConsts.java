@@ -163,7 +163,7 @@ public interface BaseConsts {
     }
 
     interface GirlVideo {
-        String SUCCESS = "好好好，视频发得慢，请不要一直发，耐心等待哈。(如果很久都没等到，再重新尝试~)";
+        String SUCCESS = "正在发送视频，视频发得慢，不要一直尝试，耐心等待即可。";
     }
 
     interface Dog {
