@@ -18,7 +18,7 @@ public class HeiSiServiceImpl implements BaseService {
     private String url;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(url, null));
         int code = (Integer)json.get("code");
         if (code == 200) {

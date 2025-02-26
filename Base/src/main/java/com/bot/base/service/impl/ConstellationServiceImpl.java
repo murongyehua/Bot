@@ -21,7 +21,7 @@ public class ConstellationServiceImpl implements BaseService {
     private String key;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         try {
             String consName = reqContent.substring(0, 3);
             // 懒得接其他的了，只支持查询日运势，其他的有需要再说

@@ -19,7 +19,7 @@ public class DogServiceImpl implements BaseService {
     private String dogUrl;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         String resultObj = HttpSenderUtil.get(dogUrl, null);
         String result = (String) JSONUtil.parseObj(resultObj).get("data");
         if (StrUtil.isEmpty(result)) {

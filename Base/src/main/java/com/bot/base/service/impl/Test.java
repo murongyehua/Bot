@@ -4,10 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.bot.base.dto.CommonResp;
 import com.bot.base.dto.MorningReq;
-import com.bot.base.dto.TencentChatReq;
-import com.bot.common.enums.ENRespType;
 import com.bot.common.util.HttpSenderUtil;
 
 public class Test {

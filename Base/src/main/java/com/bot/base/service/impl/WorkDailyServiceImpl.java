@@ -32,7 +32,7 @@ public class WorkDailyServiceImpl implements BaseService {
 
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         switch (reqContent) {
             case BaseConsts.WorkDaily.ACTIVE_WORK_DAILY:
                 insertOrUpdate(token, DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
@@ -54,6 +54,7 @@ public class WorkDailyServiceImpl implements BaseService {
         if (CollectionUtil.isEmpty(userConfigList)) {
             BotUserConfig userConfig = new BotUserConfig();
             userConfig.setId(IdUtil.simpleUUID());
+            userConfig.setUserId(token);
             userConfig.setChatEngine(ENChatEngine.DEFAULT.getValue());
             userConfigMapper.insert(userConfig);
             return;

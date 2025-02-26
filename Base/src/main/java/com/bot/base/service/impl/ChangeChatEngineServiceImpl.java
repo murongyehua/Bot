@@ -27,7 +27,7 @@ public class ChangeChatEngineServiceImpl implements BaseService {
 
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         String content =  reqContent.replace(BaseConsts.Change.CHANGE, "").trim();
         String value = ENChatEngine.getValueByKeyWord(content);
         if (value == null) {
@@ -35,7 +35,7 @@ public class ChangeChatEngineServiceImpl implements BaseService {
             return new CommonResp(BaseConsts.Change.NO_ENGINE, ENRespType.TEXT.getType());
         }
         this.insertOrUpdate(value, token);
-        return new CommonResp(String.format(BaseConsts.Change.CHANGE_SUCCESS_FORMAT, ENChatEngine.getByValue(value).getLabel()), ENRespType.TEXT.getType());
+        return new CommonResp(BaseConsts.Change.CHANGE_SUCCESS_FORMAT, ENRespType.TEXT.getType());
     }
 
     private void insertOrUpdate(String engineValue, String token) {

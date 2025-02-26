@@ -7,10 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GptChatReq {
+public class DeepCharMessageReq {
 
-    private String text;
+    private String content;
 
-    private String apiKey;
+    private String role;
 
 }

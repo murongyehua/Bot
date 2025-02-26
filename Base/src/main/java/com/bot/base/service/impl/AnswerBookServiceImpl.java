@@ -26,7 +26,7 @@ public class AnswerBookServiceImpl implements BaseService {
     private String url;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         String extContent = reqContent.replaceAll(BaseConsts.Menu.ANSWER_BOOK, "").trim();
         if (StrUtil.isEmpty(extContent)) {
             return new CommonResp("请带上你的问题再使用答案之书", ENRespType.TEXT.getType());

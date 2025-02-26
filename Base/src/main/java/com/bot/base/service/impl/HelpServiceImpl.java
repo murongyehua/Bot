@@ -12,7 +12,7 @@ public class HelpServiceImpl implements BaseService {
     @Value("${help.url}")
     private String url;
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         return new CommonResp(url, ENRespType.IMG.getType());
     }
 }

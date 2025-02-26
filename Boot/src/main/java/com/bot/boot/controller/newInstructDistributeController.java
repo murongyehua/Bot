@@ -47,7 +47,7 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。");
                 return;
             }
-            CommonResp resp = distributor.doDistributeWithString(msg, userId, null, false);
+            CommonResp resp = distributor.doDistributeWithString(msg.trim(), userId, null, false);
             if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
                 SendMsgUtil.sendImg(userId, resp.getMsg());
             }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
@@ -68,9 +68,9 @@ public class newInstructDistributeController {
                 String groupId = (String) data.get("fromGroup");
                 String effectMsg = msg;
                 boolean at = false;
-                if (msg.startsWith("@小林Bot")) {
+                if (msg.contains("@小林Bot")) {
                     at = true;
-                    effectMsg = msg.split("\u2005")[1];
+                    effectMsg = msg.replaceAll("@小林Bot", "").replaceAll("\u2005", "").trim();
                 }
                 if (effectMsg.contains(ENFileType.GAME_FILE.getLabel())) {
                     SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。", userId);

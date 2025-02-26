@@ -56,8 +56,8 @@ public class HttpSenderUtil {
      */
     static {
         defaultConfig = RequestConfig.custom()
-                .setConnectTimeout(10 * 1000)
-                .setSocketTimeout(20 * 1000)
+                .setConnectTimeout(180 * 1000)
+                .setSocketTimeout(180 * 1000)
                 .build();
     }
 
@@ -171,6 +171,26 @@ public class HttpSenderUtil {
         post.setConfig(defaultConfig);
         post.addHeader("Content-Type", "application/json");
         post.addHeader("Authorization", SystemConfigCache.token);
+        StringEntity stringEntity = new StringEntity(jsonData, CHARSET);
+//        stringEntity.setContentEncoding(CHARSET);
+        post.setEntity(stringEntity);
+        CloseableHttpResponse response = httpclient.execute(post);
+
+        if (response != null && response.getEntity() != null) {
+            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+            return result;
+        } else {
+            log.error("请求失败" + response);
+            throw new Exception("请求失败");
+        }
+    }
+
+    public static String postJsonDataWithToken(String url, String jsonData, String token) throws Exception {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost post = new HttpPost(url);
+        post.setConfig(defaultConfig);
+        post.addHeader("Content-Type", "application/json");
+        post.addHeader("Authorization", "Bearer " + token);
         StringEntity stringEntity = new StringEntity(jsonData, CHARSET);
 //        stringEntity.setContentEncoding(CHARSET);
         post.setEntity(stringEntity);

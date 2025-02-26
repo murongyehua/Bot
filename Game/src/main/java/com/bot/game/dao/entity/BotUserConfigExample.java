@@ -543,6 +543,76 @@ public class BotUserConfigExample {
             addCriterion("work_daily_config not between", value1, value2, "workDailyConfig");
             return (Criteria) this;
         }
+
+        public Criteria andJxServerIsNull() {
+            addCriterion("jx_server is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerIsNotNull() {
+            addCriterion("jx_server is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerEqualTo(String value) {
+            addCriterion("jx_server =", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerNotEqualTo(String value) {
+            addCriterion("jx_server <>", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerGreaterThan(String value) {
+            addCriterion("jx_server >", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerGreaterThanOrEqualTo(String value) {
+            addCriterion("jx_server >=", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerLessThan(String value) {
+            addCriterion("jx_server <", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerLessThanOrEqualTo(String value) {
+            addCriterion("jx_server <=", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerLike(String value) {
+            addCriterion("jx_server like", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerNotLike(String value) {
+            addCriterion("jx_server not like", value, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerIn(List<String> values) {
+            addCriterion("jx_server in", values, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerNotIn(List<String> values) {
+            addCriterion("jx_server not in", values, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerBetween(String value1, String value2) {
+            addCriterion("jx_server between", value1, value2, "jxServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerNotBetween(String value1, String value2) {
+            addCriterion("jx_server not between", value1, value2, "jxServer");
+            return (Criteria) this;
+        }
     }
 
     /**

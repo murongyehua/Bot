@@ -72,7 +72,7 @@ public class StatusMonitor {
                         SendMsgUtil.sendMsg(userTempInfo.getToken(), BaseConsts.SystemManager.MANAGE_OUT_TIME);
                     }
                     // 日报发送
-                    this.morningSender();
+//                    this.morningSender();
                     // 打工日历发送
                     this.workDailySender();
                     Thread.sleep(5 * 60 * 1000);

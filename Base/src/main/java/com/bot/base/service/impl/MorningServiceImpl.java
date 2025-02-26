@@ -28,7 +28,7 @@ public class MorningServiceImpl implements BaseService {
     private BotUserConfigMapper userConfigMapper;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         switch (reqContent) {
             case BaseConsts.Morning.PICK:
                 this.insertOrUpdate(token, ENMorningType.ALL.getValue());

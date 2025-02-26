@@ -173,7 +173,7 @@ public interface BaseConsts {
     interface Change {
         String CHANGE = "切换";
         String NO_ENGINE = "未能识别需要切换的引擎，已为您切换至默认聊天引擎。（群聊内会统一切换）";
-        String CHANGE_SUCCESS_FORMAT = "已为您切换至%s引擎。（群聊内会统一切换）";
+        String CHANGE_SUCCESS_FORMAT = "现在不需要切换引擎即可正常使用小林的聊天能力~";
     }
 
     interface Morning {
@@ -210,8 +210,37 @@ public interface BaseConsts {
         String ACTIVITY_ALL_AWARD = "中奖汇总";
         String ACTIVITY_START = "抽奖开始";
         String ACTIVITY_FINISH = "抽奖结束";
-        String UN_KNOW = "未知活动指令，请检查";
+        String UN_KNOW = "未知剑三指令，请检查";
         String REPEAT = "您当轮抽奖次数已达最大值，请不要重复操作。";
+        String TODAY_DAILY = "今天日常";
+        String TOMORROW_DAILY = "明天日常";
+        String TOMORROW_TOMORROW_DAILY = "后天日常";
+        String NEWS = "新闻";
+        String OPEN_SERVER = "开服";
+        String BIND_SERVER = "绑定区服";
+        String DAILY_RETURN_FORMAT = "【%s】" + StrUtil.CRLF +
+                "日期：%s" + StrUtil.CRLF +
+                "大战：%s" + StrUtil.CRLF +
+                "战场：%s" + StrUtil.CRLF +
+                "阵营任务：%s" + StrUtil.CRLF +
+                "门派事件：%s" + StrUtil.CRLF +
+                "驰援任务：%s" + StrUtil.CRLF +
+                "美人画像：%s" + StrUtil.CRLF +
+                "福缘宠物：%s，%s，%s" + StrUtil.CRLF +
+                "武林通鉴·公共任务：%s" + StrUtil.CRLF +
+                "武林通鉴·秘境任务：%s" + StrUtil.CRLF +
+                "武林通鉴·团队秘境：%s";
+        String DAILY_RETURN_FORMAT_WITHOUT_DRAW = "【%s】" + StrUtil.CRLF +
+                "日期：%s" + StrUtil.CRLF +
+                "大战：%s" + StrUtil.CRLF +
+                "战场：%s" + StrUtil.CRLF +
+                "阵营任务：%s" + StrUtil.CRLF +
+                "门派事件：%s" + StrUtil.CRLF +
+                "驰援任务：%s" + StrUtil.CRLF +
+                "福缘宠物：%s，%s，%s" + StrUtil.CRLF +
+                "武林通鉴·公共任务：%s" + StrUtil.CRLF +
+                "武林通鉴·秘境任务：%s" + StrUtil.CRLF +
+                "武林通鉴·团队秘境：%s";
     }
 
 }

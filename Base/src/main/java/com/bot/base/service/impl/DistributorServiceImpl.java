@@ -95,6 +95,10 @@ public class DistributorServiceImpl implements Distributor {
     public CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at) {
         try{
             CommonResp resp = this.req2Resp(reqContent, token, groupId, at);
+            if (resp == null) {
+                log.info("[{}]不予回复", token);
+                return null;
+            }
             log.info("回复[{}],[{}]", token, resp.getMsg());
             return resp;
         }catch (Exception e) {
@@ -118,7 +122,7 @@ public class DistributorServiceImpl implements Distributor {
     private CommonResp req2Resp(String reqContent, String token, String groupId, boolean at) {
         // 顶级token 走专属逻辑
         if (SystemConfigCache.topToken.contains(groupId == null ? token : groupId)) {
-            return topTokenService.doQueryReturn(reqContent, groupId == null ? token : groupId);
+            return topTokenService.doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
         }
         // 判断是不是进入管理模式
         if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {
@@ -128,9 +132,9 @@ public class DistributorServiceImpl implements Distributor {
         if (SystemManager.userTempInfo != null && SystemManager.userTempInfo.getToken().equals(token)) {
             return new CommonResp(systemManager.managerDistribute(reqContent), ENRespType.TEXT.getType());
         }
-        // 抽奖
+        // jx3
         if (reqContent.startsWith(BaseConsts.Activity.ACTIVITY_JX3)) {
-            return activityService.doQueryReturn(reqContent, token);
+            return activityService.doQueryReturn(reqContent, token, groupId);
         }
         // 开通服务
         if (reqContent.startsWith(BaseConsts.SystemManager.TEMP_REG_PREFIX)) {
@@ -199,10 +203,10 @@ public class DistributorServiceImpl implements Distributor {
         // 先判断命中服务
         for (String keyword : CommonTextLoader.serviceInstructMap.keySet()) {
             if (reqContent.startsWith(keyword)) {
-                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId);
+                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
             }
             if (reqContent.contains(keyword)) {
-                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId);
+                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
             }
         }
         // 菜单取消了，都走服务
@@ -250,7 +254,7 @@ public class DistributorServiceImpl implements Distributor {
 
     private CommonResp geyDefaultMsg(String reqContent, String token, String groupId) {
         BaseService service = serviceMap.get("defaultChatServiceImpl");
-        CommonResp resp = service.doQueryReturn(reqContent, groupId == null ? token : groupId);
+        CommonResp resp = service.doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
         if (resp != null) {
             return resp;
         }
