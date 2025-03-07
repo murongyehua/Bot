@@ -61,6 +61,9 @@ public class SystemManager {
     @Resource
     private BotAwardMapper awardMapper;
 
+    @Value("${notice.path}")
+    private String picPath;
+
     /**
      * 尝试进入管理模式
      * @param token
@@ -113,6 +116,16 @@ public class SystemManager {
             }
             String noticeContent = contentArr[1];
             send2AllUser(noticeContent);
+            return BaseConsts.SystemManager.SUCCESS;
+        }
+        // 发布图片公告
+        if (reqContent.startsWith(BaseConsts.SystemManager.PIC_SEND_NOTICE_FORMAT)) {
+            String[] contentArr = reqContent.split(StrUtil.SPACE);
+            if (contentArr.length != 2) {
+                return BaseConsts.SystemManager.ILL_CODE;
+            }
+            String noticePicName = contentArr[1];
+            send2AllUserPic(noticePicName);
             return BaseConsts.SystemManager.SUCCESS;
         }
         // 生成邀请码
@@ -207,6 +220,12 @@ public class SystemManager {
                 continue;
             }
             SendMsgUtil.sendMsg(token, content);
+        }
+    }
+
+    private void send2AllUserPic(String fileName) {
+        for(String token : SystemConfigCache.userDateMap.keySet()) {
+            SendMsgUtil.sendImg(token, picPath+fileName);
         }
     }
 

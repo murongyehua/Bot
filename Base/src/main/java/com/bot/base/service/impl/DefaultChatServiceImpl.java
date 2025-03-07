@@ -1,27 +1,20 @@
 package com.bot.base.service.impl;
 
+import cn.hutool.core.text.UnicodeUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.CommonResp;
 import com.bot.base.dto.CreatePicReq;
-import com.bot.base.dto.DeepCharMessageReq;
 import com.bot.base.dto.DeepChatReq;
 import com.bot.base.service.BaseService;
-import com.bot.common.config.SystemConfigCache;
-import com.bot.common.constant.BaseConsts;
-import com.bot.common.enums.ENChatEngine;
 import com.bot.common.enums.ENRespType;
-import com.bot.common.loader.CommonTextLoader;
 import com.bot.common.util.HttpSenderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,20 +36,44 @@ public class DefaultChatServiceImpl implements BaseService {
     @Value("${chat.key}")
     private String token;
 
+    @Value("${base.chat.key}")
+    private String baseChatKey;
+
+    @Value("${ds.chat.key}")
+    private String dsChatKey;
+
     @Value("${manager.token}")
     private String managerToken;
 
+    /**
+     * 慢生图次数记录
+     */
     public final static Map<String, Integer> SLOW_CREATE_TOKEN_TIMES_MAP = new HashMap<>();
+
+    /**
+     * 基础聊天id记录
+     */
+    public final static Map<String, String> TOKEN_2_BASE_CHAT_ID_MAP = new HashMap<>();
+
+    /**
+     * 深思聊天id记录
+     */
+    public final static Map<String, String> TOKEN_2_DS_CHAT_ID_MAP = new HashMap<>();
 
     @Override
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+        if (reqContent.equals("删除会话")) {
+            TOKEN_2_BASE_CHAT_ID_MAP.remove(token);
+            TOKEN_2_DS_CHAT_ID_MAP.remove(token);
+            return new CommonResp("已清除所有版本会话，可以重新开始聊天了。", ENRespType.TEXT.getType());
+        }
         if (reqContent.startsWith("深思")) {
             reqContent = reqContent.replaceAll("深思", "").trim();
-            return new CommonResp(this.deepChat(reqContent, "Pro/deepseek-ai/DeepSeek-R1"), ENRespType.TEXT.getType());
+            return new CommonResp(this.deepChat(reqContent, "ds", token), ENRespType.TEXT.getType());
         }
         if (reqContent.startsWith("生图")) {
             reqContent = reqContent.replaceAll("生图", "").trim();
-            String url = this.createPic("black-forest-labs/FLUX.1-schnell", reqContent);
+            String url = this.createPic("Kwai-Kolors/Kolors", reqContent);
             if (url == null) {
                 return new CommonResp("生成失败，请联系管理员检查。", ENRespType.TEXT.getType());
             }
@@ -71,7 +88,7 @@ public class DefaultChatServiceImpl implements BaseService {
                 }
             }
             reqContent = reqContent.replaceAll("慢生图", "").trim();
-            String url = this.createPic("black-forest-labs/FLUX.1-dev", reqContent);
+            String url = this.createPic("Kwai-Kolors/Kolors", reqContent);
             if (url == null) {
                 return new CommonResp("生成失败，请联系管理员检查。", ENRespType.TEXT.getType());
             }
@@ -83,7 +100,7 @@ public class DefaultChatServiceImpl implements BaseService {
             }
             return new CommonResp(url, ENRespType.IMG.getType());
         }
-        return new CommonResp(this.deepChat(reqContent, "Qwen/Qwen2.5-7B-Instruct"), ENRespType.TEXT.getType());
+        return new CommonResp(this.deepChat(reqContent, "base", token), ENRespType.TEXT.getType());
     }
 
     private String createPic(String model, String reqContent) {
@@ -104,20 +121,33 @@ public class DefaultChatServiceImpl implements BaseService {
         }
     }
 
-    private String deepChat(String reqContent, String model) {
+    private String deepChat(String reqContent, String model, String token) {
         log.info("调用ai的消息为[{}]", reqContent);
         try {
+            String conversationId = "";
+            String key = "";
+            if ("base".equals(model)) {
+                conversationId = TOKEN_2_BASE_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_BASE_CHAT_ID_MAP.get(token);
+                key = baseChatKey;
+            }else {
+                conversationId = TOKEN_2_DS_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_DS_CHAT_ID_MAP.get(token);
+                key = dsChatKey;
+            }
             JSONObject json = JSONUtil.parseObj(HttpSenderUtil.postJsonDataWithToken(defaultUrl,
-                    JSONUtil.toJsonStr(new DeepChatReq(model, 0.0, 4096, new ArrayList<DeepCharMessageReq>(){{add(new DeepCharMessageReq(reqContent, "user"));}})),
-                    token));
-            JSONArray choices = json.getJSONArray("choices");
-            if (choices == null) {
+                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), reqContent, "blocking", conversationId, token)),
+                    key));
+            String conversation_id = json.getStr("conversation_id");
+            if (conversation_id == null) {
                 log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(json));
                 return "分析失败，请联系管理员检查。";
             }
-            JSONObject choice = (JSONObject) choices.get(0);
-            JSONObject message = choice.getJSONObject("message");
-            return message.getStr("content");
+            if ("base".equals(model)) {
+                TOKEN_2_BASE_CHAT_ID_MAP.put(token, conversation_id);
+            }else {
+                TOKEN_2_DS_CHAT_ID_MAP.put(token, conversation_id);
+            }
+            String answer = json.getStr("answer");
+            return UnicodeUtil.toString(answer);
         } catch (Exception e) {
             e.printStackTrace();
         }

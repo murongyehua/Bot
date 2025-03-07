@@ -256,7 +256,7 @@ public class DistributorServiceImpl implements Distributor {
 
     private CommonResp geyDefaultMsg(String reqContent, String token, String groupId) {
         BaseService service = serviceMap.get("defaultChatServiceImpl");
-        CommonResp resp = service.doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
+        CommonResp resp = service.doQueryReturn(reqContent, token, groupId);
         if (resp != null) {
             return resp;
         }

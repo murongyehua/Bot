@@ -11,12 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 public class DeepChatReq {
 
-    private String model;
+    private Object inputs;
 
-    private Double frequency_penalty;
+    private String query;
 
-    private Integer max_tokens;
+    private String response_mode;
 
-    private List<DeepCharMessageReq> messages;
+    private String conversation_id;
+
+    private String user;
 
 }
