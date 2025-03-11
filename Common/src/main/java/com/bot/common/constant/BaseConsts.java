@@ -244,4 +244,18 @@ public interface BaseConsts {
                 "武林通鉴·团队秘境：%s";
     }
 
+    interface Drink {
+        String ACTIVE = "开启喝水记录";
+        String CLOSE = "关闭喝水记录";
+        String RECORD = "喝水";
+        String ACTIVE_SUCCESS = "开启成功。";
+        String CLOSE_SUCCESS = "关闭成功。";
+        String RECORD_SUCCESS = "记录成功。";
+        String ACTIVE_TIP = "当前会话未开启该功能，请先开启喝水记录。（私聊和群聊不共享开关）";
+        String QUERY_RECORD = "%s 喝了%sml";
+        String NO_DATA_TIP = "你今天还未记录喝水，赶紧喝一口记录下来吧！";
+        String QUERY_ALL = "今天共喝水%s次，累计摄入%sL水量。";
+        String ALL_TITLE = "【喝水提醒】";
+    }
+
 }

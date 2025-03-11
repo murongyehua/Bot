@@ -9,10 +9,13 @@ import com.bot.base.dto.DeepChatReq;
 import com.bot.base.dto.MorningReq;
 import com.bot.common.util.HttpSenderUtil;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Test {
 
     public static void main(String[] args) {
-        String resp = JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), "111", "blocking", "111", "111"));
-        System.out.println(resp);
+        BigDecimal result = new BigDecimal(200).divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP);
+        System.out.println(result);
     }
 }

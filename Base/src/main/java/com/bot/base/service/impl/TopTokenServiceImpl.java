@@ -6,6 +6,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.*;
 import com.bot.base.service.BaseService;
+import com.bot.base.util.CmmsUtil;
 import com.bot.common.enums.ENGridKeyWord;
 import com.bot.common.enums.ENRespType;
 import com.bot.common.util.HttpSenderUtil;
@@ -38,8 +39,8 @@ public class TopTokenServiceImpl implements BaseService {
                     return new CommonResp("退款指令格式错误，请检查指令是否正确。", ENRespType.TEXT.getType());
                 }
                 try {
-                    String response = HttpSenderUtil.postJsonData(url + target.getUrl(), JSONUtil.toJsonStr(new GridRefundReq(reqs[1])));
-                    return new CommonResp("操作结果：" + StrUtil.CRLF + new JSONObject(response).getStr("data"), ENRespType.TEXT.getType());
+                    String response = CmmsUtil.refund(reqs[1]);
+                    return new CommonResp("操作结果：" + response, ENRespType.TEXT.getType());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
