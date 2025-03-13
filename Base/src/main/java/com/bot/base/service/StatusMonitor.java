@@ -263,7 +263,7 @@ public class StatusMonitor {
     }
 
     private String get4DrinkAIData(List<BotDrinkRecord> recordList, String token, Map<String, String> token2DrunkChatIdMap) {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder("今天是" + DateUtil.format(new Date(), DatePattern.CHINESE_DATE_FORMAT) + "下面是我今天的喝水记录");
         AtomicInteger all = new AtomicInteger();
         recordList.forEach(x -> {
             stringBuilder.append(String.format(BaseConsts.Drink.QUERY_RECORD, x.getDrinkTime().split(StrUtil.SPACE)[1], x.getDrinkNumber())).append(StrUtil.CRLF);
