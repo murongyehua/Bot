@@ -51,7 +51,7 @@
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-        <table tableName="bot_drink_record" domainObjectName="BotDrinkRecord"
+        <table tableName="bot_user_config" domainObjectName="BotUserConfig"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableSelectByPrimaryKey="true">

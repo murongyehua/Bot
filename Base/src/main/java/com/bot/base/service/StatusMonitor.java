@@ -62,11 +62,6 @@ public class StatusMonitor {
     @Value("${drink.chat.key}")
     private String drinkToken;
 
-    /**
-     * 喝水分析id记录
-     */
-    public final static Map<String, String> TOKEN_2_DRINK_CHAT_ID_MAP = new HashMap<>();
-
     @PostConstruct
     public void systemManagerMonitor () {
         ThreadPoolManager.addBaseTask(() -> {
@@ -205,6 +200,7 @@ public class StatusMonitor {
                 return;
             }
             List<String> activeUserIds = userConfigList.stream().map(BotUserConfig::getUserId).collect(Collectors.toList());
+            Map<String, String> userId2DrinkChatIdMap = userConfigList.stream().collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getDrinkChatId));
             // 根据记录的groupId是不是空，来判断是私聊记录的还是群聊记录的
             // 如果是个人，直接推送，如果是群，推送群聊里所有今天记录了的（私聊记录的也在群里推送）
             BotDrinkRecordExample drinkRecordExample = new BotDrinkRecordExample();
@@ -230,14 +226,14 @@ public class StatusMonitor {
                 if (CollectionUtil.isEmpty(hasRecordGroupIdList)) {
                     // 第一种情况 只发私聊
                     if (activeUserIds.contains(userId)) {
-                        SendMsgUtil.sendMsg(userId, this.get4DrinkAIData(userDrinkRecordList, userId));
+                        SendMsgUtil.sendMsg(userId, this.get4DrinkAIData(userDrinkRecordList, userId, userId2DrinkChatIdMap));
                     }
                     continue;
                 }
                 long groupCount = userDrinkRecordList.stream().filter(x -> x.getGroupId() != null).count();
                 if (groupCount == userDrinkRecordList.size()) {
                     // 第二种情况 只发群聊 且每个群都要发
-                    String content = this.get4DrinkAIData(userDrinkRecordList, userId);
+                    String content = this.get4DrinkAIData(userDrinkRecordList, userId, userId2DrinkChatIdMap);
                     hasRecordGroupIdList.forEach(groupId -> {
                         if (activeUserIds.contains(groupId)) {
                             SendMsgUtil.sendGroupMsg(groupId, content, userId);
@@ -246,7 +242,7 @@ public class StatusMonitor {
                     continue;
                 }
                 // 第三种情况，都发先发私聊再发群聊
-                String content = this.get4DrinkAIData(userDrinkRecordList, userId);
+                String content = this.get4DrinkAIData(userDrinkRecordList, userId, userId2DrinkChatIdMap);
                 if (activeUserIds.contains(userId)) {
                     SendMsgUtil.sendMsg(userId, content);
                 }
@@ -266,7 +262,7 @@ public class StatusMonitor {
         return String.format(BaseConsts.Drink.ALL_TITLE + StrUtil.CRLF + StrUtil.CRLF + BaseConsts.Drink.QUERY_ALL, recordList.size(), result);
     }
 
-    private String get4DrinkAIData(List<BotDrinkRecord> recordList, String token) {
+    private String get4DrinkAIData(List<BotDrinkRecord> recordList, String token, Map<String, String> token2DrunkChatIdMap) {
         StringBuilder stringBuilder = new StringBuilder();
         AtomicInteger all = new AtomicInteger();
         recordList.forEach(x -> {
@@ -276,7 +272,7 @@ public class StatusMonitor {
         BigDecimal result = new BigDecimal(all.get()).divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP);
         stringBuilder.append(StrUtil.CRLF).append(String.format(BaseConsts.Drink.QUERY_ALL, recordList.size(), result));
 
-        String conversationId = TOKEN_2_DRINK_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_DRINK_CHAT_ID_MAP.get(token);
+        String conversationId = token2DrunkChatIdMap.get(token) == null ? "" : token2DrunkChatIdMap.get(token);
         JSONObject json;
         try {
             json = JSONUtil.parseObj(HttpSenderUtil.postJsonDataWithToken(defaultUrl,
@@ -291,7 +287,11 @@ public class StatusMonitor {
             log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(json));
             return "喝水日报发送异常，请检查。";
         }
-        TOKEN_2_DRINK_CHAT_ID_MAP.put(token, conversation_id);
+        BotUserConfigExample userConfigExample = new BotUserConfigExample();
+        userConfigExample.createCriteria().andUserIdEqualTo(token);
+        BotUserConfig botUserConfig = new BotUserConfig();
+        botUserConfig.setDrinkChatId(conversation_id);
+        userConfigMapper.updateByExampleSelective(botUserConfig, userConfigExample);
         return json.getStr("answer");
     }
 

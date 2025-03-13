@@ -683,6 +683,76 @@ public class BotUserConfigExample {
             addCriterion("drink_switch not between", value1, value2, "drinkSwitch");
             return (Criteria) this;
         }
+
+        public Criteria andDrinkChatIdIsNull() {
+            addCriterion("drink_chat_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdIsNotNull() {
+            addCriterion("drink_chat_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdEqualTo(String value) {
+            addCriterion("drink_chat_id =", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdNotEqualTo(String value) {
+            addCriterion("drink_chat_id <>", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdGreaterThan(String value) {
+            addCriterion("drink_chat_id >", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdGreaterThanOrEqualTo(String value) {
+            addCriterion("drink_chat_id >=", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdLessThan(String value) {
+            addCriterion("drink_chat_id <", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdLessThanOrEqualTo(String value) {
+            addCriterion("drink_chat_id <=", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdLike(String value) {
+            addCriterion("drink_chat_id like", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdNotLike(String value) {
+            addCriterion("drink_chat_id not like", value, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdIn(List<String> values) {
+            addCriterion("drink_chat_id in", values, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdNotIn(List<String> values) {
+            addCriterion("drink_chat_id not in", values, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdBetween(String value1, String value2) {
+            addCriterion("drink_chat_id between", value1, value2, "drinkChatId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDrinkChatIdNotBetween(String value1, String value2) {
+            addCriterion("drink_chat_id not between", value1, value2, "drinkChatId");
+            return (Criteria) this;
+        }
     }
 
     /**
