@@ -109,6 +109,9 @@ public class DrinkHelpServiceImpl implements BaseService {
                 }catch (Exception e) {
                     return new CommonResp("请填写正确的摄水量。", ENRespType.TEXT.getType());
                 }
+                if (ml > 1000 || ml < 1) {
+                    return new CommonResp("单次仅支持记录大于1小于1000的摄水量，请重新记录。", ENRespType.TEXT.getType());
+                }
                 BotDrinkRecord botDrinkRecord = new BotDrinkRecord();
                 botDrinkRecord.setDrinkTime(DateUtil.now());
                 botDrinkRecord.setGroupId(groupId);

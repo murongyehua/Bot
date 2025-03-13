@@ -9,6 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.bot.base.dto.DeepChatReq;
 import com.bot.base.dto.MorningReq;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.base.service.impl.DefaultChatServiceImpl;
@@ -54,6 +55,17 @@ public class StatusMonitor {
 
     @Resource
     private BotDrinkRecordMapper drinkRecordMapper;
+
+    @Value("${chat.url}")
+    private String defaultUrl;
+
+    @Value("${drink.chat.key}")
+    private String drinkToken;
+
+    /**
+     * 喝水分析id记录
+     */
+    public final static Map<String, String> TOKEN_2_DRINK_CHAT_ID_MAP = new HashMap<>();
 
     @PostConstruct
     public void systemManagerMonitor () {
@@ -180,6 +192,71 @@ public class StatusMonitor {
                 });
             }
         }
+
+        // 每晚8点，逐一发送日报
+        if (DateUtil.isIn(now,
+                DateUtil.parse(DateUtil.today() + " 20:00:00", DatePattern.NORM_DATETIME_PATTERN),
+                DateUtil.parse(DateUtil.today() + " 20:05:00", DatePattern.NORM_DATETIME_PATTERN))) {
+            // 开了开关才推送
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andDrinkSwitchEqualTo("1");
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            if (CollectionUtil.isEmpty(userConfigList)) {
+                return;
+            }
+            List<String> activeUserIds = userConfigList.stream().map(BotUserConfig::getUserId).collect(Collectors.toList());
+            // 根据记录的groupId是不是空，来判断是私聊记录的还是群聊记录的
+            // 如果是个人，直接推送，如果是群，推送群聊里所有今天记录了的（私聊记录的也在群里推送）
+            BotDrinkRecordExample drinkRecordExample = new BotDrinkRecordExample();
+            drinkRecordExample.createCriteria().andDrinkTimeBetween(
+                    DateUtil.format(DateUtil.beginOfDay(new Date()), DatePattern.NORM_DATETIME_FORMAT),
+                    DateUtil.format(DateUtil.endOfDay(new Date()), DatePattern.NORM_DATETIME_FORMAT));
+            List<BotDrinkRecord> botDrinkRecordList = drinkRecordMapper.selectByExample(drinkRecordExample);
+            if (CollectionUtil.isEmpty(botDrinkRecordList)) {
+                return;
+            }
+            Map<String, List<BotDrinkRecord>> drinkMap = botDrinkRecordList.stream().collect(Collectors.groupingBy(BotDrinkRecord::getUserId));
+            for (String userId : drinkMap.keySet()) {
+                // 按人遍历，三种情况
+                // 1.只在私聊记录，则只发私聊
+                // 2.只在群聊记录，则只发群聊
+                // 3.私聊群聊都有记录，两边都发
+                List<BotDrinkRecord> userDrinkRecordList = drinkMap.get(userId);
+                List<String> hasRecordGroupIdList = userDrinkRecordList.stream()
+                        .map(BotDrinkRecord::getGroupId)
+                        .distinct()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                if (CollectionUtil.isEmpty(hasRecordGroupIdList)) {
+                    // 第一种情况 只发私聊
+                    if (activeUserIds.contains(userId)) {
+                        SendMsgUtil.sendMsg(userId, this.get4DrinkAIData(userDrinkRecordList, userId));
+                    }
+                    continue;
+                }
+                long groupCount = userDrinkRecordList.stream().filter(x -> x.getGroupId() != null).count();
+                if (groupCount == userDrinkRecordList.size()) {
+                    // 第二种情况 只发群聊 且每个群都要发
+                    String content = this.get4DrinkAIData(userDrinkRecordList, userId);
+                    hasRecordGroupIdList.forEach(groupId -> {
+                        if (activeUserIds.contains(groupId)) {
+                            SendMsgUtil.sendGroupMsg(groupId, content, userId);
+                        }
+                    });
+                    continue;
+                }
+                // 第三种情况，都发先发私聊再发群聊
+                String content = this.get4DrinkAIData(userDrinkRecordList, userId);
+                if (activeUserIds.contains(userId)) {
+                    SendMsgUtil.sendMsg(userId, content);
+                }
+                hasRecordGroupIdList.forEach(groupId -> {
+                    if (activeUserIds.contains(groupId)) {
+                        SendMsgUtil.sendGroupMsg(groupId, content, userId);
+                    }
+                });
+            }
+        }
     }
 
     private String getDrinkResult(List<BotDrinkRecord> recordList) {
@@ -187,6 +264,35 @@ public class StatusMonitor {
         recordList.forEach(x -> all.addAndGet(x.getDrinkNumber()));
         BigDecimal result = new BigDecimal(all.get()).divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP);
         return String.format(BaseConsts.Drink.ALL_TITLE + StrUtil.CRLF + StrUtil.CRLF + BaseConsts.Drink.QUERY_ALL, recordList.size(), result);
+    }
+
+    private String get4DrinkAIData(List<BotDrinkRecord> recordList, String token) {
+        StringBuilder stringBuilder = new StringBuilder();
+        AtomicInteger all = new AtomicInteger();
+        recordList.forEach(x -> {
+            stringBuilder.append(String.format(BaseConsts.Drink.QUERY_RECORD, x.getDrinkTime().split(StrUtil.SPACE)[1], x.getDrinkNumber())).append(StrUtil.CRLF);
+            all.addAndGet(x.getDrinkNumber());
+        });
+        BigDecimal result = new BigDecimal(all.get()).divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP);
+        stringBuilder.append(StrUtil.CRLF).append(String.format(BaseConsts.Drink.QUERY_ALL, recordList.size(), result));
+
+        String conversationId = TOKEN_2_DRINK_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_DRINK_CHAT_ID_MAP.get(token);
+        JSONObject json;
+        try {
+            json = JSONUtil.parseObj(HttpSenderUtil.postJsonDataWithToken(defaultUrl,
+                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), stringBuilder.toString(), "blocking", conversationId, token)),
+                    drinkToken));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "喝水日报发送异常，请检查";
+        }
+        String conversation_id = json.getStr("conversation_id");
+        if (conversation_id == null) {
+            log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(json));
+            return "喝水日报发送异常，请检查。";
+        }
+        TOKEN_2_DRINK_CHAT_ID_MAP.put(token, conversation_id);
+        return json.getStr("answer");
     }
 
 

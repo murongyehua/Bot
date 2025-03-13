@@ -204,11 +204,11 @@ public class DistributorServiceImpl implements Distributor {
         }
         // 先判断命中服务
         for (String keyword : CommonTextLoader.serviceInstructMap.keySet()) {
-            if (reqContent.startsWith(keyword)) {
-                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent,  token, groupId);
-            }
-            if (reqContent.contains(keyword)) {
-                return this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent, token, groupId);
+            if (reqContent.startsWith(keyword) || reqContent.contains(keyword)) {
+                CommonResp resp = this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent,  token, groupId);
+                if (resp != null) {
+                    return resp;
+                }
             }
         }
         // 菜单取消了，都走服务
