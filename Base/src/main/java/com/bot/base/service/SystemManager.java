@@ -138,8 +138,19 @@ public class SystemManager {
                 return BaseConsts.SystemManager.ILL_CODE;
             }
             String content = contentArr[1];
-            String picName = contentArr[2];
-            SendMsgUtil.snsSendImage(content, picPath + picName);
+            String picNames = contentArr[2];
+            // 多个图片用#分隔
+            StringBuilder pics = new StringBuilder();
+            if (picNames.contains("#")) {
+                String[] picArray = picNames.split("#");
+                for (String pic : picArray) {
+                    pics.append(picPath).append(pic).append(";");
+                }
+            }else {
+                // 为了最后能一起裁剪字符串，这里也加个分号
+                pics.append(picPath).append(picNames).append(";");
+            }
+            SendMsgUtil.snsSendImage(content, pics.substring(0, pics.length() - 1));
             return BaseConsts.SystemManager.SUCCESS;
         }
         // 生成邀请码
