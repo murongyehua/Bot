@@ -38,6 +38,8 @@ public class SystemConfigCache {
 
     public static final String QUERY_GROUP_USER_URL = "/getChatRoomMemberInfo";
 
+    public static final String PUSH_FRIEND_URL = "/snsSendImage";
+
     public static final String OWNER_ID = "wxid_gt9s4k14zz7l22";
 
     /**

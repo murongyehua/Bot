@@ -99,6 +99,7 @@ public interface BaseConsts {
         String QUERY_DEADLINE_DATE = "到期时间";
         String SEND_NOTICE_FORMAT = "公告";
         String PIC_SEND_NOTICE_FORMAT = "图片公告";
+        String PUSH_FRIEND_FORMAT = "发朋友圈";
     }
 
     interface Sweet {

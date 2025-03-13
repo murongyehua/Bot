@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 /**
  * 系统管理
+ *
  * @author murongyehua
  * @version 1.0 2020/9/28
  */
@@ -66,6 +67,7 @@ public class SystemManager {
 
     /**
      * 尝试进入管理模式
+     *
      * @param token
      * @return
      */
@@ -82,6 +84,7 @@ public class SystemManager {
 
     /**
      * 管理模式分发指令
+     *
      * @param reqContent
      * @return
      */
@@ -126,6 +129,17 @@ public class SystemManager {
             }
             String noticePicName = contentArr[1];
             send2AllUserPic(noticePicName);
+            return BaseConsts.SystemManager.SUCCESS;
+        }
+        // 发送朋友圈
+        if (reqContent.startsWith(BaseConsts.SystemManager.PUSH_FRIEND_FORMAT)) {
+            String[] contentArr = reqContent.split(StrUtil.SPACE);
+            if (contentArr.length != 3) {
+                return BaseConsts.SystemManager.ILL_CODE;
+            }
+            String content = contentArr[1];
+            String picName = contentArr[2];
+            SendMsgUtil.snsSendImage(content, picPath + picName);
             return BaseConsts.SystemManager.SUCCESS;
         }
         // 生成邀请码
@@ -190,7 +204,7 @@ public class SystemManager {
                         return activityAwardDTO;
                     }).collect(Collectors.toList()));
                     return BaseConsts.SystemManager.SUCCESS;
-                }else {
+                } else {
                     return "开启条数不为1，可能存在问题，请检查数据“;                            ";
                 }
             }
@@ -204,7 +218,7 @@ public class SystemManager {
                 if (resultCount == 1) {
                     SystemConfigCache.activityAwardList.clear();
                     return BaseConsts.SystemManager.SUCCESS;
-                }else {
+                } else {
                     return "结束条数不为1，可能存在问题，请检查数据“;                            ";
                 }
             }
@@ -214,7 +228,7 @@ public class SystemManager {
     }
 
     private void send2AllUser(String content) {
-        for(String token : SystemConfigCache.userDateMap.keySet()) {
+        for (String token : SystemConfigCache.userDateMap.keySet()) {
             if (token.contains("@chatroom")) {
                 SendMsgUtil.sendGroupMsg(token, content, null);
                 continue;
@@ -224,8 +238,8 @@ public class SystemManager {
     }
 
     private void send2AllUserPic(String fileName) {
-        for(String token : SystemConfigCache.userDateMap.keySet()) {
-            SendMsgUtil.sendImg(token, picPath+fileName);
+        for (String token : SystemConfigCache.userDateMap.keySet()) {
+            SendMsgUtil.sendImg(token, picPath + fileName);
         }
     }
 
