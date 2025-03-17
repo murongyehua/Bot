@@ -24,7 +24,7 @@ public interface Distributor {
      * @param reqContent
      * @param token
      */
-    CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at);
+    CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag);
 
     /**
      * 返回文件

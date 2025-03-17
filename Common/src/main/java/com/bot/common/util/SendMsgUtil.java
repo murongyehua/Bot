@@ -127,7 +127,8 @@ public class SendMsgUtil {
             sendFriendDTO.setContent(content);
             sendFriendDTO.setPaths(urls);
             sendFriendDTO.setWId(SystemConfigCache.wId);
-            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendFriendDTO));
+            String response = HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.PUSH_FRIEND_URL, JSONUtil.toJsonStr(sendFriendDTO));
+            System.out.println(response);
         }catch (Exception e) {
             e.printStackTrace();
             System.out.println("发送朋友圈失败");

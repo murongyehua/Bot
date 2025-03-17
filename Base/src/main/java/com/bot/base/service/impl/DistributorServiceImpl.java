@@ -76,7 +76,7 @@ public class DistributorServiceImpl implements Distributor {
     public void doDistribute(HttpServletResponse response, String reqContent, String token) {
         try{
             response.setCharacterEncoding("utf-8");
-            CommonResp resp = this.req2Resp(reqContent, token, null, false);
+            CommonResp resp = this.req2Resp(reqContent, token, null, false, false);
             log.info("回复[{}],[{}]", token, resp);
             if (resp.getMsg().contains(BaseConsts.Distributor.AND_REG)) {
                 String[] responseContents = resp.getMsg().split(BaseConsts.Distributor.AND_REG);
@@ -92,9 +92,9 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     @Override
-    public CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at) {
+    public CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag) {
         try{
-            CommonResp resp = this.req2Resp(reqContent, token, groupId, at);
+            CommonResp resp = this.req2Resp(reqContent, token, groupId, at, mustRespFlag);
             if (resp == null) {
                 log.info("[{}]不予回复", token);
                 return null;
@@ -119,7 +119,7 @@ public class DistributorServiceImpl implements Distributor {
         }
     }
 
-    private CommonResp req2Resp(String reqContent, String token, String groupId, boolean at) {
+    private CommonResp req2Resp(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag) {
         // 顶级token 走专属逻辑
         if (SystemConfigCache.topToken.contains(groupId == null ? token : groupId)) {
             return topTokenService.doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
@@ -208,6 +208,10 @@ public class DistributorServiceImpl implements Distributor {
                 CommonResp resp = this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent,  token, groupId);
                 if (resp != null) {
                     return resp;
+                }
+                // 返回null的时候，要根据必须回复标记来判断是继续走默认聊天逻辑还是直接不予回复
+                if (!mustRespFlag) {
+                    return null;
                 }
             }
         }

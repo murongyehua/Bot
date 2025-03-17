@@ -101,7 +101,8 @@ public class DrinkHelpServiceImpl implements BaseService {
                 // 记录
                 String[] reqStrs = reqContent.split(StrUtil.SPACE);
                 if (reqStrs.length != 2) {
-                    return new CommonResp("指令格式错误，请检查或查阅帮助手册。", ENRespType.TEXT.getType());
+                    // 不能正常出发，直接返回null，外面再判断是不是正常聊天以及要不要回复
+                    return null;
                 }
                 int ml = 0;
                 try {

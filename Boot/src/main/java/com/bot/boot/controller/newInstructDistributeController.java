@@ -47,7 +47,7 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。");
                 return;
             }
-            CommonResp resp = distributor.doDistributeWithString(msg.trim(), userId, null, false);
+            CommonResp resp = distributor.doDistributeWithString(msg.trim(), userId, null, false, true);
             if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
                 SendMsgUtil.sendImg(userId, resp.getMsg());
             }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
@@ -76,7 +76,7 @@ public class newInstructDistributeController {
                     SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。", userId);
                     return;
                 }
-                CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId, at);
+                CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId, at, at);
                 if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
                     SendMsgUtil.sendImg(groupId, resp.getMsg());
                 }else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {

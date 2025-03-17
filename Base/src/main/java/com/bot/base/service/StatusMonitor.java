@@ -190,8 +190,8 @@ public class StatusMonitor {
 
         // 每晚8点，逐一发送日报
         if (DateUtil.isIn(now,
-                DateUtil.parse(DateUtil.today() + " 20:00:00", DatePattern.NORM_DATETIME_PATTERN),
-                DateUtil.parse(DateUtil.today() + " 20:05:00", DatePattern.NORM_DATETIME_PATTERN))) {
+                DateUtil.parse(DateUtil.today() + " 20:45:00", DatePattern.NORM_DATETIME_PATTERN),
+                DateUtil.parse(DateUtil.today() + " 20:50:00", DatePattern.NORM_DATETIME_PATTERN))) {
             // 开了开关才推送
             BotUserConfigExample userConfigExample = new BotUserConfigExample();
             userConfigExample.createCriteria().andDrinkSwitchEqualTo("1");
@@ -200,7 +200,7 @@ public class StatusMonitor {
                 return;
             }
             List<String> activeUserIds = userConfigList.stream().map(BotUserConfig::getUserId).collect(Collectors.toList());
-            Map<String, String> userId2DrinkChatIdMap = userConfigList.stream().collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getDrinkChatId));
+            Map<String, String> userId2DrinkChatIdMap = userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getDrinkChatId())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getDrinkChatId));
             // 根据记录的groupId是不是空，来判断是私聊记录的还是群聊记录的
             // 如果是个人，直接推送，如果是群，推送群聊里所有今天记录了的（私聊记录的也在群里推送）
             BotDrinkRecordExample drinkRecordExample = new BotDrinkRecordExample();
