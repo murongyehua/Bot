@@ -118,14 +118,13 @@ public class StatusMonitor {
     }
 
     /**
-     * 喝水记录，每天12:00 和 18:00各发送一次
+     * 喝水记录，每天10:00 和 17:00各发送一次
      */
     public void drinkSender() {
-        // 是否在11:59-12:04, 17:59-18:04
         Date now = new Date();
         if (DateUtil.isIn(now,
-                DateUtil.parse(DateUtil.today() + " 11:00:00", DatePattern.NORM_DATETIME_PATTERN),
-                DateUtil.parse(DateUtil.today() + " 11:05:00", DatePattern.NORM_DATETIME_PATTERN))
+                DateUtil.parse(DateUtil.today() + " 10:00:00", DatePattern.NORM_DATETIME_PATTERN),
+                DateUtil.parse(DateUtil.today() + " 10:05:00", DatePattern.NORM_DATETIME_PATTERN))
                 || DateUtil.isIn(now,
                 DateUtil.parse(DateUtil.today() + " 16:59:00", DatePattern.NORM_DATETIME_PATTERN),
                 DateUtil.parse(DateUtil.today() + " 17:04:00", DatePattern.NORM_DATETIME_PATTERN))) {

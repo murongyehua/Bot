@@ -35,15 +35,15 @@ public class WorkDailyServiceImpl implements BaseService {
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         switch (reqContent) {
             case BaseConsts.WorkDaily.ACTIVE_WORK_DAILY:
-                insertOrUpdate(token, DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
+                insertOrUpdate(groupId == null ? token : groupId, DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
                 systemConfigHolder.loadUserConfig();
                 return new CommonResp(BaseConsts.WorkDaily.DAILY_ACTIVE_SUCCESS, ENRespType.TEXT.getType());
             case BaseConsts.WorkDaily.CLOSE_WORK_DAILY:
-                insertOrUpdate(token, null);
+                insertOrUpdate(groupId == null ? token : groupId, null);
                 systemConfigHolder.loadUserConfig();
                 return new CommonResp(BaseConsts.WorkDaily.DAILY_CLOSE_SUCCESS, ENRespType.TEXT.getType());
             default:
-                return new CommonResp(BaseConsts.WorkDaily.ILL_CONTENT, ENRespType.TEXT.getType());
+                return null;
         }
     }
 
