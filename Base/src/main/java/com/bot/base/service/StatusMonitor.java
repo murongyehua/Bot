@@ -9,6 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.bot.base.dto.ChatIdDTO;
 import com.bot.base.dto.DeepChatReq;
 import com.bot.base.dto.MorningReq;
 import com.bot.base.dto.UserTempInfoDTO;
@@ -79,12 +80,30 @@ public class StatusMonitor {
                     this.workDailySender();
                     // 喝水记录发送
                     this.drinkSender();
+                    // 处理会话
+                    this.dealChatId();
                     Thread.sleep(5 * 60 * 1000);
                 }
             }catch (Exception e) {
                 log.error("管理模式状态监控出现异常", e);
             }
         });
+    }
+
+    private void dealChatId() {
+        for (String token : DefaultChatServiceImpl.TOKEN_2_DS_CHAT_ID_MAP.keySet()){
+            ChatIdDTO chatIdDTO = DefaultChatServiceImpl.TOKEN_2_DS_CHAT_ID_MAP.get(token);
+            if (DateUtil.offsetHour(chatIdDTO.getLastDate(), 3).before(new Date())) {
+                DefaultChatServiceImpl.TOKEN_2_DS_CHAT_ID_MAP.remove(token);
+            }
+        }
+
+        for (String token : DefaultChatServiceImpl.TOKEN_2_BASE_CHAT_ID_MAP.keySet()){
+            ChatIdDTO chatIdDTO = DefaultChatServiceImpl.TOKEN_2_BASE_CHAT_ID_MAP.get(token);
+            if (DateUtil.offsetHour(chatIdDTO.getLastDate(), 3).before(new Date())) {
+                DefaultChatServiceImpl.TOKEN_2_BASE_CHAT_ID_MAP.remove(token);
+            }
+        }
     }
 
     /**

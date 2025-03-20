@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.bot.base.dto.ChatIdDTO;
 import com.bot.base.dto.CommonResp;
 import com.bot.base.dto.CreatePicReq;
 import com.bot.base.dto.DeepChatReq;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,12 +47,12 @@ public class DefaultChatServiceImpl implements BaseService {
     /**
      * 基础聊天id记录
      */
-    public final static Map<String, String> TOKEN_2_BASE_CHAT_ID_MAP = new HashMap<>();
+    public final static Map<String, ChatIdDTO> TOKEN_2_BASE_CHAT_ID_MAP = new HashMap<>();
 
     /**
      * 深思聊天id记录
      */
-    public final static Map<String, String> TOKEN_2_DS_CHAT_ID_MAP = new HashMap<>();
+    public final static Map<String, ChatIdDTO> TOKEN_2_DS_CHAT_ID_MAP = new HashMap<>();
 
     @Override
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
@@ -98,10 +100,10 @@ public class DefaultChatServiceImpl implements BaseService {
             String conversationId = "";
             String key = "";
             if ("base".equals(model)) {
-                conversationId = TOKEN_2_BASE_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_BASE_CHAT_ID_MAP.get(token);
+                conversationId = TOKEN_2_BASE_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_BASE_CHAT_ID_MAP.get(token).getId();
                 key = baseChatKey;
             }else {
-                conversationId = TOKEN_2_DS_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_DS_CHAT_ID_MAP.get(token);
+                conversationId = TOKEN_2_DS_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_DS_CHAT_ID_MAP.get(token).getId();
                 key = dsChatKey;
             }
             JSONObject json = JSONUtil.parseObj(HttpSenderUtil.postJsonDataWithToken(defaultUrl,
@@ -113,9 +115,9 @@ public class DefaultChatServiceImpl implements BaseService {
                 return "分析失败，请联系管理员检查。";
             }
             if ("base".equals(model)) {
-                TOKEN_2_BASE_CHAT_ID_MAP.put(token, conversation_id);
+                TOKEN_2_BASE_CHAT_ID_MAP.put(token, new ChatIdDTO(conversation_id, new Date()));
             }else {
-                TOKEN_2_DS_CHAT_ID_MAP.put(token, conversation_id);
+                TOKEN_2_DS_CHAT_ID_MAP.put(token, new ChatIdDTO(conversation_id, new Date()));
             }
             String answer = json.getStr("answer");
             return UnicodeUtil.toString(answer);
