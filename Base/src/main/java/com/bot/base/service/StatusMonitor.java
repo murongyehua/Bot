@@ -250,6 +250,69 @@ public class StatusMonitor {
                 });
             }
         }
+
+        // 每月1日上午9:30，发送上个月的喝水月报，此月报只发送在私聊
+        if (DateUtil.beginOfMonth(now).dayOfMonth() == DateUtil.dayOfMonth(now) && DateUtil.isIn(now,
+                DateUtil.parse(DateUtil.today() + " 09:25:00", DatePattern.NORM_DATETIME_PATTERN),
+                DateUtil.parse(DateUtil.today() + " 09:30:00", DatePattern.NORM_DATETIME_PATTERN))) {
+            BotDrinkRecordExample drinkRecordExample = new BotDrinkRecordExample();
+            drinkRecordExample.createCriteria().andDrinkTimeBetween(
+                    DateUtil.format(DateUtil.beginOfMonth(DateUtil.yesterday()), DatePattern.NORM_DATETIME_FORMAT),
+                    DateUtil.format(DateUtil.endOfMonth(DateUtil.yesterday()), DatePattern.NORM_DATETIME_FORMAT));
+            List<BotDrinkRecord> botDrinkRecordList = drinkRecordMapper.selectByExample(drinkRecordExample);
+
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andDrinkSwitchEqualTo("1");
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            if (CollectionUtil.isEmpty(userConfigList)) {
+                return;
+            }
+
+            List<String> activeUserIds = userConfigList.stream().map(BotUserConfig::getUserId).collect(Collectors.toList());
+            Map<String, String> userId2DrinkChatIdMap = userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getDrinkChatId())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getDrinkChatId));
+            Map<String, List<BotDrinkRecord>> drinkMap = botDrinkRecordList.stream().collect(Collectors.groupingBy(BotDrinkRecord::getUserId));
+            for (String userId : drinkMap.keySet()) {
+                // 按人遍历，三种情况
+                // 1.只在私聊记录，则只发私聊
+                // 2.只在群聊记录，则只发群聊
+                // 3.私聊群聊都有记录，两边都发
+                List<BotDrinkRecord> userDrinkRecordList = drinkMap.get(userId);
+                List<String> hasRecordGroupIdList = userDrinkRecordList.stream()
+                        .map(BotDrinkRecord::getGroupId)
+                        .distinct()
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                if (CollectionUtil.isEmpty(hasRecordGroupIdList)) {
+                    // 第一种情况 只发私聊
+                    if (activeUserIds.contains(userId)) {
+                        SendMsgUtil.sendMsg(userId, this.get4DrinkAIDataForMonth(userDrinkRecordList, userId, userId2DrinkChatIdMap));
+                    }
+                    continue;
+                }
+                long groupCount = userDrinkRecordList.stream().filter(x -> x.getGroupId() != null).count();
+                if (groupCount == userDrinkRecordList.size()) {
+                    // 第二种情况 只发群聊 且每个群都要发
+                    String content = this.get4DrinkAIDataForMonth(userDrinkRecordList, userId, userId2DrinkChatIdMap);
+                    hasRecordGroupIdList.forEach(groupId -> {
+                        if (activeUserIds.contains(groupId)) {
+                            SendMsgUtil.sendGroupMsg(groupId, content, userId);
+                        }
+                    });
+                    continue;
+                }
+                // 第三种情况，都发先发私聊再发群聊
+                String content = this.get4DrinkAIDataForMonth(userDrinkRecordList, userId, userId2DrinkChatIdMap);
+                if (activeUserIds.contains(userId)) {
+                    SendMsgUtil.sendMsg(userId, content);
+                }
+                hasRecordGroupIdList.forEach(groupId -> {
+                    if (activeUserIds.contains(groupId)) {
+                        SendMsgUtil.sendGroupMsg(groupId, content, userId);
+                    }
+                });
+            }
+
+        }
     }
 
     private String getDrinkResult(List<BotDrinkRecord> recordList) {
@@ -283,6 +346,38 @@ public class StatusMonitor {
         if (conversation_id == null) {
             log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(json));
             return "喝水日报发送异常，请检查。";
+        }
+        BotUserConfigExample userConfigExample = new BotUserConfigExample();
+        userConfigExample.createCriteria().andUserIdEqualTo(token);
+        BotUserConfig botUserConfig = new BotUserConfig();
+        botUserConfig.setDrinkChatId(conversation_id);
+        userConfigMapper.updateByExampleSelective(botUserConfig, userConfigExample);
+        return json.getStr("answer");
+    }
+
+    private String get4DrinkAIDataForMonth(List<BotDrinkRecord> recordList, String token, Map<String, String> token2DrunkChatIdMap) {
+        StringBuilder stringBuilder = new StringBuilder("今天是新的一个月了，我把上个月喝水的记录重新发给你一次，请总结上个月的喝水情况");
+        stringBuilder.append(StrUtil.CRLF);
+        AtomicInteger all = new AtomicInteger();
+        recordList.forEach(x -> {
+            stringBuilder.append(String.format(BaseConsts.Drink.QUERY_RECORD, x.getDrinkTime(), x.getDrinkNumber())).append(StrUtil.CRLF);
+            all.addAndGet(x.getDrinkNumber());
+        });
+
+        String conversationId = token2DrunkChatIdMap.get(token) == null ? "" : token2DrunkChatIdMap.get(token);
+        JSONObject json;
+        try {
+            json = JSONUtil.parseObj(HttpSenderUtil.postJsonDataWithToken(defaultUrl,
+                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), stringBuilder.toString(), "blocking", conversationId, token)),
+                    drinkToken));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "喝水月报发送异常，请检查";
+        }
+        String conversation_id = json.getStr("conversation_id");
+        if (conversation_id == null) {
+            log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(json));
+            return "喝水月报发送异常，请检查。";
         }
         BotUserConfigExample userConfigExample = new BotUserConfigExample();
         userConfigExample.createCriteria().andUserIdEqualTo(token);
