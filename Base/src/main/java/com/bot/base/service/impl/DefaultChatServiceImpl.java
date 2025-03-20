@@ -42,14 +42,6 @@ public class DefaultChatServiceImpl implements BaseService {
     @Value("${ds.chat.key}")
     private String dsChatKey;
 
-    @Value("${manager.token}")
-    private String managerToken;
-
-    /**
-     * 慢生图次数记录
-     */
-    public final static Map<String, Integer> SLOW_CREATE_TOKEN_TIMES_MAP = new HashMap<>();
-
     /**
      * 基础聊天id记录
      */
@@ -63,13 +55,13 @@ public class DefaultChatServiceImpl implements BaseService {
     @Override
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
         if (reqContent.equals("删除会话")) {
-            TOKEN_2_BASE_CHAT_ID_MAP.remove(token);
-            TOKEN_2_DS_CHAT_ID_MAP.remove(token);
+            TOKEN_2_BASE_CHAT_ID_MAP.remove(groupId == null ? token : groupId);
+            TOKEN_2_DS_CHAT_ID_MAP.remove(groupId == null ? token : groupId);
             return new CommonResp("已清除所有版本会话，可以重新开始聊天了。", ENRespType.TEXT.getType());
         }
         if (reqContent.startsWith("深思")) {
             reqContent = reqContent.replaceAll("深思", "").trim();
-            return new CommonResp(this.deepChat(reqContent, "ds", token), ENRespType.TEXT.getType());
+            return new CommonResp(this.deepChat(reqContent, "ds", groupId == null ? token : groupId), ENRespType.TEXT.getType());
         }
         if (reqContent.startsWith("生图")) {
             reqContent = reqContent.replaceAll("生图", "").trim();
@@ -79,28 +71,7 @@ public class DefaultChatServiceImpl implements BaseService {
             }
             return new CommonResp(url, ENRespType.IMG.getType());
         }
-        if (reqContent.startsWith("慢生图")) {
-            // 校验次数
-            Integer times = SLOW_CREATE_TOKEN_TIMES_MAP.get(token);
-            if (ObjectUtil.notEqual(token, managerToken)) {
-                if (times != null && times >= 2) {
-                    return new CommonResp("当前限制每人每天可使用2次慢生图，今日已达上限。\r\n（每日上午10:00刷新）", ENRespType.TEXT.getType());
-                }
-            }
-            reqContent = reqContent.replaceAll("慢生图", "").trim();
-            String url = this.createPic("Kwai-Kolors/Kolors", reqContent);
-            if (url == null) {
-                return new CommonResp("生成失败，请联系管理员检查。", ENRespType.TEXT.getType());
-            }
-            // 记录次数
-            if (times == null) {
-                SLOW_CREATE_TOKEN_TIMES_MAP.put(token, 1);
-            }else {
-                SLOW_CREATE_TOKEN_TIMES_MAP.put(token, times + 1);
-            }
-            return new CommonResp(url, ENRespType.IMG.getType());
-        }
-        return new CommonResp(this.deepChat(reqContent, "base", token), ENRespType.TEXT.getType());
+        return new CommonResp(this.deepChat(reqContent, "base", groupId == null ? token : groupId), ENRespType.TEXT.getType());
     }
 
     private String createPic(String model, String reqContent) {

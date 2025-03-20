@@ -93,8 +93,6 @@ public class StatusMonitor {
     private void workDailySender() {
         // 是否过了当日10点
         if (new Date().getTime() > DateUtil.parse(DateUtil.today() + " 10:00:00", DatePattern.NORM_DATETIME_PATTERN).getTime()) {
-            // 清除慢生图记录
-            DefaultChatServiceImpl.SLOW_CREATE_TOKEN_TIMES_MAP.clear();
             // 查询当天发送情况
             Map<String, String> userWorkDailySendMap = userConfigMapper.selectByExample(new BotUserConfigExample()).stream().filter(botUserConfig -> StrUtil.isNotBlank(botUserConfig.getWorkDailyConfig())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getWorkDailyConfig));
             String today = DateUtil.today();

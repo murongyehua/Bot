@@ -40,7 +40,7 @@ public class RegServiceImpl implements RegService {
         botUser.setId(activeId);
         botUser.setStatus(ENRegStatus.TEMP.getValue());
         botUser.setType(regType.getValue());
-        botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 1));
+        botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 3));
         botUserMapper.insert(botUser);
         systemConfigHolder.loadUsers();
         return String.format(BaseConsts.SystemManager.REG_SUCCESS, DateUtil.format(botUser.getDeadLineDate(), DatePattern.NORM_DATETIME_FORMAT));
