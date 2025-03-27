@@ -2,17 +2,26 @@ package com.bot.common.util;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.dto.*;
 import lombok.extern.slf4j.Slf4j;
+import ws.schild.jave.MultimediaInfo;
+import ws.schild.jave.MultimediaObject;
+
+import java.io.File;
 
 @Slf4j
 public class SendMsgUtil {
 
     private static final String THUMB_PATH = "https://img31.mtime.cn/pi/2016/09/12/104656.40455111_1000X1000.jpg";
+
+    private static final String AUDIO_URL = "http://47.92.127.30/file/audio/";
+
+    private static final String AUDIO_PATH = "/data/files/audio/";
 
     public static void sendMsg(String userId, String msg) {
         try {
@@ -47,6 +56,29 @@ public class SendMsgUtil {
             HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_IMG_URL, JSONUtil.toJsonStr(sendMsg));
         }catch (Exception e) {
             System.out.println("发送消息失败");
+        }
+    }
+
+    public static void sendAudio(String userId, String fileName) {
+        try {
+            SendAudioDTO sendAudio = new SendAudioDTO();
+            sendAudio.setWcId(userId);
+            sendAudio.setWId(SystemConfigCache.wId);
+            String transFileName = "trans_" + fileName + ".silk";
+            File source = new File(AUDIO_PATH + fileName);
+            File target = new File(AUDIO_PATH + transFileName);
+            log.info("-=----1");
+            AudioTransUtil.mp3ToSilkUtil(source, target);
+            log.info("-=----2");
+            sendAudio.setLength((int) AudioTransUtil.getPCMDurationMilliSecond(source));
+            log.info("-=----6");
+            sendAudio.setContent(AUDIO_URL + transFileName);
+            log.info("语音发送参数：" + sendAudio);
+            String response = HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_AUDIO_URL, JSONUtil.toJsonStr(sendAudio));
+            log.info("语音发送结果：" + response);
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送语音失败");
         }
     }
 
@@ -113,6 +145,53 @@ public class SendMsgUtil {
             System.out.println("发送消息失败");
         }
 
+    }
+
+    /**
+     * 获取聊天图片，返回本地图片名称
+     * @param content
+     * @param msgId
+     * @return
+     */
+    public static String fetchPicture(String content, Long msgId) {
+        try {
+            FetchPictureDTO fetchPictureDTO = new FetchPictureDTO();
+            fetchPictureDTO.setContent(content);
+            fetchPictureDTO.setWId(SystemConfigCache.wId);
+            fetchPictureDTO.setMsgId(msgId);
+            String response = HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.FETCH_PICTURE_URL, JSONUtil.toJsonStr(fetchPictureDTO));
+            log.info(response);
+            JSONObject data = (JSONObject) JSONUtil.parseObj(response).get("data");
+            File img = new File("/data/files/pic/" + System.currentTimeMillis() + ".png");
+            HttpUtil.downloadFile((String) data.get("url"), img);
+            return img.getName();
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("获取图片失败");
+        }
+        return null;
+    }
+
+    /**
+     * 获取群聊人数
+     * @param groupId
+     * @return
+     */
+    public static int getChatRoomUserCount(String groupId) {
+        try {
+
+            FetchGroupUsersDTO fetchGroupUsersDTO = new FetchGroupUsersDTO();
+            fetchGroupUsersDTO.setWId(SystemConfigCache.wId);
+            fetchGroupUsersDTO.setChatRoomId(groupId);
+            String response = HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.FETCH_CHAT_ROOM_USERS, JSONUtil.toJsonStr(fetchGroupUsersDTO));
+            JSONArray userList = (JSONArray) JSONUtil.parseObj(response).get("data");
+            return userList.size();
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("获取群人数失败");
+        }
+        // 失败的时候按0人
+        return 0;
     }
 
     /**

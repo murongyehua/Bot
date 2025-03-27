@@ -9,11 +9,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.bot.base.dto.ChatIdDTO;
-import com.bot.base.dto.DeepChatReq;
-import com.bot.base.dto.MorningReq;
-import com.bot.base.dto.UserTempInfoDTO;
+import com.bot.base.dto.*;
 import com.bot.base.service.impl.DefaultChatServiceImpl;
+import com.bot.base.service.impl.PictureDistributorServiceImpl;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENChineseNumber;
@@ -57,6 +55,9 @@ public class StatusMonitor {
     @Resource
     private BotDrinkRecordMapper drinkRecordMapper;
 
+    @Resource(name = "englishServiceImpl")
+    private BaseService englishServiceImpl;
+
     @Value("${chat.url}")
     private String defaultUrl;
 
@@ -90,18 +91,40 @@ public class StatusMonitor {
         });
     }
 
-    private void dealChatId() {
-        for (String token : DefaultChatServiceImpl.TOKEN_2_DS_CHAT_ID_MAP.keySet()){
-            ChatIdDTO chatIdDTO = DefaultChatServiceImpl.TOKEN_2_DS_CHAT_ID_MAP.get(token);
-            if (DateUtil.offsetHour(chatIdDTO.getLastDate(), 3).before(new Date())) {
-                DefaultChatServiceImpl.TOKEN_2_DS_CHAT_ID_MAP.remove(token);
+    private void sendEnglish() {
+        // 每天早上9点给开了开关的人发送每日英语
+        Date now = new Date();
+        if (DateUtil.isIn(now,
+                DateUtil.parse(DateUtil.today() + " 9:00:00", DatePattern.NORM_DATETIME_PATTERN),
+                DateUtil.parse(DateUtil.today() + " 9:05:00", DatePattern.NORM_DATETIME_PATTERN))) {
+            CommonResp commonResp = englishServiceImpl.doQueryReturn("每日英语", null, null);
+            BotUserConfigExample example = new BotUserConfigExample();
+            example.createCriteria().andEnglishSwitchIsNotNull();
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(example);
+            if (CollectionUtil.isNotEmpty(userConfigList)) {
+                userConfigList.forEach(x -> {
+                    if (x.getUserId().contains("@")) {
+                        SendMsgUtil.sendGroupMsg(x.getUserId(), commonResp.getMsg(), null);
+                    }else {
+                        SendMsgUtil.sendMsg(x.getUserId(), commonResp.getMsg());
+                    }
+                });
             }
         }
+    }
 
+    private void dealChatId() {
         for (String token : DefaultChatServiceImpl.TOKEN_2_BASE_CHAT_ID_MAP.keySet()){
             ChatIdDTO chatIdDTO = DefaultChatServiceImpl.TOKEN_2_BASE_CHAT_ID_MAP.get(token);
             if (DateUtil.offsetHour(chatIdDTO.getLastDate(), 3).before(new Date())) {
                 DefaultChatServiceImpl.TOKEN_2_BASE_CHAT_ID_MAP.remove(token);
+            }
+        }
+
+        for (String token : PictureDistributorServiceImpl.WAIT_DEAL_PICTURE_MAP.keySet()){
+            Date date = PictureDistributorServiceImpl.WAIT_DEAL_PICTURE_MAP.get(token);
+            if (DateUtil.offsetMinute(date, 10).before(new Date())) {
+                PictureDistributorServiceImpl.WAIT_DEAL_PICTURE_MAP.remove(token);
             }
         }
     }

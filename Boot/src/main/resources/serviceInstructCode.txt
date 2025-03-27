@@ -8,3 +8,5 @@
 菜单,帮助,功能大全=helpServiceImpl
 打工日历=workDailyServiceImpl
 喝水=drinkHelpServiceImpl
+图片转线稿=pictureLineServiceImpl
+每日英语=englishServiceImpl

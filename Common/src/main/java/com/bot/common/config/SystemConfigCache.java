@@ -40,6 +40,12 @@ public class SystemConfigCache {
 
     public static final String PUSH_FRIEND_URL = "/snsSendImage";
 
+    public static final String SEND_AUDIO_URL = "/sendVoice";
+
+    public static final String FETCH_PICTURE_URL = "/getMsgImg";
+
+    public static final String FETCH_CHAT_ROOM_USERS = "/getChatRoomMember";
+
     public static final String OWNER_ID = "wxid_gt9s4k14zz7l22";
 
     /**

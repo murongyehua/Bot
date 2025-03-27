@@ -147,13 +147,17 @@ public class DistributorServiceImpl implements Distributor {
                     reqContent.replaceAll(BaseConsts.SystemManager.REG_PREFIX, StrUtil.EMPTY),
                     groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP), ENRespType.TEXT.getType());
         }
+        // 生成邀请码
+        if (reqContent.equals(BaseConsts.SystemManager.USER_CREATE_INVITE_CODE)) {
+            return new CommonResp(regService.createInviteCode(groupId == null ? token : groupId), ENRespType.TEXT.getType());
+        }
         // 判断用户状态
         String checkResult = this.checkUserStatus(groupId == null ? token : groupId);
         if (checkResult != null) {
             return new CommonResp(checkResult, ENRespType.TEXT.getType());
         }
         // 查询到期时间
-        if (reqContent.contains(BaseConsts.SystemManager.QUERY_DEADLINE_DATE)) {
+        if (reqContent.equals(BaseConsts.SystemManager.QUERY_DEADLINE_DATE)) {
             return new CommonResp(regService.queryDeadLineDate(groupId == null ? token : groupId), ENRespType.TEXT.getType());
         }
         // 获取token

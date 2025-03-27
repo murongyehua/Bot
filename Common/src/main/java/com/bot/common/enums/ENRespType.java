@@ -10,7 +10,8 @@ public enum ENRespType {
     TEXT("0", "文本"),
     IMG("1", "图片"),
     VIDEO("2", "视频"),
-    FILE("3", "文件");
+    FILE("3", "文件"),
+    AUDIO("4", "语音");
 
     private final String type;
 

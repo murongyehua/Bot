@@ -25,4 +25,11 @@ public interface RegService {
      */
     String queryDeadLineDate(String token);
 
+    /**
+     * 生成邀请码
+     * @param token
+     * @return
+     */
+    String createInviteCode(String token);
+
 }
