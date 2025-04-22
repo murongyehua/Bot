@@ -140,19 +140,23 @@ public class StatusMonitor {
             String today = DateUtil.today();
             String[] urls = workDailyUrls.split(StrUtil.COMMA);
             for(String token : SystemConfigCache.userWorkDaily) {
-                String lastSendDate = userWorkDailySendMap.get(token);
-                if (ObjectUtil.notEqual(today, lastSendDate)) {
-                    // 当日没有发送 执行发送
-                    for (String url : urls) {
-                        SendMsgUtil.sendImg(token, url);
+                try {
+                    String lastSendDate = userWorkDailySendMap.get(token);
+                    if (ObjectUtil.notEqual(today, lastSendDate)) {
+                        // 当日没有发送 执行发送
+                        for (String url : urls) {
+                            SendMsgUtil.sendImg(token, url);
+                        }
                     }
+                    // 更新最后发送日期
+                    BotUserConfig botUserConfig = new BotUserConfig();
+                    botUserConfig.setWorkDailyConfig(today);
+                    BotUserConfigExample example = new BotUserConfigExample();
+                    example.createCriteria().andUserIdEqualTo(token);
+                    userConfigMapper.updateByExampleSelective(botUserConfig, example);
+                }catch (Exception e) {
+                    // do nothing 不做任何处理 一个人推送异常不影响其他人接收
                 }
-                // 更新最后发送日期
-                BotUserConfig botUserConfig = new BotUserConfig();
-                botUserConfig.setWorkDailyConfig(today);
-                BotUserConfigExample example = new BotUserConfigExample();
-                example.createCriteria().andUserIdEqualTo(token);
-                userConfigMapper.updateByExampleSelective(botUserConfig, example);
             }
         }
     }

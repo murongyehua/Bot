@@ -1,5 +1,6 @@
 package com.bot.base.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -69,6 +70,9 @@ public class DistributorServiceImpl implements Distributor {
     @Value("${game.file.path}")
     private String gameFilePath;
 
+    @Value("${manager.token}")
+    private String managerToken;
+
     private final static Map<String, String> GAME_TOKENS = new HashMap<>();
 
     @Override
@@ -124,6 +128,10 @@ public class DistributorServiceImpl implements Distributor {
         if (SystemConfigCache.topToken.contains(groupId == null ? token : groupId)) {
             return topTokenService.doQueryReturn(reqContent, groupId == null ? token : groupId, groupId);
         }
+        // 签到资格token 优先走专属逻辑
+        if (SystemConfigCache.signToken.contains(groupId == null ? token : groupId)) {
+
+        }
         // 判断是不是进入管理模式
         if (BaseConsts.SystemManager.TRY_INTO_MANAGER_INFO.equals(reqContent)) {
             return new CommonResp(SystemManager.tryIntoManager(token), ENRespType.TEXT.getType());
@@ -138,9 +146,7 @@ public class DistributorServiceImpl implements Distributor {
         }
         // 开通服务
         if (reqContent.startsWith(BaseConsts.SystemManager.TEMP_REG_PREFIX)) {
-            return new CommonResp(regService.tryTempReg(groupId == null ? token : groupId,
-                    reqContent.replaceAll(BaseConsts.SystemManager.TEMP_REG_PREFIX, StrUtil.EMPTY),
-                    groupId == null ? ENRegType.PERSONNEL : ENRegType.GROUP), ENRespType.TEXT.getType());
+            return new CommonResp("现已取消试用功能，请兑换资格使用正式版。", ENRespType.TEXT.getType());
         }
         if (reqContent.startsWith(BaseConsts.SystemManager.REG_PREFIX)) {
             return new CommonResp(regService.tryReg(groupId == null ? token : groupId,
@@ -263,6 +269,10 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     private CommonResp geyDefaultMsg(String reqContent, String token, String groupId) {
+        // 1.5.0.0增加逻辑，不支持群聊闲聊
+        if (groupId != null) {
+            return new CommonResp("小林的群聊内的闲聊功能已下线，如有Ai使用需求请添加好友私聊使用，或者你可以使用小林的其他功能！\r\b发送”菜单“或者”帮助“获取使用手册，除闲聊外的功能仍可正常触发呢~", ENRespType.TEXT.getType());
+        }
         BaseService service = serviceMap.get("defaultChatServiceImpl");
         CommonResp resp = service.doQueryReturn(reqContent, token, groupId);
         if (resp != null) {

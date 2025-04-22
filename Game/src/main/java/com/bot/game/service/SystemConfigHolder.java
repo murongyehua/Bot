@@ -40,6 +40,8 @@ public class SystemConfigHolder {
         SystemConfigCache.token = configMap.get(ENSystemConfig.TOKEN.getValue());
         SystemConfigCache.inviteCode = configMap.get(ENSystemConfig.INVITE_CODE.getValue());
         SystemConfigCache.topToken = Arrays.asList(configMap.get(ENSystemConfig.TOP_TOKEN.getValue()).split(","));
+        SystemConfigCache.signToken = Arrays.asList(configMap.get(ENSystemConfig.SIGN_TOKEN.getValue()).split(","));
+        SystemConfigCache.isMaintenance = configMap.get(ENSystemConfig.MAINTENANCE_FLAG.getValue());
         this.loadUsers();
         this.loadUserConfig();
     }

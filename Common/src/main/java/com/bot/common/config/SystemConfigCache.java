@@ -23,6 +23,10 @@ public class SystemConfigCache {
 
     public static List<String> topToken;
 
+    public static List<String> signToken;
+
+    public static String isMaintenance = "";
+
     /**
      * 临时邀请码-使用后失效-用于成为正式用户
      */

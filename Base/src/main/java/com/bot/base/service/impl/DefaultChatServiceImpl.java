@@ -1,6 +1,7 @@
 package com.bot.base.service.impl;
 
 import cn.hutool.core.text.UnicodeUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -42,7 +43,7 @@ public class DefaultChatServiceImpl implements BaseService {
     private String audioChatKey;
 
     /**
-     * 基础聊天id记录
+     * 聊天id记录
      */
     public final static Map<String, ChatIdDTO> TOKEN_2_BASE_CHAT_ID_MAP = new HashMap<>();
 
@@ -53,6 +54,9 @@ public class DefaultChatServiceImpl implements BaseService {
 
     @Override
     public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+        if (StrUtil.isEmpty(reqContent.trim())) {
+            return new CommonResp("你好，我在。", ENRespType.TEXT.getType());
+        }
         if (reqContent.equals("开启语音")) {
             TOKEN_2_SPEECH_ID_MAP.put(groupId == null ? token : groupId, new SpeechIdDTO(null, 0));
             return new CommonResp("开启成功，接下来的5条消息我将发送语音回复，也可以提前关闭", ENRespType.TEXT.getType());
@@ -113,19 +117,46 @@ public class DefaultChatServiceImpl implements BaseService {
         try {
             String conversationId = "";
             String key = "";
+            String responseMode = "streaming";
             if ("base".equals(model)) {
                 conversationId = TOKEN_2_BASE_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_BASE_CHAT_ID_MAP.get(token).getId();
                 key = baseChatKey;
             }else if ("audio".equals(model)) {
                 conversationId = TOKEN_2_SPEECH_ID_MAP.get(token) == null ? "" : TOKEN_2_SPEECH_ID_MAP.get(token).getId();
                 key = audioChatKey;
+                responseMode = "blocking";
             }
-            JSONObject json = JSONUtil.parseObj(HttpSenderUtil.postJsonDataWithToken(defaultUrl,
-                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), reqContent, "blocking", conversationId, token)),
-                    key));
-            String conversation_id = json.getStr("conversation_id");
+            String response = HttpSenderUtil.postJsonDataWithToken(defaultUrl,
+                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), reqContent, responseMode, conversationId, token)),
+                    key);
+            String conversation_id = null;
+            StringBuilder answer = new StringBuilder();
+            if (response.startsWith("{")) {
+                // 阻塞模式
+                JSONObject json = JSONUtil.parseObj(response);
+                conversation_id = json.getStr("conversation_id");
+                answer = new StringBuilder(json.getStr("answer"));
+            }else {
+                // 流式模式
+                String[] datas = response.split("data: ");
+                for (String data : datas) {
+                    if (StrUtil.isNotEmpty(data)) {
+                        JSONObject dataObject = JSONUtil.parseObj(data);
+                        String event = dataObject.getStr("event");
+                        switch (event) {
+                            case "agent_message":
+                                String answerPart = dataObject.getStr("answer");
+                                answer.append(answerPart);
+                                break;
+                            case "message_end":
+                                conversation_id = dataObject.getStr("conversation_id");
+                                break;
+                        }
+                    }
+                }
+            }
             if (conversation_id == null) {
-                log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(json));
+                log.error("调用失败，返回内容：[{}]", JSONUtil.toJsonStr(response));
                 return "分析失败，请联系管理员检查。";
             }
             if ("base".equals(model)) {
@@ -142,8 +173,7 @@ public class DefaultChatServiceImpl implements BaseService {
                     TOKEN_2_SPEECH_ID_MAP.put(token, speechIdDTO);
                 }
             }
-            String answer = json.getStr("answer");
-            return UnicodeUtil.toString(answer);
+            return UnicodeUtil.toString(answer.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
