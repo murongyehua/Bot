@@ -25,7 +25,7 @@ public class DogServiceImpl implements BaseService {
     private BaseService defaultChatService;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         String resultObj = HttpSenderUtil.get(dogUrl, null);
         String result = (String) JSONUtil.parseObj(resultObj).get("data");
         if (StrUtil.isEmpty(result)) {
@@ -37,7 +37,7 @@ public class DogServiceImpl implements BaseService {
                 // 步数+1
                 speechIdDTO.setStep(speechIdDTO.getStep() + 1);
                 DefaultChatServiceImpl.TOKEN_2_SPEECH_ID_MAP.put(groupId == null ? token : groupId, speechIdDTO);
-                return defaultChatService.doQueryReturn("读一下" + result, token, groupId);
+                return defaultChatService.doQueryReturn("读一下" + result, token, groupId, null);
             }
             return new CommonResp(result, ENRespType.TEXT.getType());
         }

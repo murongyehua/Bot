@@ -29,7 +29,7 @@ public class EnglishServiceImpl implements BaseService {
     private String url;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         if (reqContent.equals("开启每日英语")) {
             BotUserConfigExample userConfigExample = new BotUserConfigExample();
             userConfigExample.createCriteria().andUserIdEqualTo(token);

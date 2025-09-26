@@ -32,7 +32,7 @@ public class WorkDailyServiceImpl implements BaseService {
 
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         switch (reqContent) {
             case BaseConsts.WorkDaily.ACTIVE_WORK_DAILY:
                 insertOrUpdate(groupId == null ? token : groupId, DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));

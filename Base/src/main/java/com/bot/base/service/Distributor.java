@@ -17,14 +17,14 @@ public interface Distributor {
      * @param reqContent
      * @param token
      */
-    void doDistribute(HttpServletResponse response, String reqContent, String token);
+    void doDistribute(HttpServletResponse response, String reqContent, String token, String channel);
 
     /**
      * 微信分发请求 进行响应
      * @param reqContent
      * @param token
      */
-    CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag);
+    CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag, String channel);
 
     /**
      * 返回文件

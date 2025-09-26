@@ -11,7 +11,7 @@ import java.util.Date;
 public class PictureLineServiceImpl implements BaseService {
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         PictureDistributorServiceImpl.WAIT_DEAL_PICTURE_MAP.put(token, new Date());
         return new CommonResp("已预备好转线稿，请发送图片", ENRespType.TEXT.getType());
     }

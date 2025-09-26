@@ -28,7 +28,7 @@ public class ChangeChatEngineServiceImpl implements BaseService {
 
     @Override
     @Deprecated
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         String content =  reqContent.replace(BaseConsts.Change.CHANGE, "").trim();
         String value = ENChatEngine.getValueByKeyWord(content);
         if (value == null) {

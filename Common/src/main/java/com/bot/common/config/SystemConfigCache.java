@@ -25,6 +25,8 @@ public class SystemConfigCache {
 
     public static List<String> signToken;
 
+    public static String tuilanToken;
+
     public static String isMaintenance = "";
 
     /**

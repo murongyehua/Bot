@@ -25,7 +25,7 @@ public class CloudMusicServiceImpl implements BaseService {
 
     @Override
     @Deprecated
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         int index = RandomUtil.randomInt(0, BaseConsts.Music.SORT.length);
         String sort = BaseConsts.Music.SORT[index];
         String finalUrl = url + "?sort=" + sort + "&format=json";

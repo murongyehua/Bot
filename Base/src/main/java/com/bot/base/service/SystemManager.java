@@ -3,8 +3,10 @@ package com.bot.base.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.UserTempInfoDTO;
 import com.bot.common.config.SystemConfigCache;
@@ -18,12 +20,15 @@ import com.bot.game.dao.entity.*;
 import com.bot.game.dao.mapper.BotActivityAwardMapper;
 import com.bot.game.dao.mapper.BotActivityMapper;
 import com.bot.game.dao.mapper.BotAwardMapper;
+import com.bot.game.dao.mapper.BotUserConfigMapper;
 import com.bot.game.service.GameHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +41,7 @@ import java.util.stream.Collectors;
  * @author murongyehua
  * @version 1.0 2020/9/28
  */
+@Slf4j
 @Service
 public class SystemManager {
 
@@ -64,6 +70,9 @@ public class SystemManager {
 
     @Value("${notice.path}")
     private String picPath;
+
+    @Resource
+    private BotUserConfigMapper userConfigMapper;
 
     /**
      * 尝试进入管理模式
@@ -233,6 +242,32 @@ public class SystemManager {
                     return "结束条数不为1，可能存在问题，请检查数据“;                            ";
                 }
             }
+        }
+        // 手动发送日报
+        if (reqContent.startsWith(BaseConsts.SystemManager.SEND_DAILY)) {
+            Map<String, String> userWorkDailySendMap = userConfigMapper.selectByExample(new BotUserConfigExample()).stream().filter(botUserConfig -> StrUtil.isNotBlank(botUserConfig.getWorkDailyConfig())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getWorkDailyConfig));
+            String today = DateUtil.today();
+            for(String token : SystemConfigCache.userWorkDaily) {
+                try {
+                    String lastSendDate = userWorkDailySendMap.get(token);
+                    if (ObjectUtil.notEqual(today, lastSendDate)) {
+                        // 当日没有发送 执行发送
+                        for (int index=1;index<6;index++) {
+                            SendMsgUtil.sendImg(token, picPath + "/daily/" + DateUtil.today() + "/" + index + ".png");
+                        }
+                    }
+                    // 更新最后发送日期
+                    BotUserConfig botUserConfig = new BotUserConfig();
+                    botUserConfig.setWorkDailyConfig(today);
+                    BotUserConfigExample example = new BotUserConfigExample();
+                    example.createCriteria().andUserIdEqualTo(token);
+                    userConfigMapper.updateByExampleSelective(botUserConfig, example);
+                }catch (Exception e) {
+                    // do nothing 不做任何处理 一个人推送异常不影响其他人接收
+                    log.error("摸鱼日报发送失败！！！", e);
+                }
+            }
+            return BaseConsts.SystemManager.SUCCESS;
         }
         userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
         return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;

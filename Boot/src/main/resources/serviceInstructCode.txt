@@ -10,3 +10,5 @@
 喝水=drinkHelpServiceImpl
 图片转线稿=pictureLineServiceImpl
 每日英语=englishServiceImpl
+求签,解签=luckServiceImpl
+cp,CP,Cp=cpServiceImpl

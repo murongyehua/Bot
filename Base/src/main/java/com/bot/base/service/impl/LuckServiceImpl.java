@@ -1,12 +1,18 @@
 package com.bot.base.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.CommonResp;
+import com.bot.base.dto.LuckDTO;
 import com.bot.base.service.BaseService;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENRespType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,83 +26,36 @@ import java.util.Map;
 @Service("luckServiceImpl")
 public class LuckServiceImpl implements BaseService {
 
-    public static Map<String, String> luckCacheMap = new HashMap<>();
+    public static Map<String, LuckDTO> luckCacheMap = new HashMap<>();
+
+    @Value("${luck.url}")
+    private String url;
 
     @Override
     @Deprecated
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
-        String key = token + StrUtil.UNDERLINE + DateUtil.today();
-        String resp = luckCacheMap.computeIfAbsent(key, k -> this.getLuck());
-        return new CommonResp(BaseConsts.Luck.TEXT_COMMON + resp, ENRespType.TEXT.getType());
-    }
-
-    private String getLuck() {
-        int one = this.getLuckNum();
-        int two = this.getLuckNum();
-        int three = this.getLuckNum();
-        if (isBest(one, two, three)) {
-            return BaseConsts.Luck.TEXT_BEST;
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
+        if (ObjectUtil.equals("求签", reqContent)) {
+            String key = token + StrUtil.UNDERLINE + DateUtil.today();
+            LuckDTO resp = luckCacheMap.computeIfAbsent(key, k -> this.getLuck());
+            return new CommonResp(resp.getPic(), ENRespType.IMG.getType());
+        }else if (ObjectUtil.equals("解签", reqContent)) {
+            String key = token + StrUtil.UNDERLINE + DateUtil.today();
+            LuckDTO resp = luckCacheMap.get(key);
+            if (resp == null) {
+                return new CommonResp("你今天还未求签，要先求签才能解签哦~", ENRespType.TEXT.getType());
+            }
+            String contentFormat = "签名：%s\r\n内容：%s\r\n解签：%s\r\n(此为附带的解签结果，仅供参考，也可以自行解签或使用小林的ai能力解签哦OvO)";
+            String content = String.format(contentFormat, resp.getTitle(), resp.getPoem(), resp.getContent());
+            return new CommonResp(content, ENRespType.TEXT.getType());
         }
-        if (isGood(one, two, three)) {
-            return BaseConsts.Luck.TEXT_GOOD;
-        }
-        if (isRight(one, two, three)) {
-            return BaseConsts.Luck.TEXT_RIGHT;
-        }
-        if (isBad(one, two, three)) {
-            return BaseConsts.Luck.TEXT_BAD;
-        }
-        if (isTerrible(one, two, three)) {
-            return BaseConsts.Luck.TEXT_TERRIBLE;
-        }
-        return BaseConsts.Luck.TEXT_NORMAL;
+        return null;
     }
 
-    private boolean isBest(int one, int two, int three) {
-        return isNumberBetween(one, 1, 20) && isNumberBetween(two, 1, 20) && isNumberBetween(three, 1, 20);
+    private LuckDTO getLuck() {
+        String response = HttpUtil.get(url);
+        JSONObject jsonObject = JSONUtil.parseObj(response);
+        JSONObject data = (JSONObject) jsonObject.get("data");
+        return JSONUtil.toBean(data, LuckDTO.class);
     }
 
-    private boolean isGood(int one, int two, int three) {
-        return hasTwoRight(isNumberBetween(one, 1, 20), isNumberBetween(two, 1, 20), isNumberBetween(three, 1, 20)) &&
-                this.noBad(one, two, three);
-    }
-
-    private boolean isRight(int one, int two, int three) {
-        return hasOneRight(isNumberBetween(one, 1, 20), isNumberBetween(two, 1, 20), isNumberBetween(three, 1, 20)) &&
-                this.noBad(one, two, three);
-    }
-
-    private boolean isBad(int one, int two, int three) {
-        return hasOneRight(isNumberBetween(one, 80, 100), isNumberBetween(two, 80, 100), isNumberBetween(three, 80, 100)) &&
-                this.noGood(one, two, three);
-    }
-
-    private boolean isTerrible(int one, int two, int three) {
-        return hasTwoRight(isNumberBetween(one, 80, 100), isNumberBetween(two, 80, 100), isNumberBetween(three, 80, 100)) &&
-                this.noGood(one, two, three);
-    }
-
-    private int getLuckNum() {
-        return RandomUtil.randomInt(0,100);
-    }
-
-    private boolean isNumberBetween(int number, int min, int max) {
-        return number < max && number > min;
-    }
-
-    private boolean hasTwoRight(boolean boo1, boolean boo2, boolean boo3) {
-        return (boo1 && boo2 && !boo3) || (boo1 && !boo2 && boo3) || (!boo1 && boo2 && boo3);
-    }
-
-    private boolean hasOneRight(boolean boo1, boolean boo2, boolean boo3) {
-        return (boo1 && !boo2 && !boo3) || (!boo1 && boo2 && !boo3) || (!boo1 && !boo2 && boo3);
-    }
-
-    private boolean noBad(int one, int two, int three) {
-        return !isNumberBetween(one, 80, 100) && !isNumberBetween(two, 80, 100) && !isNumberBetween(three, 80, 100);
-    }
-
-    private boolean noGood(int one, int two, int three) {
-        return !isNumberBetween(one, 1, 20) && !isNumberBetween(two, 1, 20) && !isNumberBetween(three, 1, 20);
-    }
 }

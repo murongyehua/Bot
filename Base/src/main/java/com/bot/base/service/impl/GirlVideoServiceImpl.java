@@ -19,7 +19,7 @@ public class GirlVideoServiceImpl implements BaseService {
     private String girlUrl;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         JSONObject json = JSONUtil.parseObj(HttpSenderUtil.get(girlUrl, null));
         Integer code = (Integer) json.get("code");
         if (code != 200) {

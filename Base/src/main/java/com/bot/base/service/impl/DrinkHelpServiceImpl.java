@@ -35,7 +35,7 @@ public class DrinkHelpServiceImpl implements BaseService {
     private BotUserConfigMapper userConfigMapper;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         String realId = groupId == null ? token : groupId;
         BotUserConfigExample example = new BotUserConfigExample();
         example.createCriteria().andUserIdEqualTo(realId);

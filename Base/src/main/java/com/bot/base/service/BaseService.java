@@ -13,6 +13,6 @@ public interface BaseService {
      * @param reqContent 请求内容
      * @return
      */
-    CommonResp doQueryReturn(String reqContent, String token, String groupId);
+    CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel);
 
 }

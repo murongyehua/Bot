@@ -53,7 +53,7 @@ public class DefaultChatServiceImpl implements BaseService {
     public final static Map<String, SpeechIdDTO> TOKEN_2_SPEECH_ID_MAP = new HashMap<>();
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         if (StrUtil.isEmpty(reqContent.trim())) {
             return new CommonResp("你好，我在。", ENRespType.TEXT.getType());
         }

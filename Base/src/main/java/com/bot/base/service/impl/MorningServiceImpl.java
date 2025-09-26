@@ -29,7 +29,7 @@ public class MorningServiceImpl implements BaseService {
 
     @Override
     @Deprecated
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         switch (reqContent) {
             case BaseConsts.Morning.PICK:
                 this.insertOrUpdate(token, ENMorningType.ALL.getValue());

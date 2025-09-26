@@ -13,7 +13,8 @@ public enum ENSystemConfig {
     INVITE_CODE("inviteCode", "邀请码"),
     TOP_TOKEN("topToken", "顶级token，走专属逻辑"),
     SIGN_TOKEN("signToken", "签到资格token"),
-    MAINTENANCE_FLAG("isMaintenance", "维护标记");
+    MAINTENANCE_FLAG("isMaintenance", "维护标记"),
+    TUILAN_TOKEN("tuilanToken", "推栏token");
 
     private final String value;
 

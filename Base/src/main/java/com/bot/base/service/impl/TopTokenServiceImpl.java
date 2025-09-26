@@ -20,7 +20,7 @@ public class TopTokenServiceImpl implements BaseService {
     private String url;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         String[] reqs = null;
         ENGridKeyWord target = null;
         for (ENGridKeyWord enGridKeyWord : ENGridKeyWord.values()) {

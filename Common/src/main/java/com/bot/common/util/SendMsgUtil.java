@@ -19,7 +19,7 @@ public class SendMsgUtil {
 
     private static final String THUMB_PATH = "https://img31.mtime.cn/pi/2016/09/12/104656.40455111_1000X1000.jpg";
 
-    private static final String AUDIO_URL = "http://47.92.127.30/file/audio/";
+    private static final String AUDIO_URL = "http://113.45.63.97//file/audio/";
 
     private static final String AUDIO_PATH = "/data/files/audio/";
 

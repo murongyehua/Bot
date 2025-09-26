@@ -5,7 +5,7 @@
     <parent>
         <artifactId>bot</artifactId>
         <groupId>com.bot</groupId>
-        <version>1.4.0.0</version>
+        <version>1.5.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,6 +31,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${http.client}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.9.4</version>
         </dependency>
     </dependencies>
 </project>

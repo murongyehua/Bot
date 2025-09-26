@@ -25,7 +25,7 @@ public class SweetServiceImpl implements BaseService {
     private BaseService defaultChatService;
 
     @Override
-    public CommonResp doQueryReturn(String reqContent, String token, String groupId) {
+    public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
         String result = HttpSenderUtil.get(url, null);
         // 如果在语音，这里用按读一下处理，语音步数+1
         SpeechIdDTO speechIdDTO = DefaultChatServiceImpl.TOKEN_2_SPEECH_ID_MAP.get(groupId == null ? token : groupId);
@@ -33,7 +33,7 @@ public class SweetServiceImpl implements BaseService {
             // 步数+1
             speechIdDTO.setStep(speechIdDTO.getStep() + 1);
             DefaultChatServiceImpl.TOKEN_2_SPEECH_ID_MAP.put(groupId == null ? token : groupId, speechIdDTO);
-            return defaultChatService.doQueryReturn("读一下" + result, token, groupId);
+            return defaultChatService.doQueryReturn("读一下" + result, token, groupId, null);
         }
         return new CommonResp(result, ENRespType.TEXT.getType());
     }

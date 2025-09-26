@@ -2,6 +2,9 @@ package com.bot.common.constant;
 
 import cn.hutool.core.util.StrUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author murongyehua
  * @version 1.0 2020/9/22
@@ -89,13 +92,14 @@ public interface BaseConsts {
         String EXIT_GAME = "退出";
         String GET_TOKEN = "我的专属token";
         String CREATE_INVITE_CODE = "生成邀请码";
+        String SEND_DAILY = "发送日报";
         String TEMP_REG_PREFIX = "#试用";
         String REG_PREFIX = "#开通";
         String USER_CREATE_INVITE_CODE = "生成邀请码";
         String REPEAT_TEMP_REG_TIP = "你已经用过小林了，不能再参加试用哦~";
         String INVITE_CODE_ERROR = "你的邀请码不正确，或已被使用，请仔细核对后再试哦~";
         String REG_SUCCESS = "恭喜成为小林的新玩伴！截止日期为%s，在此之前小林都会一直在哦~";
-        String OVER_TIME_TIP = "你的服务未开通或者已到期，请先进行开通哦~";
+        String OVER_TIME_TIP = "你的服务未开通或者已到期，请先兑换并使用资格哦~";
         String CONTINUE_TIPS = "您的服务时间即将到期，如果还有需求请及时续期，感谢您的使用。";
         String QUERY_DEADLINE_DATE = "到期时间";
         String SEND_NOTICE_FORMAT = "公告";
@@ -213,12 +217,11 @@ public interface BaseConsts {
         String ACTIVITY_ALL_AWARD = "中奖汇总";
         String ACTIVITY_START = "抽奖开始";
         String ACTIVITY_FINISH = "抽奖结束";
-        String UN_KNOW = "未知剑三指令，请检查";
+        String UN_KNOW = "未知指令，请检查指令内容和格式是否正确";
         String REPEAT = "您当轮抽奖次数已达最大值，请不要重复操作。";
         String TODAY_DAILY = "今天日常";
         String TOMORROW_DAILY = "明天日常";
         String TOMORROW_TOMORROW_DAILY = "后天日常";
-        String NEWS = "新闻";
         String OPEN_SERVER = "开服";
         String BIND_SERVER = "绑定区服";
         String DAILY_RETURN_FORMAT = "【%s】" + StrUtil.CRLF +
@@ -244,6 +247,21 @@ public interface BaseConsts {
                 "武林通鉴·公共任务：%s" + StrUtil.CRLF +
                 "武林通鉴·秘境任务：%s" + StrUtil.CRLF +
                 "武林通鉴·团队秘境：%s";
+        List<String> QQ_SHOW = new ArrayList<String>(){{add("qq秀");add("QQ秀");add("名片秀");}};
+        String RANDOM_SHOW = "随机秀";
+        String MONEY_PRICE = "金价\r\n更新时间：%s\r\n" +
+                "服务器：%s\r\n" +
+                "万宝楼：%s\r\n" +
+                "贴吧：%s\r\n" +
+                "dd373：%s\r\n" +
+                "uu898：%s\r\n";
+        String MONEY = "金价";
+        String NEWS = "资讯";
+        String NOTICE = "公告";
+        String BATTLE = "战绩";
+        String TEAM_CD = "副本";
+        String ATTRIBUTE = "属性";
+        String ALL_SHOWS = "全部名片";
     }
 
     interface Drink {
@@ -258,6 +276,11 @@ public interface BaseConsts {
         String NO_DATA_TIP = "你今天还未记录喝水，赶紧喝一口记录下来吧！";
         String QUERY_ALL = "今天共喝水%s次，累计摄入%sL水量。";
         String ALL_TITLE = "【喝水提醒】";
+    }
+
+    interface Sign {
+        String SIGN_TIP = "签到成功！\r\n连续签到%s天，碎玉 + %s";
+        String SIGN_FAIL = "你今天已经签到过了~";
     }
 
 }

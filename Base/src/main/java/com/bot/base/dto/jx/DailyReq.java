@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DailyQeq {
+public class DailyReq {
 
     private String server;
 

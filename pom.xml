@@ -17,13 +17,13 @@
     </parent>
     <groupId>com.bot</groupId>
     <artifactId>bot</artifactId>
-    <version>1.4.0.0</version>
+    <version>1.5.0.0</version>
     <name>Bot</name>
     <description>bot for QQ</description>
 
     <properties>
         <java.version>1.8</java.version>
-        <bot.version>1.4.0.0</bot.version>
+        <bot.version>1.5.0.0</bot.version>
         <logback.version>1.2.3</logback.version>
         <hutool.version>5.7.6</hutool.version>
         <pinyin.version>2.5.1</pinyin.version>

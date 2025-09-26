@@ -97,7 +97,7 @@ public class StatusMonitor {
         if (DateUtil.isIn(now,
                 DateUtil.parse(DateUtil.today() + " 9:00:00", DatePattern.NORM_DATETIME_PATTERN),
                 DateUtil.parse(DateUtil.today() + " 9:05:00", DatePattern.NORM_DATETIME_PATTERN))) {
-            CommonResp commonResp = englishServiceImpl.doQueryReturn("每日英语", null, null);
+            CommonResp commonResp = englishServiceImpl.doQueryReturn("每日英语", null, null, null);
             BotUserConfigExample example = new BotUserConfigExample();
             example.createCriteria().andEnglishSwitchIsNotNull();
             List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(example);
@@ -156,6 +156,7 @@ public class StatusMonitor {
                     userConfigMapper.updateByExampleSelective(botUserConfig, example);
                 }catch (Exception e) {
                     // do nothing 不做任何处理 一个人推送异常不影响其他人接收
+                    log.error("摸鱼日报发送失败！！！", e);
                 }
             }
         }

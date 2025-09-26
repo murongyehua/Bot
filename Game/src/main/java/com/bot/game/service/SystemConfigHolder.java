@@ -42,6 +42,7 @@ public class SystemConfigHolder {
         SystemConfigCache.topToken = Arrays.asList(configMap.get(ENSystemConfig.TOP_TOKEN.getValue()).split(","));
         SystemConfigCache.signToken = Arrays.asList(configMap.get(ENSystemConfig.SIGN_TOKEN.getValue()).split(","));
         SystemConfigCache.isMaintenance = configMap.get(ENSystemConfig.MAINTENANCE_FLAG.getValue());
+        SystemConfigCache.tuilanToken = configMap.get(ENSystemConfig.TUILAN_TOKEN.getValue());
         this.loadUsers();
         this.loadUserConfig();
     }
