@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全部名片秀</title>
+    <style>
+        /* 基础样式 */
+        :root {
+            --grid-gap: 12px;
+            --columns: 2;
+            --button-size: 36px;
+            --loader-color: #f0f0f0;
+            --accent-color: #2196F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* 加载遮罩 */
+        .global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+
+        /* 相册网格 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(var(--columns), 1fr);
+            gap: var(--grid-gap);
+            padding: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            aspect-ratio: 1;
+        }
+
+        /* 图片加载状态 */
+        .media-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--loader-color);
+            animation: shimmer 1.5s infinite;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* 大图查看器 */
+        .viewer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            z-index: 999;
+            touch-action: none;
+        }
+
+        .viewer-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .viewer-image {
+            position: absolute;
+            max-width: 95%;
+            max-height: 95%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* 控制按钮 */
+        .viewer-controls {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 40px;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 动画 */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* 响应式布局 */
+        @media (min-width: 768px) {
+            :root {
+                --columns: 3;
+                --grid-gap: 16px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            :root {
+                --columns: 4;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 全局加载状态 -->
+<div class="global-loader" id="globalLoader">
+    <svg width="50" height="50" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" fill="none" stroke="#2196F3" stroke-width="4" stroke-dasharray="31.415 31.415" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+        </circle>
+    </svg>
+</div>
+
+<!-- 相册容器 -->
+<div class="gallery" id="galleryContainer"></div>
+
+<!-- 大图查看器 -->
+<div class="viewer-overlay" id="viewer">
+    <div class="viewer-content">
+        <img class="viewer-image" id="viewerImage">
+        <div class="viewer-controls">
+            <div class="control-btn" id="downloadBtn" title="下载图片">↓</div>
+            <div class="control-btn" id="zoomReset" title="重置缩放">↻</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 配置信息
+    const API_ENDPOINT = 'https://ai.ialy.top/getShows';
+    let currentAlbumId = null;
+    let imageList = [];
+    let currentIndex = 0;
+    let currentScale = 1;
+    let isDragging = false;
+    let startX = 0;
+
+    // 初始化函数
+    async function initialize() {
+        showGlobalLoader();
+        try {
+            // 从URL获取相册ID
+            const urlParams = new URLSearchParams(window.location.search);
+            currentAlbumId = urlParams.get('id') || 'default';
+
+            // 获取图片数据
+            const response = await fetch(`${API_ENDPOINT}?queryId=${currentAlbumId}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            if (!data?.images?.length) throw new Error('没有找到图片');
+
+            // 新增标题设置
+            if (data.title) {
+                document.title = `${data.title} - 相册浏览器`;
+            }
+            imageList = data.images;
+            renderGallery();
+            setupViewer();
+        } catch (error) {
+            console.error('初始化失败:', error);
+            alert('加载名片秀失败，请稍后重试');
+        } finally {
+            hideGlobalLoader();
+        }
+    }
+
+    // 渲染相册网格
+    function renderGallery() {
+        const container = document.getElementById('galleryContainer');
+        container.innerHTML = '';
+
+        imageList.forEach((imgUrl, index) => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+
+            // 加载指示器
+            const loader = document.createElement('div');
+            loader.className = 'media-loader';
+            item.appendChild(loader);
+
+            // 图片元素
+            const img = new Image();
+            img.className = 'gallery-img';
+            img.src = imgUrl;
+            img.alt = `图片 ${index + 1}`;
+            img.loading = 'lazy';
+
+            img.onload = () => {
+                img.style.opacity = '1';
+                loader.remove();
+            };
+
+            img.onerror = () => {
+                item.remove();
+                console.warn(`图片加载失败: ${imgUrl}`);
+            };
+
+            item.addEventListener('click', () => openViewer(index));
+            item.appendChild(img);
+            container.appendChild(item);
+        });
+    }
+
+    // 查看器功能
+    function setupViewer() {
+        const viewer = document.getElementById('viewer');
+        const viewerImage = document.getElementById('viewerImage');
+
+        // 打开查看器
+        window.openViewer = (index) => {
+            currentIndex = index;
+            viewer.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            viewerImage.src = imageList[currentIndex];
+            currentScale = 1;
+            viewerImage.style.transform = 'translate(-50%, -50%) scale(1)';
+        };
+
+        // 关闭查看器
+        viewer.addEventListener('click', (e) => {
+            if (e.target === viewer) {
+                viewer.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // 下载功能
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = imageList[currentIndex];
+            link.download = `image_${currentIndex + 1}.${getFileExtension(imageList[currentIndex])}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // 缩放控制
+        document.getElementById('zoomReset').addEventListener('click', () => {
+            currentScale = 1;
+            viewerImage.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+
+        // 触摸事件处理
+        let touchStartTime = 0;
+        viewerImage.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+            if (e.touches.length === 1) {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+            }
+        });
+
+        viewerImage.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1 && isDragging) {
+                const deltaX = e.touches[0].clientX - startX;
+                viewerImage.style.transform = `translate(calc(-50% + ${deltaX}px), -50%) scale(${currentScale})`;
+            }
+        });
+
+        viewerImage.addEventListener('touchend', (e) => {
+            const deltaTime = Date.now() - touchStartTime;
+            const deltaX = e.changedTouches[0].clientX - startX;
+
+            if (Math.abs(deltaX) > 50 && deltaTime < 300) {
+                const direction = deltaX > 0 ? -1 : 1;
+                currentIndex = (currentIndex + direction + imageList.length) % imageList.length;
+                viewerImage.src = imageList[currentIndex];
+            }
+
+            viewerImage.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+            isDragging = false;
+        });
+
+        // 键盘控制
+        document.addEventListener('keydown', (e) => {
+            if (viewer.style.display === 'block') {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        currentIndex = (currentIndex - 1 + imageList.length) % imageList.length;
+                        viewerImage.src = imageList[currentIndex];
+                        break;
+                    case 'ArrowRight':
+                        currentIndex = (currentIndex + 1) % imageList.length;
+                        viewerImage.src = imageList[currentIndex];
+                        break;
+                    case 'Escape':
+                        viewer.style.display = 'none';
+                        document.body.style.overflow = '';
+                        break;
+                }
+            }
+        });
+    }
+
+    // 辅助函数
+    function showGlobalLoader() {
+        document.getElementById('globalLoader').style.display = 'flex';
+    }
+
+    function hideGlobalLoader() {
+        document.getElementById('globalLoader').style.display = 'none';
+    }
+
+    function getFileExtension(url) {
+        return url.split('.').pop().split(/[#?]/)[0];
+    }
+
+    // 启动初始化
+    initialize();
+</script>
+</body>
+</html>
