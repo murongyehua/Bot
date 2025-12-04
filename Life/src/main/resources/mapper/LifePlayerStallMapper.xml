@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifePlayerStallMapper">
+
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifePlayerStall">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="stall_name" jdbcType="VARCHAR" property="stallName" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_id" jdbcType="BIGINT" property="itemId" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="unit_price" jdbcType="INTEGER" property="unitPrice" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <resultMap id="WithItemResultMap" type="com.bot.life.dao.entity.LifePlayerStall" extends="BaseResultMap">
+    <association property="item" javaType="com.bot.life.dao.entity.LifeItem">
+      <id column="item_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="item_name" jdbcType="VARCHAR" property="name" />
+      <result column="item_type_detail" jdbcType="INTEGER" property="type" />
+      <result column="item_effect_value" jdbcType="INTEGER" property="effectValue" />
+      <result column="item_description" jdbcType="LONGVARCHAR" property="description" />
+    </association>
+    <association property="player" javaType="com.bot.life.dao.entity.LifePlayer">
+      <id column="player_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="player_nickname" jdbcType="VARCHAR" property="nickname" />
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, player_id, stall_name, item_type, item_id, quantity, unit_price, create_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_stall
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="WithItemResultMap">
+    select 
+        s.id, s.player_id, s.stall_name, s.item_type, s.item_id, s.quantity, s.unit_price, s.create_time,
+        i.id as item_pk_id, i.name as item_name, i.type as item_type_detail,
+        i.effect_value as item_effect_value, i.description as item_description,
+        p.id as player_pk_id, p.nickname as player_nickname
+    from life_player_stall s
+    left join life_item i on s.item_id = i.id
+    left join life_player p on s.player_id = p.id
+    order by s.create_time desc
+  </select>
+
+  <select id="selectByPlayerId" parameterType="java.lang.Long" resultMap="WithItemResultMap">
+    select 
+        s.id, s.player_id, s.stall_name, s.item_type, s.item_id, s.quantity, s.unit_price, s.create_time,
+        i.id as item_pk_id, i.name as item_name, i.type as item_type_detail,
+        i.effect_value as item_effect_value, i.description as item_description,
+        p.id as player_pk_id, p.nickname as player_nickname
+    from life_player_stall s
+    left join life_item i on s.item_id = i.id
+    left join life_player p on s.player_id = p.id
+    where s.player_id = #{playerId,jdbcType=BIGINT}
+    order by s.create_time desc
+  </select>
+
+  <select id="selectByPlayerIdAndItemId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_stall
+    where player_id = #{playerId,jdbcType=BIGINT} and item_id = #{itemId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_player_stall
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifePlayerStall" useGeneratedKeys="true" keyProperty="id">
+    insert into life_player_stall (player_id, stall_name, item_type, 
+      item_id, quantity, unit_price, create_time)
+    values (#{playerId,jdbcType=BIGINT}, #{stallName,jdbcType=VARCHAR}, #{itemType,jdbcType=INTEGER}, 
+      #{itemId,jdbcType=BIGINT}, #{quantity,jdbcType=INTEGER}, #{unitPrice,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifePlayerStall">
+    update life_player_stall
+    set player_id = #{playerId,jdbcType=BIGINT},
+      stall_name = #{stallName,jdbcType=VARCHAR},
+      item_type = #{itemType,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=BIGINT},
+      quantity = #{quantity,jdbcType=INTEGER},
+      unit_price = #{unitPrice,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

@@ -51,7 +51,7 @@
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-        <table tableName="bot_user_bind" domainObjectName="UserBind"
+        <table tableName="bot_game_room_player" domainObjectName="BotGameRoomPlayer"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableSelectByPrimaryKey="true">

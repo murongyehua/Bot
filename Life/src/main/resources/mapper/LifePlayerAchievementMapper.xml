@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifePlayerAchievementMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifePlayerAchievement">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="achievement_id" jdbcType="BIGINT" property="achievementId" />
+    <result column="completed_time" jdbcType="TIMESTAMP" property="completedTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, player_id, achievement_id, completed_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_achievement
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPlayerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_achievement
+    where player_id = #{playerId,jdbcType=BIGINT}
+    order by completed_time DESC
+  </select>
+  
+  <select id="selectByPlayerIdAndAchievementId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_achievement
+    where player_id = #{playerId,jdbcType=BIGINT} and achievement_id = #{achievementId,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_player_achievement
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifePlayerAchievement" useGeneratedKeys="true" keyProperty="id">
+    insert into life_player_achievement (player_id, achievement_id, completed_time)
+    values (#{playerId,jdbcType=BIGINT}, #{achievementId,jdbcType=BIGINT}, #{completedTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifePlayerAchievement">
+    update life_player_achievement
+    set player_id = #{playerId,jdbcType=BIGINT},
+      achievement_id = #{achievementId,jdbcType=BIGINT},
+      completed_time = #{completedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

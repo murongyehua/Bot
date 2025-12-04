@@ -893,6 +893,426 @@ public class BotUserConfigExample {
             addCriterion("english_switch not between", value1, value2, "englishSwitch");
             return (Criteria) this;
         }
+
+        public Criteria andJxOpenServerIsNull() {
+            addCriterion("jx_open_server is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerIsNotNull() {
+            addCriterion("jx_open_server is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerEqualTo(String value) {
+            addCriterion("jx_open_server =", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerNotEqualTo(String value) {
+            addCriterion("jx_open_server <>", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerGreaterThan(String value) {
+            addCriterion("jx_open_server >", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerGreaterThanOrEqualTo(String value) {
+            addCriterion("jx_open_server >=", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerLessThan(String value) {
+            addCriterion("jx_open_server <", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerLessThanOrEqualTo(String value) {
+            addCriterion("jx_open_server <=", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerLike(String value) {
+            addCriterion("jx_open_server like", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerNotLike(String value) {
+            addCriterion("jx_open_server not like", value, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerIn(List<String> values) {
+            addCriterion("jx_open_server in", values, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerNotIn(List<String> values) {
+            addCriterion("jx_open_server not in", values, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerBetween(String value1, String value2) {
+            addCriterion("jx_open_server between", value1, value2, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxOpenServerNotBetween(String value1, String value2) {
+            addCriterion("jx_open_server not between", value1, value2, "jxOpenServer");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusIsNull() {
+            addCriterion("jx_server_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusIsNotNull() {
+            addCriterion("jx_server_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusEqualTo(String value) {
+            addCriterion("jx_server_status =", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusNotEqualTo(String value) {
+            addCriterion("jx_server_status <>", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusGreaterThan(String value) {
+            addCriterion("jx_server_status >", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("jx_server_status >=", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusLessThan(String value) {
+            addCriterion("jx_server_status <", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusLessThanOrEqualTo(String value) {
+            addCriterion("jx_server_status <=", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusLike(String value) {
+            addCriterion("jx_server_status like", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusNotLike(String value) {
+            addCriterion("jx_server_status not like", value, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusIn(List<String> values) {
+            addCriterion("jx_server_status in", values, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusNotIn(List<String> values) {
+            addCriterion("jx_server_status not in", values, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusBetween(String value1, String value2) {
+            addCriterion("jx_server_status between", value1, value2, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andJxServerStatusNotBetween(String value1, String value2) {
+            addCriterion("jx_server_status not between", value1, value2, "jxServerStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyIsNull() {
+            addCriterion("chat_frequency is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyIsNotNull() {
+            addCriterion("chat_frequency is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyEqualTo(String value) {
+            addCriterion("chat_frequency =", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyNotEqualTo(String value) {
+            addCriterion("chat_frequency <>", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyGreaterThan(String value) {
+            addCriterion("chat_frequency >", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyGreaterThanOrEqualTo(String value) {
+            addCriterion("chat_frequency >=", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyLessThan(String value) {
+            addCriterion("chat_frequency <", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyLessThanOrEqualTo(String value) {
+            addCriterion("chat_frequency <=", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyLike(String value) {
+            addCriterion("chat_frequency like", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyNotLike(String value) {
+            addCriterion("chat_frequency not like", value, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyIn(List<String> values) {
+            addCriterion("chat_frequency in", values, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyNotIn(List<String> values) {
+            addCriterion("chat_frequency not in", values, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyBetween(String value1, String value2) {
+            addCriterion("chat_frequency between", value1, value2, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andChatFrequencyNotBetween(String value1, String value2) {
+            addCriterion("chat_frequency not between", value1, value2, "chatFrequency");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchIsNull() {
+            addCriterion("emoji_switch is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchIsNotNull() {
+            addCriterion("emoji_switch is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchEqualTo(String value) {
+            addCriterion("emoji_switch =", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchNotEqualTo(String value) {
+            addCriterion("emoji_switch <>", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchGreaterThan(String value) {
+            addCriterion("emoji_switch >", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchGreaterThanOrEqualTo(String value) {
+            addCriterion("emoji_switch >=", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchLessThan(String value) {
+            addCriterion("emoji_switch <", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchLessThanOrEqualTo(String value) {
+            addCriterion("emoji_switch <=", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchLike(String value) {
+            addCriterion("emoji_switch like", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchNotLike(String value) {
+            addCriterion("emoji_switch not like", value, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchIn(List<String> values) {
+            addCriterion("emoji_switch in", values, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchNotIn(List<String> values) {
+            addCriterion("emoji_switch not in", values, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchBetween(String value1, String value2) {
+            addCriterion("emoji_switch between", value1, value2, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andEmojiSwitchNotBetween(String value1, String value2) {
+            addCriterion("emoji_switch not between", value1, value2, "emojiSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchIsNull() {
+            addCriterion("bottle_auto_switch is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchIsNotNull() {
+            addCriterion("bottle_auto_switch is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchEqualTo(String value) {
+            addCriterion("bottle_auto_switch =", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchNotEqualTo(String value) {
+            addCriterion("bottle_auto_switch <>", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchGreaterThan(String value) {
+            addCriterion("bottle_auto_switch >", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchGreaterThanOrEqualTo(String value) {
+            addCriterion("bottle_auto_switch >=", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchLessThan(String value) {
+            addCriterion("bottle_auto_switch <", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchLessThanOrEqualTo(String value) {
+            addCriterion("bottle_auto_switch <=", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchLike(String value) {
+            addCriterion("bottle_auto_switch like", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchNotLike(String value) {
+            addCriterion("bottle_auto_switch not like", value, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchIn(List<String> values) {
+            addCriterion("bottle_auto_switch in", values, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchNotIn(List<String> values) {
+            addCriterion("bottle_auto_switch not in", values, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchBetween(String value1, String value2) {
+            addCriterion("bottle_auto_switch between", value1, value2, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andBottleAutoSwitchNotBetween(String value1, String value2) {
+            addCriterion("bottle_auto_switch not between", value1, value2, "bottleAutoSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentIsNull() {
+            addCriterion("welcome_content is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentIsNotNull() {
+            addCriterion("welcome_content is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentEqualTo(String value) {
+            addCriterion("welcome_content =", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentNotEqualTo(String value) {
+            addCriterion("welcome_content <>", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentGreaterThan(String value) {
+            addCriterion("welcome_content >", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentGreaterThanOrEqualTo(String value) {
+            addCriterion("welcome_content >=", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentLessThan(String value) {
+            addCriterion("welcome_content <", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentLessThanOrEqualTo(String value) {
+            addCriterion("welcome_content <=", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentLike(String value) {
+            addCriterion("welcome_content like", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentNotLike(String value) {
+            addCriterion("welcome_content not like", value, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentIn(List<String> values) {
+            addCriterion("welcome_content in", values, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentNotIn(List<String> values) {
+            addCriterion("welcome_content not in", values, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentBetween(String value1, String value2) {
+            addCriterion("welcome_content between", value1, value2, "welcomeContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andWelcomeContentNotBetween(String value1, String value2) {
+            addCriterion("welcome_content not between", value1, value2, "welcomeContent");
+            return (Criteria) this;
+        }
     }
 
     /**

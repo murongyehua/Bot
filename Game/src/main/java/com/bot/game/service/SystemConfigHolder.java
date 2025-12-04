@@ -67,6 +67,16 @@ public class SystemConfigHolder {
         SystemConfigCache.userMorningMap.putAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getMorningType())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getMorningType)));
         SystemConfigCache.userWorkDaily.clear();
         SystemConfigCache.userWorkDaily.addAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getWorkDailyConfig())).map(BotUserConfig::getUserId).collect(Collectors.toList()));
+        SystemConfigCache.chatFrequency.clear();
+        SystemConfigCache.chatFrequency.putAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getChatFrequency())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getChatFrequency)));
+        SystemConfigCache.openServer.clear();
+        SystemConfigCache.openServer.addAll(userConfigList.stream().filter(x -> "1".equals(x.getJxOpenServer())).map(BotUserConfig::getUserId).collect(Collectors.toList()));
+        SystemConfigCache.emojiUser.clear();
+        SystemConfigCache.emojiUser.addAll(userConfigList.stream().filter(x -> "1".equals(x.getEmojiSwitch()) || x.getEmojiSwitch() == null).map(BotUserConfig::getUserId).collect(Collectors.toList()));
+        SystemConfigCache.bottleUser.clear();
+        SystemConfigCache.bottleUser.addAll(userConfigList.stream().filter(x -> "1".equals(x.getBottleAutoSwitch())).map(BotUserConfig::getUserId).collect(Collectors.toList()));
+        SystemConfigCache.welcomeMap.clear();
+        SystemConfigCache.welcomeMap.putAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getWelcomeContent())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getWelcomeContent)));
     }
 
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeWorldBossMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeWorldBoss">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="monster_id" jdbcType="BIGINT" property="monsterId" />
+    <result column="map_id" jdbcType="BIGINT" property="mapId" />
+    <result column="start_time" jdbcType="TIME" property="startTime" />
+    <result column="end_time" jdbcType="TIME" property="endTime" />
+    <result column="max_challenge_count" jdbcType="INTEGER" property="maxChallengeCount" />
+    <result column="is_active" jdbcType="INTEGER" property="isActive" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, monster_id, map_id, start_time, end_time, max_challenge_count, is_active
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectActiveWorldBosses" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss
+    where is_active = 1
+    order by id
+  </select>
+  
+  <select id="selectByMapId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss
+    where map_id = #{mapId,jdbcType=BIGINT} and is_active = 1
+    order by id
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_world_boss
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeWorldBoss" useGeneratedKeys="true" keyProperty="id">
+    insert into life_world_boss (monster_id, map_id, start_time, 
+      end_time, max_challenge_count, is_active)
+    values (#{monsterId,jdbcType=BIGINT}, #{mapId,jdbcType=BIGINT}, #{startTime,jdbcType=TIME}, 
+      #{endTime,jdbcType=TIME}, #{maxChallengeCount,jdbcType=INTEGER}, #{isActive,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeWorldBoss">
+    update life_world_boss
+    set monster_id = #{monsterId,jdbcType=BIGINT},
+      map_id = #{mapId,jdbcType=BIGINT},
+      start_time = #{startTime,jdbcType=TIME},
+      end_time = #{endTime,jdbcType=TIME},
+      max_challenge_count = #{maxChallengeCount,jdbcType=INTEGER},
+      is_active = #{isActive,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

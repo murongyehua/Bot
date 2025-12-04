@@ -8,6 +8,7 @@
         <module>Base</module>
         <module>Common</module>
         <module>Game</module>
+        <module>Life</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

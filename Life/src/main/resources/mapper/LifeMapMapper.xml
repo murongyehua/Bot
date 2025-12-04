@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeMapMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeMap">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="min_level" jdbcType="INTEGER" property="minLevel" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, type, min_level, description, create_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_map
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectTeleportableMaps" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_map
+    where type = 1
+    order by min_level, id
+  </select>
+  
+  <select id="selectAvailableMaps" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_map
+    where type = 1 and min_level &lt;= #{playerLevel,jdbcType=INTEGER}
+    order by min_level, id
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_map
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeMap" useGeneratedKeys="true" keyProperty="id">
+    insert into life_map (name, type, min_level, 
+      description, create_time)
+    values (#{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{minLevel,jdbcType=INTEGER}, 
+      #{description,jdbcType=LONGVARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeMap">
+    update life_map
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      min_level = #{minLevel,jdbcType=INTEGER},
+      description = #{description,jdbcType=LONGVARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

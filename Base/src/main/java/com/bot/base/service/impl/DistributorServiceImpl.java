@@ -15,7 +15,13 @@ import com.bot.common.constant.BaseConsts;
 import com.bot.common.exception.BotException;
 import com.bot.base.commom.MessageSender;
 import com.bot.common.util.HttpSenderUtil;
+import com.bot.common.util.SendMsgUtil;
+import com.bot.game.dao.entity.BotEmoji;
+import com.bot.game.dao.entity.BotEmojiExample;
+import com.bot.game.dao.mapper.BotEmojiMapper;
 import com.bot.game.service.GameHandler;
+import com.bot.life.service.LifeHandler;
+import com.twelvemonkeys.imageio.metadata.tiff.IFD;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +61,12 @@ public class DistributorServiceImpl implements Distributor {
     @Autowired
     private GameHandler gameHandler;
 
+    @Autowired
+    private LifeHandler lifeHandler;
+
+    @Autowired
+    private GameRoomManager gameRoomManager;
+
     @Resource
     private RegService regService;
 
@@ -79,7 +91,18 @@ public class DistributorServiceImpl implements Distributor {
     @Value("${manager.token}")
     private String managerToken;
 
+    @Resource
+    private BotEmojiMapper emojiMapper;
+
     private final static Map<String, String> GAME_TOKENS = new HashMap<>();
+    private final static Map<String, String> LIFE_GAME_TOKENS = new HashMap<>();
+
+    private final static Map<String, List<String>> TEMP_CHAT_RECORD = new HashMap<>();
+
+    private final static Map<String, List<String>> BOT_SEND_RECORD = new HashMap<>();
+
+    @Resource
+    private DefaultChatServiceImpl defaultChatService;
 
     @Override
     @Deprecated
@@ -102,10 +125,70 @@ public class DistributorServiceImpl implements Distributor {
     }
 
     @Override
-    public CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag, String channel) {
+    public CommonResp doDistributeWithString(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag, String channel, String withoutPexContent) {
         try{
-            CommonResp resp = this.req2Resp(reqContent, token, groupId, at, mustRespFlag, channel);
+            CommonResp resp = this.req2Resp(withoutPexContent, token, groupId, at, mustRespFlag, channel);
             if (resp == null) {
+                // 不回复时记录内容，如果连续两条内容一样就复制一条跟着发
+                if (groupId != null) {
+                    // 特殊处理 如果是表情包三个字就随机一个表情包
+                    if ("表情包".equals(withoutPexContent)) {
+                        BotEmoji emoji = this.fetchRandomEmoji();
+                        if (emoji.getMd5().startsWith("http")) {
+                            return new CommonResp(emoji.getMd5(), ENRespType.IMG.getType());
+                        }
+                        SendMsgUtil.sendEmoji(groupId, emoji.getMd5(), Integer.parseInt(emoji.getImgsize()));
+                        return null;
+                    }
+                    if (TEMP_CHAT_RECORD.containsKey(groupId)) {
+                        List<String> record = TEMP_CHAT_RECORD.get(groupId);
+                        if (record.size() > 0) {
+                            String lastContent = record.get(record.size() - 1);
+                            if (lastContent.equals(withoutPexContent)) {
+                                // 检查是否已经发送过这条重复消息
+                                if (BOT_SEND_RECORD.containsKey(groupId) && BOT_SEND_RECORD.get(groupId).contains(lastContent)) {
+                                    // 已经发过的内容不重复发送
+                                    log.info("[{}]群聊中的重复消息不再重复发送", token);
+                                } else {
+                                    // 记录即将发送的重复消息
+                                    if (BOT_SEND_RECORD.containsKey(groupId)) {
+                                        BOT_SEND_RECORD.get(groupId).add(lastContent);
+                                    } else {
+                                        BOT_SEND_RECORD.put(groupId, new ArrayList<String>(){{add(lastContent);}});
+                                    }
+                                    return new CommonResp(lastContent, ENRespType.TEXT.getType());
+                                }
+                            }
+                            record.add(withoutPexContent);
+                        }
+                    } else {
+                        TEMP_CHAT_RECORD.put(groupId, new ArrayList<String>(){{add(withoutPexContent);}});
+                        // 防止后面一直不说话了，这里5句清除一下
+                        if (BOT_SEND_RECORD.containsKey(groupId) && BOT_SEND_RECORD.get(groupId).size() > 5) {
+                            BOT_SEND_RECORD.remove(groupId);
+                        }
+                    }
+                    // 如果是艾特或者是内容包含小林，就回复
+                    if (at || reqContent.contains("小林")) {
+                        String respContent = defaultChatService.deepChat(reqContent, "group", groupId);
+                        return new CommonResp(respContent, ENRespType.TEXT.getType());
+                    }
+                    // 上面都未触发，则有15%的机率回复
+                    String frequency = SystemConfigCache.chatFrequency.get(groupId);
+                    if (Math.random() < (StrUtil.isNotEmpty(frequency) ? Double.parseDouble(frequency) : 0.15)) {
+                        // 回复时有8%的几率是表情包
+                        if (Math.random() < 0.08) {
+                            BotEmoji emoji = this.fetchRandomEmoji();
+                            if (emoji.getMd5().startsWith("http")) {
+                                return new CommonResp(emoji.getMd5(), ENRespType.IMG.getType());
+                            }
+                            SendMsgUtil.sendEmoji(groupId, emoji.getMd5(), Integer.parseInt(emoji.getImgsize()));
+                            return null;
+                        }
+                        String respContent = defaultChatService.deepChat(reqContent, "group", groupId);
+                        return new CommonResp(respContent, ENRespType.TEXT.getType());
+                    }
+                }
                 log.info("[{}]不予回复", token);
                 return null;
             }
@@ -127,6 +210,10 @@ public class DistributorServiceImpl implements Distributor {
             default:
                 return StrUtil.EMPTY;
         }
+    }
+
+    private BotEmoji fetchRandomEmoji() {
+        return emojiMapper.selectByExample(new BotEmojiExample()).get(new Random().nextInt(emojiMapper.selectByExample(new BotEmojiExample()).size()));
     }
 
     private CommonResp req2Resp(String reqContent, String token, String groupId, boolean at, boolean mustRespFlag, String channel) {
@@ -182,6 +269,52 @@ public class DistributorServiceImpl implements Distributor {
         if (BaseConsts.SystemManager.GET_TOKEN.equals(reqContent)) {
             return new CommonResp(StrUtil.isEmpty(groupId) ? token : groupId, ENRespType.TEXT.getType());
         }
+        // 先判断命中服务
+        for (String keyword : CommonTextLoader.serviceInstructMap.keySet()) {
+            if (reqContent.startsWith(keyword) || reqContent.contains(keyword)) {
+                CommonResp resp = this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent,  token, groupId, channel);
+                if (resp != null) {
+                    return resp;
+                }
+                // 返回null的时候，要根据必须回复标记来判断是继续走默认聊天逻辑还是直接不予回复
+                if (!mustRespFlag) {
+                    return null;
+                }
+            }
+        }
+        // 是不是处于浮生卷游戏模式
+        if (LIFE_GAME_TOKENS.containsKey(token)) {
+            if ("退出".equals(reqContent)) {
+                LIFE_GAME_TOKENS.remove(token);
+                String imagePath = lifeHandler.exit(token);
+                return new CommonResp(imagePath, ENRespType.IMG.getType());
+            }
+            String imagePath = lifeHandler.play(reqContent, token);
+            if (imagePath != null) {
+                return new CommonResp(imagePath, ENRespType.IMG.getType());
+            }
+        }
+        // 是不是进入浮生卷游戏模式
+        if ("浮生卷".equals(reqContent)) {
+            LIFE_GAME_TOKENS.put(token, "active");
+            String imagePath = lifeHandler.play(reqContent, token);
+            return new CommonResp(imagePath, ENRespType.IMG.getType());
+        }
+
+        // ==========小游戏房间系统==========
+        // 优先级最高：检查用户是否在游戏中
+        if (gameRoomManager.isUserInGame(token)) {
+            String gameResp = gameRoomManager.handleGameInstruction(token, reqContent);
+            if (gameResp != null) {
+                return new CommonResp(gameResp, ENRespType.TEXT.getType());
+            }
+        }
+        // 游戏房间指令检查
+        String gameRoomResp = gameRoomManager.handleGameCommand(reqContent, token, groupId);
+        if (gameRoomResp != null) {
+            return new CommonResp(gameRoomResp, ENRespType.TEXT.getType());
+        }
+        // ==========结束小游戏房间系统==========
         // 是不是处于游戏模式
         if (GAME_TOKENS.containsKey(token)) {
             if (GAME_TOKENS.get(token).equals(ENUserGameStatus.JOINED.getValue()) && BaseConsts.SystemManager.EXIT_GAME.equals(reqContent)) {
@@ -222,19 +355,6 @@ public class DistributorServiceImpl implements Distributor {
         for (String keyword : CommonTextLoader.someResponseMap.keySet()) {
             if (keyword.equals(reqContent)) {
                 return new CommonResp(this.getResponseByKey(keyword), ENRespType.TEXT.getType());
-            }
-        }
-        // 先判断命中服务
-        for (String keyword : CommonTextLoader.serviceInstructMap.keySet()) {
-            if (reqContent.startsWith(keyword) || reqContent.contains(keyword)) {
-                CommonResp resp = this.getService(CommonTextLoader.serviceInstructMap.get(keyword)).doQueryReturn(reqContent,  token, groupId, channel);
-                if (resp != null) {
-                    return resp;
-                }
-                // 返回null的时候，要根据必须回复标记来判断是继续走默认聊天逻辑还是直接不予回复
-                if (!mustRespFlag) {
-                    return null;
-                }
             }
         }
         // 菜单取消了，都走服务
@@ -283,7 +403,8 @@ public class DistributorServiceImpl implements Distributor {
     private CommonResp geyDefaultMsg(String reqContent, String token, String groupId, String channel) {
         // 1.5.0.0增加逻辑，不支持群聊闲聊
         if (groupId != null) {
-            return new CommonResp("小林的群聊内的闲聊功能已下线，如有Ai使用需求请添加好友私聊使用，或者你可以使用小林的其他功能！\r\b发送”菜单“或者”帮助“获取使用手册，除闲聊外的功能仍可正常触发呢~", ENRespType.TEXT.getType());
+//            return new CommonResp("小林的群聊内的闲聊功能已下线，如有Ai使用需求请添加好友私聊使用，或者你可以使用小林的其他功能！\r\b发送”菜单“或者”帮助“获取使用手册，除闲聊外的功能仍可正常触发呢~", ENRespType.TEXT.getType());
+            return null;
         }
         BaseService service = serviceMap.get("defaultChatServiceImpl");
         CommonResp resp = service.doQueryReturn(reqContent, token, groupId, channel);

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeTeamMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeTeam">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="leader_id" jdbcType="BIGINT" property="leaderId" />
+    <result column="team_name" jdbcType="VARCHAR" property="teamName" />
+    <result column="max_members" jdbcType="INTEGER" property="maxMembers" />
+    <result column="current_members" jdbcType="INTEGER" property="currentMembers" />
+    <result column="team_status" jdbcType="INTEGER" property="teamStatus" />
+    <result column="dungeon_id" jdbcType="BIGINT" property="dungeonId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  
+  <resultMap id="WithLeaderResultMap" type="com.bot.life.dao.entity.LifeTeam" extends="BaseResultMap">
+    <association property="leader" javaType="com.bot.life.dao.entity.LifePlayer">
+      <id column="leader_player_id" jdbcType="BIGINT" property="id" />
+      <result column="leader_nickname" jdbcType="VARCHAR" property="nickname" />
+    </association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, leader_id, team_name, max_members, current_members, team_status, dungeon_id, create_time, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_team
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByLeaderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_team
+    where leader_id = #{leaderId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAvailableTeams" resultMap="WithLeaderResultMap">
+    select 
+    t.id, t.leader_id, t.team_name, t.max_members, t.current_members, t.team_status, 
+    t.dungeon_id, t.create_time, t.update_time,
+    p.id as leader_player_id, p.nickname as leader_nickname
+    from life_team t
+    left join life_player p on t.leader_id = p.id
+    where t.team_status = 0 and t.current_members &lt; t.max_members
+    order by t.create_time DESC
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_team
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeTeam" useGeneratedKeys="true" keyProperty="id">
+    insert into life_team (leader_id, team_name, max_members, 
+      current_members, team_status, dungeon_id, 
+      create_time, update_time)
+    values (#{leaderId,jdbcType=BIGINT}, #{teamName,jdbcType=VARCHAR}, #{maxMembers,jdbcType=INTEGER}, 
+      #{currentMembers,jdbcType=INTEGER}, #{teamStatus,jdbcType=INTEGER}, #{dungeonId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeTeam">
+    update life_team
+    set leader_id = #{leaderId,jdbcType=BIGINT},
+      team_name = #{teamName,jdbcType=VARCHAR},
+      max_members = #{maxMembers,jdbcType=INTEGER},
+      current_members = #{currentMembers,jdbcType=INTEGER},
+      team_status = #{teamStatus,jdbcType=INTEGER},
+      dungeon_id = #{dungeonId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

@@ -50,6 +50,11 @@ public class SystemManager {
      */
     public static volatile UserTempInfoDTO userTempInfo = null;
 
+    /**
+     * 公告模式
+     */
+    public static volatile String noticeModel = null;
+
     @Value("${system.manager.password}")
     private String managerPassword;
 
@@ -109,6 +114,12 @@ public class SystemManager {
             userTempInfo = null;
             return BaseConsts.SystemManager.MANAGER_PASSWORD_ERROR;
         }
+        // 处于公告模式则直接发送
+        if ("1".equals(noticeModel)) {
+            send2AllUser(reqContent);
+            noticeModel = null;
+            return BaseConsts.SystemManager.SUCCESS;
+        }
         // 退出管理模式
         if (BaseConsts.SystemManager.TRY_OUT_MANAGER_INFO.equals(reqContent)) {
             userTempInfo = null;
@@ -121,14 +132,9 @@ public class SystemManager {
             return BaseConsts.SystemManager.SUCCESS;
         }
         // 发布公告
-        if (reqContent.startsWith(BaseConsts.SystemManager.SEND_NOTICE_FORMAT)) {
-            String[] contentArr = reqContent.split(StrUtil.SPACE);
-            if (contentArr.length != 2) {
-                return BaseConsts.SystemManager.ILL_CODE;
-            }
-            String noticeContent = contentArr[1];
-            send2AllUser(noticeContent);
-            return BaseConsts.SystemManager.SUCCESS;
+        if (reqContent.equals(BaseConsts.SystemManager.SEND_NOTICE_FORMAT)) {
+            noticeModel = "1";
+            return "请发送公告内容";
         }
         // 发布图片公告
         if (reqContent.startsWith(BaseConsts.SystemManager.PIC_SEND_NOTICE_FORMAT)) {

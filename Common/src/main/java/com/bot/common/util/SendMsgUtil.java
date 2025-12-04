@@ -1,6 +1,7 @@
 package com.bot.common.util;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.PageUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
@@ -111,6 +112,20 @@ public class SendMsgUtil {
         }
     }
 
+    public static void sendEmoji(String userId, String emoji, Integer length) {
+        try {
+            SendEmojiDTO sendEmojiDTO = new SendEmojiDTO();
+            sendEmojiDTO.setImgSize(String.valueOf(length));
+            sendEmojiDTO.setWcId(userId);
+            sendEmojiDTO.setWId(SystemConfigCache.wId);
+            sendEmojiDTO.setImageMd5(emoji);
+            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_EMOJI_URL, JSONUtil.toJsonStr(sendEmojiDTO));
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送消息失败");
+        }
+    }
+
     public static void sendGroupVideo(String groupId, String url, String userId) {
         try{
             SendGroupDTO sendGroup = new SendGroupDTO();
@@ -132,10 +147,31 @@ public class SendMsgUtil {
         try{
             SendGroupDTO sendGroup = new SendGroupDTO();
             sendGroup.setWId(SystemConfigCache.wId);
+//            sendGroup.setAt(userId);
+            if (StrUtil.isEmpty(userId)) {
+                sendGroup.setContent(msg);
+            }else {
+                sendGroup.setContent(msg);
+//                sendGroup.setContent(String.format("@%s\u2005", getGroupNickName(groupId, userId)) + StrUtil.CRLF + msg);
+            }
+            sendGroup.setWcId(groupId);
+            HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_TEXT_URL, JSONUtil.toJsonStr(sendGroup));
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送消息失败");
+        }
+
+    }
+
+    public static void sendGroupMsgForGame(String groupId, String msg, String userId) {
+        try{
+            SendGroupDTO sendGroup = new SendGroupDTO();
+            sendGroup.setWId(SystemConfigCache.wId);
             sendGroup.setAt(userId);
             if (StrUtil.isEmpty(userId)) {
                 sendGroup.setContent(msg);
             }else {
+//                sendGroup.setContent(msg);
                 sendGroup.setContent(String.format("@%s\u2005", getGroupNickName(groupId, userId)) + StrUtil.CRLF + msg);
             }
             sendGroup.setWcId(groupId);
@@ -214,7 +250,21 @@ public class SendMsgUtil {
         }
     }
 
-    private static String getGroupNickName(String groupId, String userId) {
+    public static void acceptUrl(String url) {
+        try {
+            AcceptUrlDTO acceptUrlDTO = new AcceptUrlDTO();
+            acceptUrlDTO.setWId(SystemConfigCache.wId);
+            acceptUrlDTO.setUrl(url);
+            String response = HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.ACCEPT_URL, JSONUtil.toJsonStr(acceptUrlDTO));
+            System.out.println(response);
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("自动入群失败");
+        }
+
+    }
+
+    public static String getGroupNickName(String groupId, String userId) {
         if (userId.equals("notify@all")) {
             return "所有人";
         }

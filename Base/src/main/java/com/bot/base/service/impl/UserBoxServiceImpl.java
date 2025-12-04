@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.bot.base.dto.CommonResp;
 import com.bot.base.service.BaseService;
 import com.bot.common.config.SystemConfigCache;
@@ -211,6 +212,85 @@ public class UserBoxServiceImpl implements BaseService {
             this.reg(groupId, ENRegType.GROUP.getValue());
             return new CommonResp("使用成功，有效期延长30天！可以发送“到期时间”查询~", ENRespType.TEXT.getType());
         }
+        if (ObjectUtil.equals("嘻嘻哈哈乌拉乌拉", reqContent)) {
+            if (groupId != null) {
+                this.reg(groupId, ENRegType.GROUP.getValue());
+            }else {
+                this.reg(token, ENRegType.PERSONNEL.getValue());
+            }
+            return new CommonResp("暗号正确，有效期延长90天！可以发送“到期时间”查询。", ENRespType.TEXT.getType());
+        }
+
+        if (reqContent.startsWith("设置回复频率")) {
+            String[] split = reqContent.split(StrUtil.SPACE);
+            if (split.length != 2) {
+                return new CommonResp("格式错误，请按照格式发送“设置回复频率 0-1的两位小数”", ENRespType.TEXT.getType());
+            }
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andUserIdEqualTo(groupId != null ? groupId : token);
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            BotUserConfig userConfig = userConfigList.get(0);
+            userConfig.setChatFrequency(split[1]);
+            userConfigMapper.updateByPrimaryKeySelective(userConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("设置成功，回复频率为：" + split[1], ENRespType.TEXT.getType());
+        }
+
+        if (reqContent.equals("禁止表情包")) {
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andUserIdEqualTo(groupId != null ? groupId : token);
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            BotUserConfig userConfig = userConfigList.get(0);
+            userConfig.setEmojiSwitch("0");
+            userConfigMapper.updateByPrimaryKeySelective(userConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("设置成功，将不再收集后续的表情包，也不会回复表情包。", ENRespType.TEXT.getType());
+        }
+        if (reqContent.equals("开启表情包")) {
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andUserIdEqualTo(groupId != null ? groupId : token);
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            BotUserConfig userConfig = userConfigList.get(0);
+            userConfig.setEmojiSwitch("1");
+            userConfigMapper.updateByPrimaryKeySelective(userConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("设置成功，将随机回复表情包，也会收集后续的表情包", ENRespType.TEXT.getType());
+        }
+        if (reqContent.equals("开启漂流瓶推送")) {
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andUserIdEqualTo(groupId != null ? groupId : token);
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            BotUserConfig userConfig = userConfigList.get(0);
+            userConfig.setBottleAutoSwitch("1");
+            userConfigMapper.updateByPrimaryKeySelective(userConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("开启成功。", ENRespType.TEXT.getType());
+        }
+
+        if (reqContent.equals("关闭漂流瓶推送")) {
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andUserIdEqualTo(groupId != null ? groupId : token);
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            BotUserConfig userConfig = userConfigList.get(0);
+            userConfig.setBottleAutoSwitch("0");
+            userConfigMapper.updateByPrimaryKeySelective(userConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("关闭成功。", ENRespType.TEXT.getType());
+        }
+        if(reqContent.startsWith("设置欢迎语")) {
+            if (groupId == null) {
+                return new CommonResp("请在群聊内使用该指令。", ENRespType.TEXT.getType());
+            }
+            String content = reqContent.replaceFirst("设置欢迎语 ", "");
+            BotUserConfigExample userConfigExample = new BotUserConfigExample();
+            userConfigExample.createCriteria().andUserIdEqualTo(groupId);
+            List<BotUserConfig> userConfigList = userConfigMapper.selectByExample(userConfigExample);
+            BotUserConfig userConfig = userConfigList.get(0);
+            userConfig.setWelcomeContent(content);
+            userConfigMapper.updateByPrimaryKeySelective(userConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("设置成功。", ENRespType.TEXT.getType());
+        }
         return null;
     }
 
@@ -223,7 +303,7 @@ public class UserBoxServiceImpl implements BaseService {
                 BotUser botUser = new BotUser();
                 botUser.setId(token);
                 botUser.setStatus(ENRegStatus.FOREVER.getValue());
-                botUser.setDeadLineDate(DateUtil.offsetDay(SystemConfigCache.userDateMap.get(token), 30));
+                botUser.setDeadLineDate(DateUtil.offsetDay(SystemConfigCache.userDateMap.get(token), 90));
                 userMapper.updateByPrimaryKeySelective(botUser);
                 systemConfigHolder.loadUsers();
                 return;
@@ -232,7 +312,7 @@ public class UserBoxServiceImpl implements BaseService {
             BotUser botUser = new BotUser();
             botUser.setId(token);
             botUser.setStatus(ENRegStatus.FOREVER.getValue());
-            botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 30));
+            botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 90));
             userMapper.updateByPrimaryKeySelective(botUser);
             systemConfigHolder.loadUsers();
             return;
@@ -244,7 +324,7 @@ public class UserBoxServiceImpl implements BaseService {
         botUser.setId(token);
         botUser.setStatus(ENRegStatus.FOREVER.getValue());
         botUser.setType(regType);
-        botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 30));
+        botUser.setDeadLineDate(DateUtil.offsetDay(new Date(), 90));
         userMapper.insert(botUser);
         log.info("7---" + token + "----" + regType);
         BotUserConfig botUserConfig = new BotUserConfig();

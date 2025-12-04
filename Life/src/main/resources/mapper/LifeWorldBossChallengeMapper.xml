@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeWorldBossChallengeMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeWorldBossChallenge">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="world_boss_id" jdbcType="BIGINT" property="worldBossId" />
+    <result column="damage_dealt" jdbcType="BIGINT" property="damageDealt" />
+    <result column="spirit_reward" jdbcType="INTEGER" property="spiritReward" />
+    <result column="item_rewards" jdbcType="LONGVARCHAR" property="itemRewards" />
+    <result column="challenge_time" jdbcType="TIMESTAMP" property="challengeTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, player_id, world_boss_id, damage_dealt, spirit_reward, item_rewards, challenge_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss_challenge
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectTodayChallengeCount" resultType="java.lang.Integer">
+    select count(*)
+    from life_world_boss_challenge
+    where player_id = #{playerId,jdbcType=BIGINT} 
+      and world_boss_id = #{worldBossId,jdbcType=BIGINT}
+      and DATE(challenge_time) = CURDATE()
+  </select>
+  
+  <select id="selectTodayChallengesByPlayerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss_challenge
+    where player_id = #{playerId,jdbcType=BIGINT}
+      and DATE(challenge_time) = CURDATE()
+    order by challenge_time DESC
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_world_boss_challenge
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeWorldBossChallenge" useGeneratedKeys="true" keyProperty="id">
+    insert into life_world_boss_challenge (player_id, world_boss_id, damage_dealt, 
+      spirit_reward, item_rewards, challenge_time)
+    values (#{playerId,jdbcType=BIGINT}, #{worldBossId,jdbcType=BIGINT}, #{damageDealt,jdbcType=BIGINT}, 
+      #{spiritReward,jdbcType=INTEGER}, #{itemRewards,jdbcType=LONGVARCHAR}, #{challengeTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeWorldBossChallenge">
+    update life_world_boss_challenge
+    set player_id = #{playerId,jdbcType=BIGINT},
+      world_boss_id = #{worldBossId,jdbcType=BIGINT},
+      damage_dealt = #{damageDealt,jdbcType=BIGINT},
+      spirit_reward = #{spiritReward,jdbcType=INTEGER},
+      item_rewards = #{itemRewards,jdbcType=LONGVARCHAR},
+      challenge_time = #{challengeTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

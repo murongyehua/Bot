@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeDungeonMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeDungeon">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="min_level" jdbcType="INTEGER" property="minLevel" />
+    <result column="max_level" jdbcType="INTEGER" property="maxLevel" />
+    <result column="required_members" jdbcType="INTEGER" property="requiredMembers" />
+    <result column="difficulty" jdbcType="INTEGER" property="difficulty" />
+    <result column="rewards" jdbcType="LONGVARCHAR" property="rewards" />
+    <result column="is_active" jdbcType="INTEGER" property="isActive" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, description, min_level, max_level, required_members, difficulty, rewards, is_active
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_dungeon
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectActiveDungeons" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_dungeon
+    where is_active = 1
+    order by difficulty, min_level
+  </select>
+  
+  <select id="selectByDifficulty" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_dungeon
+    where difficulty = #{difficulty,jdbcType=INTEGER} and is_active = 1
+    order by min_level
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_dungeon
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeDungeon" useGeneratedKeys="true" keyProperty="id">
+    insert into life_dungeon (name, description, min_level, 
+      max_level, required_members, difficulty, 
+      rewards, is_active)
+    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{minLevel,jdbcType=INTEGER}, 
+      #{maxLevel,jdbcType=INTEGER}, #{requiredMembers,jdbcType=INTEGER}, #{difficulty,jdbcType=INTEGER}, 
+      #{rewards,jdbcType=LONGVARCHAR}, #{isActive,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeDungeon">
+    update life_dungeon
+    set name = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=LONGVARCHAR},
+      min_level = #{minLevel,jdbcType=INTEGER},
+      max_level = #{maxLevel,jdbcType=INTEGER},
+      required_members = #{requiredMembers,jdbcType=INTEGER},
+      difficulty = #{difficulty,jdbcType=INTEGER},
+      rewards = #{rewards,jdbcType=LONGVARCHAR},
+      is_active = #{isActive,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

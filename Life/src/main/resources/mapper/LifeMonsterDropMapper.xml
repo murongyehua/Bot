@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeMonsterDropMapper">
+
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeMonsterDrop">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="monster_id" jdbcType="BIGINT" property="monsterId" />
+    <result column="drop_type" jdbcType="INTEGER" property="dropType" />
+    <result column="item_id" jdbcType="BIGINT" property="itemId" />
+    <result column="spirit_amount" jdbcType="INTEGER" property="spiritAmount" />
+    <result column="drop_rate" jdbcType="DECIMAL" property="dropRate" />
+    <result column="min_quantity" jdbcType="INTEGER" property="minQuantity" />
+    <result column="max_quantity" jdbcType="INTEGER" property="maxQuantity" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <resultMap id="WithItemResultMap" type="com.bot.life.dao.entity.LifeMonsterDrop" extends="BaseResultMap">
+    <association property="item" javaType="com.bot.life.dao.entity.LifeItem">
+      <id column="item_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="item_name" jdbcType="VARCHAR" property="name" />
+      <result column="item_type" jdbcType="INTEGER" property="type" />
+      <result column="item_description" jdbcType="LONGVARCHAR" property="description" />
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, monster_id, drop_type, item_id, spirit_amount, drop_rate, min_quantity, max_quantity, create_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_monster_drop
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByMonsterId" parameterType="java.lang.Long" resultMap="WithItemResultMap">
+    select 
+        d.id, d.monster_id, d.drop_type, d.item_id, d.spirit_amount, d.drop_rate, 
+        d.min_quantity, d.max_quantity, d.create_time,
+        i.id as item_pk_id, i.name as item_name, i.type as item_type, 
+        i.description as item_description
+    from life_monster_drop d
+    left join life_item i on d.item_id = i.id
+    where d.monster_id = #{monsterId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_monster_drop
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeMonsterDrop" useGeneratedKeys="true" keyProperty="id">
+    insert into life_monster_drop (monster_id, drop_type, item_id, 
+      spirit_amount, drop_rate, min_quantity, max_quantity, create_time)
+    values (#{monsterId,jdbcType=BIGINT}, #{dropType,jdbcType=INTEGER}, #{itemId,jdbcType=BIGINT}, 
+      #{spiritAmount,jdbcType=INTEGER}, #{dropRate,jdbcType=DECIMAL}, #{minQuantity,jdbcType=INTEGER}, 
+      #{maxQuantity,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeMonsterDrop">
+    update life_monster_drop
+    set monster_id = #{monsterId,jdbcType=BIGINT},
+      drop_type = #{dropType,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=BIGINT},
+      spirit_amount = #{spiritAmount,jdbcType=INTEGER},
+      drop_rate = #{dropRate,jdbcType=DECIMAL},
+      min_quantity = #{minQuantity,jdbcType=INTEGER},
+      max_quantity = #{maxQuantity,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>
+

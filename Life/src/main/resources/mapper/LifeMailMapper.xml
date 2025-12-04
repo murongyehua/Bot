@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeMailMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeMail">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sender_id" jdbcType="BIGINT" property="senderId" />
+    <result column="receiver_id" jdbcType="BIGINT" property="receiverId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="mail_type" jdbcType="INTEGER" property="mailType" />
+    <result column="has_attachment" jdbcType="INTEGER" property="hasAttachment" />
+    <result column="attachment_data" jdbcType="LONGVARCHAR" property="attachmentData" />
+    <result column="is_read" jdbcType="INTEGER" property="isRead" />
+    <result column="is_received" jdbcType="INTEGER" property="isReceived" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="read_time" jdbcType="TIMESTAMP" property="readTime" />
+    <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
+  </resultMap>
+  
+  <resultMap id="WithPlayerResultMap" type="com.bot.life.dao.entity.LifeMail" extends="BaseResultMap">
+    <association property="sender" javaType="com.bot.life.dao.entity.LifePlayer">
+      <id column="sender_player_id" jdbcType="BIGINT" property="id" />
+      <result column="sender_nickname" jdbcType="VARCHAR" property="nickname" />
+    </association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, sender_id, receiver_id, title, content, mail_type, has_attachment, 
+    attachment_data, is_read, is_received, send_time, read_time, receive_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_mail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByReceiverId" parameterType="java.lang.Long" resultMap="WithPlayerResultMap">
+    select 
+    m.id, m.sender_id, m.receiver_id, m.title, m.content, m.mail_type, m.has_attachment,
+    m.attachment_data, m.is_read, m.is_received, m.send_time, m.read_time, m.receive_time,
+    p.id as sender_player_id, p.nickname as sender_nickname
+    from life_mail m
+    left join life_player p on m.sender_id = p.id
+    where m.receiver_id = #{receiverId,jdbcType=BIGINT}
+    order by m.send_time DESC
+  </select>
+  
+  <select id="selectBySenderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_mail
+    where sender_id = #{senderId,jdbcType=BIGINT}
+    order by send_time DESC
+  </select>
+  
+  <select id="selectUnreadCountByReceiverId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(*)
+    from life_mail
+    where receiver_id = #{receiverId,jdbcType=BIGINT} and is_read = 0
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_mail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeMail" useGeneratedKeys="true" keyProperty="id">
+    insert into life_mail (sender_id, receiver_id, title, 
+      content, mail_type, has_attachment, 
+      attachment_data, is_read, is_received, 
+      send_time, read_time, receive_time)
+    values (#{senderId,jdbcType=BIGINT}, #{receiverId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR}, #{mailType,jdbcType=INTEGER}, #{hasAttachment,jdbcType=INTEGER}, 
+      #{attachmentData,jdbcType=LONGVARCHAR}, #{isRead,jdbcType=INTEGER}, #{isReceived,jdbcType=INTEGER}, 
+      #{sendTime,jdbcType=TIMESTAMP}, #{readTime,jdbcType=TIMESTAMP}, #{receiveTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeMail">
+    update life_mail
+    set sender_id = #{senderId,jdbcType=BIGINT},
+      receiver_id = #{receiverId,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR},
+      mail_type = #{mailType,jdbcType=INTEGER},
+      has_attachment = #{hasAttachment,jdbcType=INTEGER},
+      attachment_data = #{attachmentData,jdbcType=LONGVARCHAR},
+      is_read = #{isRead,jdbcType=INTEGER},
+      is_received = #{isReceived,jdbcType=INTEGER},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      read_time = #{readTime,jdbcType=TIMESTAMP},
+      receive_time = #{receiveTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

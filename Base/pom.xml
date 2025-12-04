@@ -28,6 +28,11 @@
             <version>${bot.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.bot</groupId>
+            <artifactId>Life</artifactId>
+            <version>${bot.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${http.client}</version>

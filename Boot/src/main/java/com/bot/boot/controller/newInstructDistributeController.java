@@ -11,9 +11,11 @@ import cn.hutool.json.JSONUtil;
 import com.bot.base.dto.CommonResp;
 import com.bot.base.dto.jx.ShowHistoryResp;
 import com.bot.base.service.Distributor;
+import com.bot.base.service.EmojiDistributor;
 import com.bot.base.service.PictureDistributor;
 import com.bot.base.service.impl.JXShowHistoryManager;
 import com.bot.base.service.impl.QQDealDistributor;
+import com.bot.common.config.SystemConfigCache;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.dto.qqsender.QQGroupMessage;
 import com.bot.common.enums.ENFileType;
@@ -58,6 +60,9 @@ public class newInstructDistributeController {
     @Resource
     private QQDealDistributor qqDealDistributor;
 
+    @Resource
+    private EmojiDistributor emojiDistributor;
+
 
     /**
      * 消息体id，判重用
@@ -76,7 +81,10 @@ public class newInstructDistributeController {
                 && ObjectUtil.notEqual("60002", messageType)
                 && ObjectUtil.notEqual("80002", messageType)
                 && ObjectUtil.notEqual("85008", messageType)
-                && ObjectUtil.notEqual("85009", messageType)) {
+                && ObjectUtil.notEqual("85009", messageType)
+                && ObjectUtil.notEqual("60006", messageType)
+                && ObjectUtil.notEqual("80006", messageType)
+                && ObjectUtil.notEqual("60022", messageType)) {
             return;
         }
         if (msgIdList.contains(msgId)) {
@@ -90,7 +98,7 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendMsg(userId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。");
                 return;
             }
-            CommonResp resp = distributor.doDistributeWithString(msg.trim(), userId, null, false, true, "wx");
+            CommonResp resp = distributor.doDistributeWithString(msg.trim(), userId, null, false, true, "wx", msg.trim());
             if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
                 SendMsgUtil.sendImg(userId, resp.getMsg());
             } else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
@@ -121,18 +129,21 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendGroupMsg(groupId, "游戏pc端已停止维护，不再提供下载，请使用微信游玩。", userId);
                 return;
             }
-            CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId, at, at, "wx");
-            if (resp != null && ENRespType.IMG.getType().equals(resp.getType())) {
+            String nickName = SendMsgUtil.getGroupNickName(groupId, userId);
+            String withoutPexContent = effectMsg;
+            effectMsg = String.format("%s对你说：" + effectMsg, nickName);
+            CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId, at, at, "wx", withoutPexContent);
+            if (resp !=null && ENRespType.IMG.getType().equals(resp.getType()) && StrUtil.isNotEmpty(resp.getMsg())) {
                 SendMsgUtil.sendImg(groupId, resp.getMsg());
-            } else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType())) {
+            } else if (resp != null && ENRespType.VIDEO.getType().equals(resp.getType()) && StrUtil.isNotEmpty(resp.getMsg())) {
                 // 要发视频的时候先提醒耐心等待 再异步慢慢发
                 SendMsgUtil.sendGroupMsg(groupId, BaseConsts.GirlVideo.SUCCESS, userId);
                 ThreadPoolManager.addBaseTask(() -> SendMsgUtil.sendGroupVideo(groupId, resp.getMsg(), userId));
-            } else if (resp != null && ENRespType.FILE.getType().equals(resp.getType())) {
+            } else if (resp != null && ENRespType.FILE.getType().equals(resp.getType()) && StrUtil.isNotEmpty(resp.getMsg())) {
                 SendMsgUtil.sendFile(groupId, resp.getMsg());
-            } else if (resp != null && ENRespType.AUDIO.getType().equals(resp.getType())) {
+            } else if (resp != null && ENRespType.AUDIO.getType().equals(resp.getType())&& StrUtil.isNotEmpty(resp.getMsg())) {
                 SendMsgUtil.sendAudio(groupId, resp.getMsg());
-            } else if (resp != null) {
+            } else if (resp != null && StrUtil.isNotEmpty(resp.getMsg())) {
                 SendMsgUtil.sendGroupMsg(groupId, resp.getMsg(), userId);
             }
 //            }
@@ -167,12 +178,32 @@ public class newInstructDistributeController {
                 SendMsgUtil.sendMsg(userId, resp.getMsg());
             }
         }
+        // 私聊表情
+        if ("60006".equals(messageType)) {
+            log.info("收到私聊emoji");
+            Integer length = (Integer) data.get("length");
+            String md5 = (String) data.get("md5");
+            emojiDistributor.dealEmoji(md5, length, msgId, userId, null);
+        }
+        // 群聊表情
+        if ("80006".equals(messageType)) {
+            String groupId = (String) data.get("fromGroup");
+            Integer length = (Integer) data.get("length");
+            String md5 = (String) data.get("md5");
+            emojiDistributor.dealEmoji(md5, length, msgId, userId, groupId);
+        }
+        // 私聊邀请进群
+        if ("60022".equals(messageType)) {
+            String url = (String) data.get("url");
+            SendMsgUtil.acceptUrl(url);
+        }
         // 进群
         if ("85008".equals(messageType) || "85009".equals(messageType)) {
             String groupId = (String) data.get("fromGroup");
             String toUser = (String) data.get("toUser");
-            if ("46020686559@chatroom".equals(groupId)) {
-                SendMsgUtil.sendGroupMsg(groupId, "欢迎加入小林Bot签到交流群，使用请查看群公告~", toUser);
+            String content = SystemConfigCache.welcomeMap.get(groupId);
+            if (content != null) {
+                SendMsgUtil.sendGroupMsg(groupId, content, toUser);
             }
         }
     }

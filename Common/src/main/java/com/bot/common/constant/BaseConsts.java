@@ -262,6 +262,7 @@ public interface BaseConsts {
         String TEAM_CD = "副本";
         String ATTRIBUTE = "属性";
         String ALL_SHOWS = "全部名片";
+        String OPEN_SERVER_NOTICE = "开服提醒";
     }
 
     interface Drink {

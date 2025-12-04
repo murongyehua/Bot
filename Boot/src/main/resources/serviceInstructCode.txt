@@ -12,3 +12,4 @@
 每日英语=englishServiceImpl
 求签,解签=luckServiceImpl
 cp,CP,Cp=cpServiceImpl
+漂流瓶=bottleMessageServiceImpl

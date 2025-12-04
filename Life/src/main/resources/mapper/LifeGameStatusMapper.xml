@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeGameStatusMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeGameStatus">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="game_mode" jdbcType="INTEGER" property="gameMode" />
+    <result column="current_menu" jdbcType="VARCHAR" property="currentMenu" />
+    <result column="context_data" jdbcType="LONGVARCHAR" property="contextData" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, user_id, game_mode, current_menu, context_data, create_time, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_game_status
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_game_status
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_game_status
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeGameStatus" useGeneratedKeys="true" keyProperty="id">
+    insert into life_game_status (user_id, game_mode, current_menu, 
+      context_data, create_time, update_time)
+    values (#{userId,jdbcType=VARCHAR}, #{gameMode,jdbcType=INTEGER}, #{currentMenu,jdbcType=VARCHAR}, 
+      #{contextData,jdbcType=LONGVARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeGameStatus">
+    update life_game_status
+    set user_id = #{userId,jdbcType=VARCHAR},
+      game_mode = #{gameMode,jdbcType=INTEGER},
+      current_menu = #{currentMenu,jdbcType=VARCHAR},
+      context_data = #{contextData,jdbcType=LONGVARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

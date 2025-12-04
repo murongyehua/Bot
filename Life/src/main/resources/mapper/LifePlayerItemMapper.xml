@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifePlayerItemMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifePlayerItem">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="item_id" jdbcType="BIGINT" property="itemId" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="used_count" jdbcType="INTEGER" property="usedCount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  
+  <resultMap id="WithItemResultMap" type="com.bot.life.dao.entity.LifePlayerItem" extends="BaseResultMap">
+    <association property="item" javaType="com.bot.life.dao.entity.LifeItem">
+      <id column="item_id_pk" jdbcType="BIGINT" property="id" />
+      <result column="item_name" jdbcType="VARCHAR" property="name" />
+      <result column="item_type" jdbcType="INTEGER" property="type" />
+      <result column="item_effect_value" jdbcType="INTEGER" property="effectValue" />
+      <result column="item_max_use_count" jdbcType="INTEGER" property="maxUseCount" />
+      <result column="item_can_use_in_battle" jdbcType="INTEGER" property="canUseInBattle" />
+      <result column="item_description" jdbcType="LONGVARCHAR" property="description" />
+    </association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, player_id, item_id, quantity, used_count, create_time, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPlayerId" parameterType="java.lang.Long" resultMap="WithItemResultMap">
+    select 
+    pi.id, pi.player_id, pi.item_id, pi.quantity, pi.used_count, pi.create_time, pi.update_time,
+    i.id as item_id_pk, i.name as item_name, i.type as item_type, i.effect_value as item_effect_value,
+    i.max_use_count as item_max_use_count, i.can_use_in_battle as item_can_use_in_battle, 
+    i.description as item_description
+    from life_player_item pi
+    left join life_item i on pi.item_id = i.id
+    where pi.player_id = #{playerId,jdbcType=BIGINT} and pi.quantity > 0
+    order by i.type, i.id
+  </select>
+  
+  <select id="selectByPlayerIdAndItemId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_item
+    where player_id = #{playerId,jdbcType=BIGINT} and item_id = #{itemId,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_player_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifePlayerItem" useGeneratedKeys="true" keyProperty="id">
+    insert into life_player_item (player_id, item_id, quantity, 
+      used_count, create_time, update_time)
+    values (#{playerId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{quantity,jdbcType=INTEGER}, 
+      #{usedCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifePlayerItem">
+    update life_player_item
+    set player_id = #{playerId,jdbcType=BIGINT},
+      item_id = #{itemId,jdbcType=BIGINT},
+      quantity = #{quantity,jdbcType=INTEGER},
+      used_count = #{usedCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

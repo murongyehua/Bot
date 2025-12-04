@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeSkillMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeSkill">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="attribute" jdbcType="INTEGER" property="attribute" />
+    <result column="power" jdbcType="INTEGER" property="power" />
+    <result column="cooldown" jdbcType="INTEGER" property="cooldown" />
+    <result column="required_level" jdbcType="INTEGER" property="requiredLevel" />
+    <result column="required_cultivation" jdbcType="INTEGER" property="requiredCultivation" />
+    <result column="max_level" jdbcType="INTEGER" property="maxLevel" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, type, attribute, power, cooldown, required_level, required_cultivation, max_level, description
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_skill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_skill
+    order by required_level, id
+  </select>
+  
+  <select id="selectByAttribute" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_skill
+    where attribute = #{attribute,jdbcType=INTEGER} OR attribute = 0
+    order by required_level, id
+  </select>
+  
+  <select id="selectByType" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_skill
+    where type = #{type,jdbcType=INTEGER}
+    order by required_level, id
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_skill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeSkill" useGeneratedKeys="true" keyProperty="id">
+    insert into life_skill (name, type, attribute, 
+      power, cooldown, required_level, 
+      required_cultivation, max_level, description)
+    values (#{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{attribute,jdbcType=INTEGER}, 
+      #{power,jdbcType=INTEGER}, #{cooldown,jdbcType=INTEGER}, #{requiredLevel,jdbcType=INTEGER}, 
+      #{requiredCultivation,jdbcType=INTEGER}, #{maxLevel,jdbcType=INTEGER}, #{description,jdbcType=LONGVARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeSkill">
+    update life_skill
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      attribute = #{attribute,jdbcType=INTEGER},
+      power = #{power,jdbcType=INTEGER},
+      cooldown = #{cooldown,jdbcType=INTEGER},
+      required_level = #{requiredLevel,jdbcType=INTEGER},
+      required_cultivation = #{requiredCultivation,jdbcType=INTEGER},
+      max_level = #{maxLevel,jdbcType=INTEGER},
+      description = #{description,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

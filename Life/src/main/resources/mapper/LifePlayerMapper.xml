@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifePlayerMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifePlayer">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="attribute" jdbcType="INTEGER" property="attribute" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="experience" jdbcType="BIGINT" property="experience" />
+    <result column="cultivation" jdbcType="BIGINT" property="cultivation" />
+    <result column="cultivation_speed" jdbcType="INTEGER" property="cultivationSpeed" />
+    <result column="last_cultivation_time" jdbcType="TIMESTAMP" property="lastCultivationTime" />
+    <result column="speed" jdbcType="INTEGER" property="speed" />
+    <result column="constitution" jdbcType="INTEGER" property="constitution" />
+    <result column="spirit_power" jdbcType="INTEGER" property="spiritPower" />
+    <result column="strength" jdbcType="INTEGER" property="strength" />
+    <result column="health" jdbcType="INTEGER" property="health" />
+    <result column="max_health" jdbcType="INTEGER" property="maxHealth" />
+    <result column="defense" jdbcType="INTEGER" property="defense" />
+    <result column="critical_rate" jdbcType="DECIMAL" property="criticalRate" />
+    <result column="critical_damage" jdbcType="DECIMAL" property="criticalDamage" />
+    <result column="armor_break" jdbcType="DECIMAL" property="armorBreak" />
+    <result column="attack_power" jdbcType="INTEGER" property="attackPower" />
+    <result column="stamina" jdbcType="INTEGER" property="stamina" />
+    <result column="max_stamina" jdbcType="INTEGER" property="maxStamina" />
+    <result column="last_stamina_time" jdbcType="TIMESTAMP" property="lastStaminaTime" />
+    <result column="spirit" jdbcType="BIGINT" property="spirit" />
+    <result column="last_battle_time" jdbcType="TIMESTAMP" property="lastBattleTime" />
+    <result column="last_hp_recovery_time" jdbcType="TIMESTAMP" property="lastHpRecoveryTime" />
+    <result column="current_map_id" jdbcType="BIGINT" property="currentMapId" />
+    <result column="game_status" jdbcType="INTEGER" property="gameStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, user_id, nickname, attribute, level, experience, cultivation, cultivation_speed, last_cultivation_time, 
+    speed, constitution, spirit_power, strength, health, max_health, defense, critical_rate, 
+    critical_damage, armor_break, attack_power, stamina, max_stamina, last_stamina_time, 
+    spirit, last_battle_time, last_hp_recovery_time, current_map_id, game_status, create_time, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByNickname" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player
+    where nickname = #{nickname,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAllPlayers" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_player
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifePlayer" useGeneratedKeys="true" keyProperty="id">
+    insert into life_player (user_id, nickname, attribute, 
+      level, experience, cultivation, cultivation_speed, 
+      last_cultivation_time, speed, constitution, 
+      spirit_power, strength, health, 
+      max_health, defense, critical_rate, 
+      critical_damage, armor_break, attack_power, 
+      stamina, max_stamina, last_stamina_time, 
+      spirit, last_battle_time, last_hp_recovery_time,
+      current_map_id, game_status, create_time, 
+      update_time)
+    values (#{userId,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{attribute,jdbcType=INTEGER}, 
+      #{level,jdbcType=INTEGER}, #{experience,jdbcType=BIGINT}, #{cultivation,jdbcType=BIGINT}, #{cultivationSpeed,jdbcType=INTEGER}, 
+      #{lastCultivationTime,jdbcType=TIMESTAMP}, #{speed,jdbcType=INTEGER}, #{constitution,jdbcType=INTEGER}, 
+      #{spiritPower,jdbcType=INTEGER}, #{strength,jdbcType=INTEGER}, #{health,jdbcType=INTEGER}, 
+      #{maxHealth,jdbcType=INTEGER}, #{defense,jdbcType=INTEGER}, #{criticalRate,jdbcType=DECIMAL}, 
+      #{criticalDamage,jdbcType=DECIMAL}, #{armorBreak,jdbcType=DECIMAL}, #{attackPower,jdbcType=INTEGER}, 
+      #{stamina,jdbcType=INTEGER}, #{maxStamina,jdbcType=INTEGER}, #{lastStaminaTime,jdbcType=TIMESTAMP}, 
+      #{spirit,jdbcType=BIGINT}, #{lastBattleTime,jdbcType=TIMESTAMP}, #{lastHpRecoveryTime,jdbcType=TIMESTAMP},
+      #{currentMapId,jdbcType=BIGINT}, #{gameStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifePlayer">
+    update life_player
+    set user_id = #{userId,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      attribute = #{attribute,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
+      experience = #{experience,jdbcType=BIGINT},
+      cultivation = #{cultivation,jdbcType=BIGINT},
+      cultivation_speed = #{cultivationSpeed,jdbcType=INTEGER},
+      last_cultivation_time = #{lastCultivationTime,jdbcType=TIMESTAMP},
+      speed = #{speed,jdbcType=INTEGER},
+      constitution = #{constitution,jdbcType=INTEGER},
+      spirit_power = #{spiritPower,jdbcType=INTEGER},
+      strength = #{strength,jdbcType=INTEGER},
+      health = #{health,jdbcType=INTEGER},
+      max_health = #{maxHealth,jdbcType=INTEGER},
+      defense = #{defense,jdbcType=INTEGER},
+      critical_rate = #{criticalRate,jdbcType=DECIMAL},
+      critical_damage = #{criticalDamage,jdbcType=DECIMAL},
+      armor_break = #{armorBreak,jdbcType=DECIMAL},
+      attack_power = #{attackPower,jdbcType=INTEGER},
+      stamina = #{stamina,jdbcType=INTEGER},
+      max_stamina = #{maxStamina,jdbcType=INTEGER},
+      last_stamina_time = #{lastStaminaTime,jdbcType=TIMESTAMP},
+      spirit = #{spirit,jdbcType=BIGINT},
+      last_battle_time = #{lastBattleTime,jdbcType=TIMESTAMP},
+      last_hp_recovery_time = #{lastHpRecoveryTime,jdbcType=TIMESTAMP},
+      current_map_id = #{currentMapId,jdbcType=BIGINT},
+      game_status = #{gameStatus,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

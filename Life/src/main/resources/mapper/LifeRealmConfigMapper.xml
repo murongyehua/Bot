@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeRealmConfigMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeRealmConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="realm_name" jdbcType="VARCHAR" property="realmName" />
+    <result column="min_level" jdbcType="INTEGER" property="minLevel" />
+    <result column="max_level" jdbcType="INTEGER" property="maxLevel" />
+    <result column="required_cultivation" jdbcType="BIGINT" property="requiredCultivation" />
+    <result column="max_cultivation" jdbcType="BIGINT" property="maxCultivation" />
+    <result column="success_rate" jdbcType="DECIMAL" property="successRate" />
+    <result column="attribute_bonus" jdbcType="LONGVARCHAR" property="attributeBonus" />
+    <result column="special_abilities" jdbcType="LONGVARCHAR" property="specialAbilities" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, realm_name, min_level, max_level, required_cultivation, max_cultivation, success_rate, 
+    attribute_bonus, special_abilities, create_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_realm_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByLevel" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_realm_config
+    where #{level,jdbcType=INTEGER} >= min_level 
+    and #{level,jdbcType=INTEGER} &lt;= max_level
+    limit 1
+  </select>
+  
+  <select id="selectNextRealm" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_realm_config
+    where min_level &gt; #{currentLevel,jdbcType=INTEGER}
+    order by min_level asc
+    limit 1
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_realm_config
+    order by min_level asc
+  </select>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeRealmConfig">
+    insert into life_realm_config (realm_name, min_level, max_level, 
+      required_cultivation, max_cultivation, success_rate, 
+      attribute_bonus, special_abilities, create_time)
+    values (#{realmName,jdbcType=VARCHAR}, #{minLevel,jdbcType=INTEGER}, #{maxLevel,jdbcType=INTEGER}, 
+      #{requiredCultivation,jdbcType=BIGINT}, #{maxCultivation,jdbcType=BIGINT}, #{successRate,jdbcType=DECIMAL}, 
+      #{attributeBonus,jdbcType=LONGVARCHAR}, #{specialAbilities,jdbcType=LONGVARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeRealmConfig">
+    update life_realm_config
+    set realm_name = #{realmName,jdbcType=VARCHAR},
+      min_level = #{minLevel,jdbcType=INTEGER},
+      max_level = #{maxLevel,jdbcType=INTEGER},
+      required_cultivation = #{requiredCultivation,jdbcType=BIGINT},
+      max_cultivation = #{maxCultivation,jdbcType=BIGINT},
+      success_rate = #{successRate,jdbcType=DECIMAL},
+      attribute_bonus = #{attributeBonus,jdbcType=LONGVARCHAR},
+      special_abilities = #{specialAbilities,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_realm_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+</mapper>

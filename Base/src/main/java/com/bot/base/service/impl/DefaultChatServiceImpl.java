@@ -42,6 +42,9 @@ public class DefaultChatServiceImpl implements BaseService {
     @Value("${audio.chat.key}")
     private String audioChatKey;
 
+    @Value("${group.chat.key}")
+    private String groupChatKey;
+
     /**
      * 聊天id记录
      */
@@ -51,6 +54,11 @@ public class DefaultChatServiceImpl implements BaseService {
      * 语音聊天id和步数记录
      */
     public final static Map<String, SpeechIdDTO> TOKEN_2_SPEECH_ID_MAP = new HashMap<>();
+
+    /**
+     * 群组id记录
+     */
+    public final static Map<String, String> TOKEN_2_GROUP_ID_MAP = new HashMap<>();
 
     @Override
     public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
@@ -71,6 +79,7 @@ public class DefaultChatServiceImpl implements BaseService {
         if (reqContent.equals("删除会话")) {
             TOKEN_2_BASE_CHAT_ID_MAP.remove(groupId == null ? token : groupId);
             TOKEN_2_SPEECH_ID_MAP.remove(groupId == null ? token : groupId);
+            TOKEN_2_GROUP_ID_MAP.remove(groupId == null ? token : groupId);
             return new CommonResp("已清除所有版本会话，可以重新开始聊天了。", ENRespType.TEXT.getType());
         }
         if (reqContent.startsWith("生图")) {
@@ -112,7 +121,7 @@ public class DefaultChatServiceImpl implements BaseService {
         return SiliconflowUtil.speech(inputContent);
     }
 
-    private String deepChat(String reqContent, String model, String token) {
+    public String deepChat(String reqContent, String model, String token) {
         log.info("调用ai的消息为[{}]", reqContent);
         try {
             String conversationId = "";
@@ -120,10 +129,15 @@ public class DefaultChatServiceImpl implements BaseService {
             String responseMode = "streaming";
             if ("base".equals(model)) {
                 conversationId = TOKEN_2_BASE_CHAT_ID_MAP.get(token) == null ? "" : TOKEN_2_BASE_CHAT_ID_MAP.get(token).getId();
-                key = baseChatKey;
+                key = groupChatKey;
+                responseMode = "blocking";
             }else if ("audio".equals(model)) {
                 conversationId = TOKEN_2_SPEECH_ID_MAP.get(token) == null ? "" : TOKEN_2_SPEECH_ID_MAP.get(token).getId();
                 key = audioChatKey;
+                responseMode = "blocking";
+            }else if ("group".equals(model)) {
+                conversationId = TOKEN_2_GROUP_ID_MAP.get(token) == null ? "" : TOKEN_2_GROUP_ID_MAP.get(token);
+                key = groupChatKey;
                 responseMode = "blocking";
             }
             String response = HttpSenderUtil.postJsonDataWithToken(defaultUrl,
@@ -172,6 +186,8 @@ public class DefaultChatServiceImpl implements BaseService {
                     speechIdDTO.setStep(speechIdDTO.getStep() + 1);
                     TOKEN_2_SPEECH_ID_MAP.put(token, speechIdDTO);
                 }
+            }else if ("group".equals(model)) {
+                TOKEN_2_GROUP_ID_MAP.put(token, conversation_id);
             }
             return UnicodeUtil.toString(answer.toString());
         } catch (Exception e) {

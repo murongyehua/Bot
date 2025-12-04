@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeTeamMemberMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeTeamMember">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="team_id" jdbcType="BIGINT" property="teamId" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="member_status" jdbcType="INTEGER" property="memberStatus" />
+    <result column="join_time" jdbcType="TIMESTAMP" property="joinTime" />
+  </resultMap>
+  
+  <resultMap id="WithPlayerResultMap" type="com.bot.life.dao.entity.LifeTeamMember" extends="BaseResultMap">
+    <association property="player" javaType="com.bot.life.dao.entity.LifePlayer">
+      <id column="player_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="player_nickname" jdbcType="VARCHAR" property="nickname" />
+      <result column="player_level" jdbcType="INTEGER" property="level" />
+    </association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, team_id, player_id, member_status, join_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_team_member
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByTeamId" parameterType="java.lang.Long" resultMap="WithPlayerResultMap">
+    select 
+    tm.id, tm.team_id, tm.player_id, tm.member_status, tm.join_time,
+    p.id as player_pk_id, p.nickname as player_nickname, p.level as player_level
+    from life_team_member tm
+    left join life_player p on tm.player_id = p.id
+    where tm.team_id = #{teamId,jdbcType=BIGINT}
+    order by tm.join_time
+  </select>
+  
+  <select id="selectByPlayerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_team_member
+    where player_id = #{playerId,jdbcType=BIGINT} and member_status = 1
+  </select>
+  
+  <select id="selectByTeamIdAndPlayerId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_team_member
+    where team_id = #{teamId,jdbcType=BIGINT} and player_id = #{playerId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectPendingMembersByTeamId" parameterType="java.lang.Long" resultMap="WithPlayerResultMap">
+    select 
+    tm.id, tm.team_id, tm.player_id, tm.member_status, tm.join_time,
+    p.id as player_pk_id, p.nickname as player_nickname, p.level as player_level
+    from life_team_member tm
+    left join life_player p on tm.player_id = p.id
+    where tm.team_id = #{teamId,jdbcType=BIGINT} and tm.member_status = 0
+    order by tm.join_time
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_team_member
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="deleteByTeamId" parameterType="java.lang.Long">
+    delete from life_team_member
+    where team_id = #{teamId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeTeamMember" useGeneratedKeys="true" keyProperty="id">
+    insert into life_team_member (team_id, player_id, member_status, join_time)
+    values (#{teamId,jdbcType=BIGINT}, #{playerId,jdbcType=BIGINT}, #{memberStatus,jdbcType=INTEGER}, #{joinTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeTeamMember">
+    update life_team_member
+    set team_id = #{teamId,jdbcType=BIGINT},
+      player_id = #{playerId,jdbcType=BIGINT},
+      member_status = #{memberStatus,jdbcType=INTEGER},
+      join_time = #{joinTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

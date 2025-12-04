@@ -27,6 +27,11 @@
             <artifactId>Game</artifactId>
             <version>${bot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.bot</groupId>
+            <artifactId>Life</artifactId>
+            <version>${bot.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

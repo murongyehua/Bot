@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeBattleStateMapper">
+
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeBattleState">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="monster_id" jdbcType="BIGINT" property="monsterId" />
+    <result column="current_turn" jdbcType="INTEGER" property="currentTurn" />
+    <result column="player_hp" jdbcType="INTEGER" property="playerHp" />
+    <result column="monster_hp" jdbcType="INTEGER" property="monsterHp" />
+    <result column="monster_max_hp" jdbcType="INTEGER" property="monsterMaxHp" />
+    <result column="monster_skill_cooldowns" jdbcType="LONGVARCHAR" property="monsterSkillCooldowns" />
+    <result column="player_buffs" jdbcType="LONGVARCHAR" property="playerBuffs" />
+    <result column="monster_buffs" jdbcType="LONGVARCHAR" property="monsterBuffs" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, player_id, monster_id, current_turn, player_hp, monster_hp, monster_max_hp, 
+    monster_skill_cooldowns, player_buffs, monster_buffs, create_time, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_battle_state
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByPlayerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_battle_state
+    where player_id = #{playerId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_battle_state
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteByPlayerId" parameterType="java.lang.Long">
+    delete from life_battle_state
+    where player_id = #{playerId,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeBattleState" useGeneratedKeys="true" keyProperty="id">
+    insert into life_battle_state (player_id, monster_id, current_turn, 
+      player_hp, monster_hp, monster_max_hp, monster_skill_cooldowns, 
+      player_buffs, monster_buffs, create_time, update_time)
+    values (#{playerId,jdbcType=BIGINT}, #{monsterId,jdbcType=BIGINT}, #{currentTurn,jdbcType=INTEGER}, 
+      #{playerHp,jdbcType=INTEGER}, #{monsterHp,jdbcType=INTEGER}, #{monsterMaxHp,jdbcType=INTEGER}, 
+      #{monsterSkillCooldowns,jdbcType=LONGVARCHAR}, #{playerBuffs,jdbcType=LONGVARCHAR}, 
+      #{monsterBuffs,jdbcType=LONGVARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeBattleState">
+    update life_battle_state
+    set player_id = #{playerId,jdbcType=BIGINT},
+      monster_id = #{monsterId,jdbcType=BIGINT},
+      current_turn = #{currentTurn,jdbcType=INTEGER},
+      player_hp = #{playerHp,jdbcType=INTEGER},
+      monster_hp = #{monsterHp,jdbcType=INTEGER},
+      monster_max_hp = #{monsterMaxHp,jdbcType=INTEGER},
+      monster_skill_cooldowns = #{monsterSkillCooldowns,jdbcType=LONGVARCHAR},
+      player_buffs = #{playerBuffs,jdbcType=LONGVARCHAR},
+      monster_buffs = #{monsterBuffs,jdbcType=LONGVARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

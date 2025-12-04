@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeMonsterSkillMapper">
+
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeMonsterSkill">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="monster_id" jdbcType="BIGINT" property="monsterId" />
+    <result column="skill_id" jdbcType="BIGINT" property="skillId" />
+  </resultMap>
+
+  <resultMap id="WithSkillResultMap" type="com.bot.life.dao.entity.LifeMonsterSkill" extends="BaseResultMap">
+    <association property="skill" javaType="com.bot.life.dao.entity.LifeSkill">
+      <id column="skill_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="skill_name" jdbcType="VARCHAR" property="name" />
+      <result column="skill_type" jdbcType="INTEGER" property="type" />
+      <result column="skill_attribute" jdbcType="INTEGER" property="attribute" />
+      <result column="skill_power" jdbcType="INTEGER" property="power" />
+      <result column="skill_cooldown" jdbcType="INTEGER" property="cooldown" />
+      <result column="skill_description" jdbcType="LONGVARCHAR" property="description" />
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, monster_id, skill_id
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_monster_skill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByMonsterId" parameterType="java.lang.Long" resultMap="WithSkillResultMap">
+    select 
+        ms.id, ms.monster_id, ms.skill_id,
+        s.id as skill_pk_id, s.name as skill_name, s.type as skill_type,
+        s.attribute as skill_attribute, s.power as skill_power, s.cooldown as skill_cooldown,
+        s.description as skill_description
+    from life_monster_skill ms
+    left join life_skill s on ms.skill_id = s.id
+    where ms.monster_id = #{monsterId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_monster_skill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeMonsterSkill" useGeneratedKeys="true" keyProperty="id">
+    insert into life_monster_skill (monster_id, skill_id)
+    values (#{monsterId,jdbcType=BIGINT}, #{skillId,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeMonsterSkill">
+    update life_monster_skill
+    set monster_id = #{monsterId,jdbcType=BIGINT},
+      skill_id = #{skillId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifePlayerSkillMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifePlayerSkill">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="skill_id" jdbcType="BIGINT" property="skillId" />
+    <result column="skill_level" jdbcType="INTEGER" property="skillLevel" />
+    <result column="current_cooldown" jdbcType="INTEGER" property="currentCooldown" />
+    <result column="last_used_time" jdbcType="TIMESTAMP" property="lastUsedTime" />
+    <result column="learn_time" jdbcType="TIMESTAMP" property="learnTime" />
+  </resultMap>
+  
+  <resultMap id="WithSkillResultMap" type="com.bot.life.dao.entity.LifePlayerSkill" extends="BaseResultMap">
+    <association property="skill" javaType="com.bot.life.dao.entity.LifeSkill">
+      <id column="skill_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="skill_name" jdbcType="VARCHAR" property="name" />
+      <result column="skill_type" jdbcType="INTEGER" property="type" />
+      <result column="skill_attribute" jdbcType="INTEGER" property="attribute" />
+      <result column="skill_power" jdbcType="INTEGER" property="power" />
+      <result column="skill_cooldown" jdbcType="INTEGER" property="cooldown" />
+      <result column="skill_description" jdbcType="LONGVARCHAR" property="description" />
+    </association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, player_id, skill_id, skill_level, current_cooldown, last_used_time, learn_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_skill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPlayerId" parameterType="java.lang.Long" resultMap="WithSkillResultMap">
+    select 
+    ps.id, ps.player_id, ps.skill_id, ps.skill_level, ps.current_cooldown, ps.last_used_time, ps.learn_time,
+    s.id as skill_pk_id, s.name as skill_name, s.type as skill_type, s.attribute as skill_attribute,
+    s.power as skill_power, s.cooldown as skill_cooldown, s.description as skill_description
+    from life_player_skill ps
+    left join life_skill s on ps.skill_id = s.id
+    where ps.player_id = #{playerId,jdbcType=BIGINT}
+    order by ps.learn_time
+  </select>
+  
+  <select id="selectByPlayerIdAndSkillId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_skill
+    where player_id = #{playerId,jdbcType=BIGINT} and skill_id = #{skillId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPlayerAndSkillId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_player_skill
+    where player_id = #{playerId,jdbcType=BIGINT} and skill_id = #{skillId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAvailableSkillsByPlayerId" parameterType="java.lang.Long" resultMap="WithSkillResultMap">
+    select 
+    ps.id, ps.player_id, ps.skill_id, ps.skill_level, ps.current_cooldown, ps.last_used_time, ps.learn_time,
+    s.id as skill_pk_id, s.name as skill_name, s.type as skill_type, s.attribute as skill_attribute,
+    s.power as skill_power, s.cooldown as skill_cooldown, s.description as skill_description
+    from life_player_skill ps
+    left join life_skill s on ps.skill_id = s.id
+    where ps.player_id = #{playerId,jdbcType=BIGINT} 
+      and (ps.current_cooldown = 0 OR ps.last_used_time IS NULL 
+           OR TIMESTAMPDIFF(SECOND, ps.last_used_time, NOW()) >= s.cooldown)
+    order by ps.learn_time
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_player_skill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifePlayerSkill" useGeneratedKeys="true" keyProperty="id">
+    insert into life_player_skill (player_id, skill_id, skill_level, 
+      current_cooldown, last_used_time, learn_time)
+    values (#{playerId,jdbcType=BIGINT}, #{skillId,jdbcType=BIGINT}, #{skillLevel,jdbcType=INTEGER}, 
+      #{currentCooldown,jdbcType=INTEGER}, #{lastUsedTime,jdbcType=TIMESTAMP}, #{learnTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifePlayerSkill">
+    update life_player_skill
+    set player_id = #{playerId,jdbcType=BIGINT},
+      skill_id = #{skillId,jdbcType=BIGINT},
+      skill_level = #{skillLevel,jdbcType=INTEGER},
+      current_cooldown = #{currentCooldown,jdbcType=INTEGER},
+      last_used_time = #{lastUsedTime,jdbcType=TIMESTAMP},
+      learn_time = #{learnTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

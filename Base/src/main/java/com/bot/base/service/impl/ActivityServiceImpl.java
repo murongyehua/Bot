@@ -25,6 +25,7 @@ import com.bot.common.util.HttpSenderUtil;
 import com.bot.common.util.SendMsgUtil;
 import com.bot.game.dao.entity.*;
 import com.bot.game.dao.mapper.*;
+import com.bot.game.service.SystemConfigHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -72,6 +73,9 @@ public class ActivityServiceImpl implements BaseService {
 
     @Value("${jx.help.url}")
     private String jxHelpUrl;
+
+    @Resource
+    private SystemConfigHolder systemConfigHolder;
 
     private static final String PIC_URL = "http://113.45.63.97/file/picCache/";
 
@@ -193,6 +197,18 @@ public class ActivityServiceImpl implements BaseService {
         // 公告
         if (reqs.length == 2 && BaseConsts.Activity.NOTICE.equals(reqs[1])) {
             return new CommonResp(this.news(ENJXCacheType.NOTICE, "/news/announce"), ENRespType.TEXT.getType());
+        }
+        if (reqs.length == 3 && BaseConsts.Activity.OPEN_SERVER_NOTICE.equals(reqs[1])) {
+            String statusContent = reqs[2];
+            BotUserConfig botUserConfig = botUserConfigs.get(0);
+            if ("开启".equals(statusContent)) {
+                botUserConfig.setJxOpenServer("1");
+            }else if ("关闭".equals(statusContent)) {
+                botUserConfig.setJxOpenServer("0");
+            }
+            botUserConfigMapper.updateByPrimaryKeySelective(botUserConfig);
+            systemConfigHolder.loadUserConfig();
+            return new CommonResp("已设置", ENRespType.TEXT.getType());
         }
         return new CommonResp(BaseConsts.Activity.UN_KNOW, ENRespType.TEXT.getType());
     }
@@ -524,7 +540,7 @@ public class ActivityServiceImpl implements BaseService {
         }
     }
 
-    private String openServer(String serverName) {
+    public String openServer(String serverName) {
         try {
             JXCacheExample jxCacheExample = new JXCacheExample();
             jxCacheExample.createCriteria().andCacheKeyEqualTo(serverName).andCacheTypeEqualTo(ENJXCacheType.OPEN_SERVER.getValue());

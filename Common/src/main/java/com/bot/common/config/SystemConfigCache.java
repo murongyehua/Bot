@@ -42,6 +42,8 @@ public class SystemConfigCache {
 
     public static final String SEND_VIDEO_URL = "/sendVideo";
 
+    public static final String SEND_EMOJI_URL = "/sendEmoji";
+
     public static final String QUERY_GROUP_USER_URL = "/getChatRoomMemberInfo";
 
     public static final String PUSH_FRIEND_URL = "/snsSendImage";
@@ -51,6 +53,8 @@ public class SystemConfigCache {
     public static final String FETCH_PICTURE_URL = "/getMsgImg";
 
     public static final String FETCH_CHAT_ROOM_USERS = "/getChatRoomMember";
+
+    public static final String ACCEPT_URL = "/acceptUrl";
 
     public static final String OWNER_ID = "wxid_gt9s4k14zz7l22";
 
@@ -77,6 +81,31 @@ public class SystemConfigCache {
      * 激活了打工日历的用户
      */
     public static final List<String> userWorkDaily = new ArrayList<>();
+
+    /**
+     * 聊天频率
+     */
+    public static final Map<String, String> chatFrequency = new HashMap<>();
+
+    /**
+     * 开了开服提示的 用户
+     */
+    public static final List<String> openServer = new ArrayList<>();
+
+    /**
+     * 开启了表情的用户
+     */
+    public static final List<String> emojiUser = new ArrayList<>();
+
+    /**
+     * 开启了自动推送漂流瓶的用户
+     */
+    public static final List<String> bottleUser = new ArrayList<>();
+
+    /**
+     * 设置了欢迎语的用户
+     */
+    public static final Map<String, String> welcomeMap = new HashMap<>();
 
     /**
      * 当前开启的抽奖活动奖品

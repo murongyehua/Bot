@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeWorldBossRewardMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeWorldBossReward">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="world_boss_id" jdbcType="BIGINT" property="worldBossId" />
+    <result column="min_damage" jdbcType="BIGINT" property="minDamage" />
+    <result column="max_damage" jdbcType="BIGINT" property="maxDamage" />
+    <result column="spirit_reward" jdbcType="INTEGER" property="spiritReward" />
+    <result column="item_rewards" jdbcType="LONGVARCHAR" property="itemRewards" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, world_boss_id, min_damage, max_damage, spirit_reward, item_rewards
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss_reward
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByWorldBossId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_world_boss_reward
+    where world_boss_id = #{worldBossId,jdbcType=BIGINT}
+    order by min_damage
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_world_boss_reward
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeWorldBossReward" useGeneratedKeys="true" keyProperty="id">
+    insert into life_world_boss_reward (world_boss_id, min_damage, max_damage, 
+      spirit_reward, item_rewards)
+    values (#{worldBossId,jdbcType=BIGINT}, #{minDamage,jdbcType=BIGINT}, #{maxDamage,jdbcType=BIGINT}, 
+      #{spiritReward,jdbcType=INTEGER}, #{itemRewards,jdbcType=LONGVARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeWorldBossReward">
+    update life_world_boss_reward
+    set world_boss_id = #{worldBossId,jdbcType=BIGINT},
+      min_damage = #{minDamage,jdbcType=BIGINT},
+      max_damage = #{maxDamage,jdbcType=BIGINT},
+      spirit_reward = #{spiritReward,jdbcType=INTEGER},
+      item_rewards = #{itemRewards,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

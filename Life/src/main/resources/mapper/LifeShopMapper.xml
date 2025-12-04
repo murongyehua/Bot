@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeShopMapper">
+
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeShop">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_id" jdbcType="BIGINT" property="itemId" />
+    <result column="base_price" jdbcType="INTEGER" property="basePrice" />
+    <result column="current_price" jdbcType="INTEGER" property="currentPrice" />
+    <result column="discount" jdbcType="DECIMAL" property="discount" />
+    <result column="in_stock" jdbcType="TINYINT" property="inStock" />
+    <result column="last_refresh_date" jdbcType="DATE" property="lastRefreshDate" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <resultMap id="WithItemResultMap" type="com.bot.life.dao.entity.LifeShop" extends="BaseResultMap">
+    <association property="item" javaType="com.bot.life.dao.entity.LifeItem">
+      <id column="item_pk_id" jdbcType="BIGINT" property="id" />
+      <result column="item_name" jdbcType="VARCHAR" property="name" />
+      <result column="item_type" jdbcType="INTEGER" property="type" />
+      <result column="item_effect_value" jdbcType="INTEGER" property="effectValue" />
+      <result column="item_description" jdbcType="LONGVARCHAR" property="description" />
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, item_type, item_id, base_price, current_price, discount, in_stock, last_refresh_date, create_time, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_shop
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="WithItemResultMap">
+    select 
+        s.id, s.item_type, s.item_id, s.base_price, s.current_price, s.discount, s.in_stock, 
+        s.last_refresh_date, s.create_time, s.update_time,
+        i.id as item_pk_id, i.name as item_name, i.type as item_type,
+        i.effect_value as item_effect_value, i.description as item_description
+    from life_shop s
+    left join life_item i on s.item_id = i.id
+    where s.in_stock = 1
+    order by s.id
+  </select>
+
+  <select id="selectByItemId" parameterType="java.lang.Long" resultMap="WithItemResultMap">
+    select 
+        s.id, s.item_type, s.item_id, s.base_price, s.current_price, s.discount, s.in_stock, 
+        s.last_refresh_date, s.create_time, s.update_time,
+        i.id as item_pk_id, i.name as item_name, i.type as item_type,
+        i.effect_value as item_effect_value, i.description as item_description
+    from life_shop s
+    left join life_item i on s.item_id = i.id
+    where s.item_id = #{itemId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_shop
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeShop" useGeneratedKeys="true" keyProperty="id">
+    insert into life_shop (item_type, item_id, base_price, current_price, 
+      discount, in_stock, last_refresh_date, create_time, update_time)
+    values (#{itemType,jdbcType=INTEGER}, #{itemId,jdbcType=BIGINT}, #{basePrice,jdbcType=INTEGER}, 
+      #{currentPrice,jdbcType=INTEGER}, #{discount,jdbcType=DECIMAL}, #{inStock,jdbcType=TINYINT}, 
+      #{lastRefreshDate,jdbcType=DATE}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeShop">
+    update life_shop
+    set item_type = #{itemType,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=BIGINT},
+      base_price = #{basePrice,jdbcType=INTEGER},
+      current_price = #{currentPrice,jdbcType=INTEGER},
+      discount = #{discount,jdbcType=DECIMAL},
+      in_stock = #{inStock,jdbcType=TINYINT},
+      last_refresh_date = #{lastRefreshDate,jdbcType=DATE},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

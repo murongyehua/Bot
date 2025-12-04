@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeAchievementMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeAchievement">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="condition_type" jdbcType="INTEGER" property="conditionType" />
+    <result column="condition_target" jdbcType="VARCHAR" property="conditionTarget" />
+    <result column="condition_value" jdbcType="BIGINT" property="conditionValue" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, description, condition_type, condition_target, condition_value, create_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_achievement
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_achievement
+    order by id
+  </select>
+  
+  <select id="selectByConditionType" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_achievement
+    where condition_type = #{conditionType,jdbcType=INTEGER}
+    order by condition_value, id
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_achievement
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeAchievement" useGeneratedKeys="true" keyProperty="id">
+    insert into life_achievement (name, description, condition_type, 
+      condition_target, condition_value, create_time)
+    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{conditionType,jdbcType=INTEGER}, 
+      #{conditionTarget,jdbcType=VARCHAR}, #{conditionValue,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeAchievement">
+    update life_achievement
+    set name = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=LONGVARCHAR},
+      condition_type = #{conditionType,jdbcType=INTEGER},
+      condition_target = #{conditionTarget,jdbcType=VARCHAR},
+      condition_value = #{conditionValue,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

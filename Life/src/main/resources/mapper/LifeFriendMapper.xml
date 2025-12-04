@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeFriendMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeFriend">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="friend_id" jdbcType="BIGINT" property="friendId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, player_id, friend_id, status, create_time, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_friend
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPlayerIdAndFriendId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_friend
+    where player_id = #{playerId,jdbcType=BIGINT} and friend_id = #{friendId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectFriendsByPlayerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_friend
+    where player_id = #{playerId,jdbcType=BIGINT} and status = 1
+    order by create_time DESC
+  </select>
+  
+  <select id="selectPendingRequestsByPlayerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_friend
+    where player_id = #{playerId,jdbcType=BIGINT} and status = 0
+    order by create_time DESC
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_friend
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeFriend" useGeneratedKeys="true" keyProperty="id">
+    insert into life_friend (player_id, friend_id, status, 
+      create_time, update_time)
+    values (#{playerId,jdbcType=BIGINT}, #{friendId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeFriend">
+    update life_friend
+    set player_id = #{playerId,jdbcType=BIGINT},
+      friend_id = #{friendId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

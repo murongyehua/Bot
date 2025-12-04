@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bot.life.dao.mapper.LifeItemMapper">
+  
+  <resultMap id="BaseResultMap" type="com.bot.life.dao.entity.LifeItem">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="effect_value" jdbcType="INTEGER" property="effectValue" />
+    <result column="effect_attribute" jdbcType="VARCHAR" property="effectAttribute" />
+    <result column="skill_id" jdbcType="BIGINT" property="skillId" />
+    <result column="max_use_count" jdbcType="INTEGER" property="maxUseCount" />
+    <result column="can_use_in_battle" jdbcType="INTEGER" property="canUseInBattle" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, type, effect_value, effect_attribute, skill_id, max_use_count, can_use_in_battle, description, create_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_item
+    order by type, id
+  </select>
+  
+  <select id="selectByType" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from life_item
+    where type = #{type,jdbcType=INTEGER}
+    order by id
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from life_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bot.life.dao.entity.LifeItem" useGeneratedKeys="true" keyProperty="id">
+    insert into life_item (name, type, effect_value, effect_attribute, skill_id,
+      max_use_count, can_use_in_battle, description, 
+      create_time)
+    values (#{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{effectValue,jdbcType=INTEGER}, 
+      #{effectAttribute,jdbcType=VARCHAR}, #{skillId,jdbcType=BIGINT},
+      #{maxUseCount,jdbcType=INTEGER}, #{canUseInBattle,jdbcType=INTEGER}, #{description,jdbcType=LONGVARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bot.life.dao.entity.LifeItem">
+    update life_item
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      effect_value = #{effectValue,jdbcType=INTEGER},
+      effect_attribute = #{effectAttribute,jdbcType=VARCHAR},
+      skill_id = #{skillId,jdbcType=BIGINT},
+      max_use_count = #{maxUseCount,jdbcType=INTEGER},
+      can_use_in_battle = #{canUseInBattle,jdbcType=INTEGER},
+      description = #{description,jdbcType=LONGVARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>
