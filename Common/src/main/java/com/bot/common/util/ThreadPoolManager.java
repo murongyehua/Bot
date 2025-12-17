@@ -61,6 +61,9 @@ public class ThreadPoolManager extends ThreadPoolExecutor {
 
     private static ExecutorService inTimeExecutor = new ThreadPoolManager(IN_TIME_THREAD_POOL_SIZE,IN_TIME_THREAD_POOL_SIZE,THREAD_ALIVE_TIME_SECONDS,TimeUnit.SECONDS,BASE_TASK);
 
+    // 调度线程池：用于一次性延时任务
+    private static ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(IN_TIME_THREAD_POOL_SIZE);
+
     private ThreadPoolManager(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, BlockingQueue<Runnable> queue){
         super(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, queue);
     }
@@ -81,6 +84,13 @@ public class ThreadPoolManager extends ThreadPoolExecutor {
      */
     public static Future addEmergencyTask(Runnable task){
         return emergencyExecutor.submit(task);
+    }
+
+    /**
+     *  延时执行一次性任务
+     */
+    public static ScheduledFuture<?> schedule(Runnable task, long delay, TimeUnit unit){
+        return scheduledExecutor.schedule(task, delay, unit);
     }
 
     /**

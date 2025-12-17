@@ -94,7 +94,12 @@ public class DefaultChatServiceImpl implements BaseService {
         if (TOKEN_2_SPEECH_ID_MAP.get(groupId == null ? token : groupId) != null) {
             return new CommonResp(this.getAudioChatFileName(reqContent,  groupId == null ? token : groupId), ENRespType.AUDIO.getType());
         }
-        return new CommonResp(this.deepChat(reqContent, "base", groupId == null ? token : groupId), ENRespType.TEXT.getType());
+        // 现在群聊闲聊在外面处理，这里返回null
+        if (groupId != null) {
+            return null;
+        }
+        // 私聊正常返回
+        return new CommonResp(this.deepChat(reqContent, "base", token), ENRespType.TEXT.getType());
     }
 
     private String createPic(String model, String reqContent) {

@@ -6,9 +6,7 @@ import com.bot.common.config.SystemConfigCache;
 import com.bot.common.enums.ENChatEngine;
 import com.bot.common.enums.ENSystemConfig;
 import com.bot.game.dao.entity.*;
-import com.bot.game.dao.mapper.BotUserConfigMapper;
-import com.bot.game.dao.mapper.BotUserMapper;
-import com.bot.game.dao.mapper.SystemConfigMapper;
+import com.bot.game.dao.mapper.*;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +28,12 @@ public class SystemConfigHolder {
 
     @Resource
     private BotUserConfigMapper botUserConfigMapper;
+
+    @Resource
+    private BotBaseWordMapper botBaseWordMapper;
+
+    @Resource
+    private BotGameUserScoreMapper gameUserScoreMapper;
 
     @PostConstruct
     public void init() {
@@ -77,6 +81,15 @@ public class SystemConfigHolder {
         SystemConfigCache.bottleUser.addAll(userConfigList.stream().filter(x -> "1".equals(x.getBottleAutoSwitch())).map(BotUserConfig::getUserId).collect(Collectors.toList()));
         SystemConfigCache.welcomeMap.clear();
         SystemConfigCache.welcomeMap.putAll(userConfigList.stream().filter(x -> StrUtil.isNotEmpty(x.getWelcomeContent())).collect(Collectors.toMap(BotUserConfig::getUserId, BotUserConfig::getWelcomeContent)));
+
+        List<BotBaseWord> words = botBaseWordMapper.selectByExample(new BotBaseWordExample());
+        SystemConfigCache.wordPrompt.clear();
+        SystemConfigCache.wordPrompt.putAll(words.stream().filter(x -> StrUtil.isNotEmpty(x.getPrompt())).collect(Collectors.toMap(BotBaseWord::getWord, BotBaseWord::getPrompt)));
+
+        List<BotGameUserScore> userScoreList = gameUserScoreMapper.selectByExample(new BotGameUserScoreExample());
+        SystemConfigCache.userWordMap.clear();
+        SystemConfigCache.userWordMap.putAll(userScoreList.stream().filter(x -> StrUtil.isNotEmpty(x.getCurrentWord())).collect(Collectors.toMap(BotGameUserScore::getUserId, BotGameUserScore::getCurrentWord)));
+
     }
 
 }

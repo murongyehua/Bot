@@ -58,16 +58,18 @@ public class OpenServerTask {
                             }
                             // 本轮未查询 去查询
                             String result = activityService.openServer(userConfig.getJxServer());
-                            SERVER_STATUS_MAP.put(userConfig.getJxServer(), result);
-                            if (result.equals(userConfig.getJxServerStatus())) {
-                                continue;
-                            }
-                            userConfig.setJxServerStatus(result);
-                            userConfigMapper.updateByPrimaryKey(userConfig);
-                            if (userConfig.getUserId().contains("chatroom")) {
-                                SendMsgUtil.sendGroupMsg(userConfig.getUserId(), result, null);
-                            } else {
-                                SendMsgUtil.sendMsg(userConfig.getUserId(), result);
+                            if (!result.contains("失败")) {
+                                SERVER_STATUS_MAP.put(userConfig.getJxServer(), result);
+                                if (result.equals(userConfig.getJxServerStatus())) {
+                                    continue;
+                                }
+                                userConfig.setJxServerStatus(result);
+                                userConfigMapper.updateByPrimaryKey(userConfig);
+                                if (userConfig.getUserId().contains("chatroom")) {
+                                    SendMsgUtil.sendGroupMsg(userConfig.getUserId(), result, null);
+                                } else {
+                                    SendMsgUtil.sendMsg(userConfig.getUserId(), result);
+                                }
                             }
                         }
                     }

@@ -583,10 +583,26 @@ public class GameRoomManager {
                 return;
             }
 
-            // 更新每个玩家的积分
+            // 获取玩家参与方式(用于获取昵称)
+            Map<String, String> participationMap = gamePlay.getParticipationMap();
+
+            // 更新每个玩家的积分和昵称
             for (Map.Entry<String, Integer> entry : scores.entrySet()) {
                 String userId = entry.getKey();
                 Integer score = entry.getValue();
+
+                // 获取玩家昵称
+                String nickname = userId; // 默认使用userId
+                if (participationMap != null) {
+                    String groupId = participationMap.get(userId);
+                    if (groupId != null && !groupId.trim().isEmpty()) {
+                        // 群聊参与,获取群昵称
+                        String groupNickname = SendMsgUtil.getGroupNickName(groupId, userId);
+                        if (groupNickname != null && !groupNickname.trim().isEmpty()) {
+                            nickname = groupNickname;
+                        }
+                    }
+                }
 
                 BotGameUserScoreExample example = new BotGameUserScoreExample();
                 example.createCriteria().andUserIdEqualTo(userId);
@@ -597,11 +613,13 @@ public class GameRoomManager {
                     BotGameUserScore userScore = new BotGameUserScore();
                     userScore.setUserId(userId);
                     userScore.setScore(score);
+                    userScore.setNickname(nickname);
                     userScoreMapper.insertSelective(userScore);
                 } else {
-                    // 存在，更新积分
+                    // 存在，更新积分和昵称
                     BotGameUserScore userScore = existingScores.get(0);
                     userScore.setScore(userScore.getScore() + score);
+                    userScore.setNickname(nickname);
                     userScoreMapper.updateByPrimaryKeySelective(userScore);
                 }
             }

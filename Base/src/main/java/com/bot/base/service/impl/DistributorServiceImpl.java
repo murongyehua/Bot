@@ -140,6 +140,14 @@ public class DistributorServiceImpl implements Distributor {
                         SendMsgUtil.sendEmoji(groupId, emoji.getMd5(), Integer.parseInt(emoji.getImgsize()));
                         return null;
                     }
+                    // 处理词条
+                    String word = SystemConfigCache.userWordMap.get(token);
+                    if (word != null) {
+                        String prompt = SystemConfigCache.wordPrompt.get(word);
+                        if (StrUtil.isNotEmpty(prompt)) {
+                            reqContent = String.format("(这个人的身份标志是【%s】，%s)%s", word, prompt, reqContent);
+                        }
+                    }
                     if (TEMP_CHAT_RECORD.containsKey(groupId)) {
                         List<String> record = TEMP_CHAT_RECORD.get(groupId);
                         if (record.size() > 0) {
@@ -175,6 +183,9 @@ public class DistributorServiceImpl implements Distributor {
                     }
                     // 上面都未触发，则有15%的机率回复
                     String frequency = SystemConfigCache.chatFrequency.get(groupId);
+                    if ("话痨".equals(word)) {
+                        frequency = "1.00";
+                    }
                     if (Math.random() < (StrUtil.isNotEmpty(frequency) ? Double.parseDouble(frequency) : 0.15)) {
                         // 回复时有8%的几率是表情包
                         if (Math.random() < 0.08) {
@@ -372,10 +383,7 @@ public class DistributorServiceImpl implements Distributor {
         }
         // 全部未命中
         // 非群聊 或 群聊艾特 认为是闲聊
-        if (groupId == null || at) {
-            return geyDefaultMsg(reqContent, token, groupId, channel);
-        }
-        return null;
+        return geyDefaultMsg(reqContent, token, groupId, channel);
     }
 
     private BaseService getService(String className) {
@@ -402,10 +410,6 @@ public class DistributorServiceImpl implements Distributor {
 
     private CommonResp geyDefaultMsg(String reqContent, String token, String groupId, String channel) {
         // 1.5.0.0增加逻辑，不支持群聊闲聊
-        if (groupId != null) {
-//            return new CommonResp("小林的群聊内的闲聊功能已下线，如有Ai使用需求请添加好友私聊使用，或者你可以使用小林的其他功能！\r\b发送”菜单“或者”帮助“获取使用手册，除闲聊外的功能仍可正常触发呢~", ENRespType.TEXT.getType());
-            return null;
-        }
         BaseService service = serviceMap.get("defaultChatServiceImpl");
         CommonResp resp = service.doQueryReturn(reqContent, token, groupId, channel);
         if (resp != null) {

@@ -108,6 +108,16 @@ public class SystemConfigCache {
     public static final Map<String, String> welcomeMap = new HashMap<>();
 
     /**
+     * 用户佩戴词条
+     */
+    public static final Map<String, String> userWordMap = new HashMap<>();
+
+    /**
+     * 词条提示词
+     */
+    public static final Map<String, String> wordPrompt = new HashMap<>();;
+
+    /**
      * 当前开启的抽奖活动奖品
      */
     public static final CopyOnWriteArrayList<ActivityAwardDTO> activityAwardList = new CopyOnWriteArrayList<>();

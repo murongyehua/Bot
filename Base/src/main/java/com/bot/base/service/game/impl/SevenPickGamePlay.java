@@ -1,10 +1,14 @@
 package com.bot.base.service.game.impl;
 
 import com.bot.base.service.game.BaseGamePlay;
+import com.bot.common.config.SystemConfigCache;
 import com.bot.common.util.SendMsgUtil;
+import com.bot.common.util.ThreadPoolManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +40,10 @@ public class SevenPickGamePlay extends BaseGamePlay {
     private PendingEffectType pendingEffectType = PendingEffectType.NONE;
     private String pendingOperatorUserId;
     private List<String> pendingTargets = new ArrayList<>();
+
+    // 功能牌目标选择超时控制
+    private ScheduledFuture<?> choiceTimeoutFuture;
+    private volatile boolean choiceHandled = false;
     
     // 待处理的功能牌队列（用于处理再翻三张过程中触发的功能牌）
     private Deque<PendingAction> pendingActionQueue = new ArrayDeque<>();
@@ -56,6 +64,8 @@ public class SevenPickGamePlay extends BaseGamePlay {
     private int currentSeatIndex = 0; // 当前座位索引
     private boolean hasPlayerReached200 = false; // 是否有玩家达到200分
     private String playerReached200 = null; // 达到200分的玩家
+    private int initialPlayerCount = 0; // 游戏开始时的参与人数（用于结算判断）
+    private Set<String> quitPlayers = new HashSet<>(); // 中途退出的玩家
 
     // ========== 玩家总分 ==========
     private Map<String, Integer> totalScore = new HashMap<>();
@@ -71,6 +81,10 @@ public class SevenPickGamePlay extends BaseGamePlay {
     private Map<String, List<String>> roundActionCards = new HashMap<>(); // 本轮拥有的功能牌
     private Map<String, Boolean> frozenThisRound = new HashMap<>(); // 本轮是否被冻结
 
+    // 回合超时控制
+    private ScheduledFuture<?> turnTimeoutFuture;
+    private volatile boolean turnHandled = false;
+
     public SevenPickGamePlay(String roomCode, String gameCode, String gameName, List<String> playerIds) {
         super(roomCode, gameCode, gameName, playerIds);
     }
@@ -79,6 +93,10 @@ public class SevenPickGamePlay extends BaseGamePlay {
     protected void initGame() {
         // 随机打乱座位
         Collections.shuffle(playerIds);
+
+        // 记录初始参与人数（用于结算判断）
+        initialPlayerCount = playerIds.size();
+        quitPlayers.clear();
 
         // 初始化玩家状态
         for (String playerId : playerIds) {
@@ -170,21 +188,31 @@ public class SevenPickGamePlay extends BaseGamePlay {
     public Map<String, Integer> calculateScores() {
         Map<String, Integer> scores = new HashMap<>();
 
-        // 按总分排序
+        // 过滤掉中途退出的玩家，只对完整参与的玩家进行结算
         List<Map.Entry<String, Integer>> sortedPlayers = totalScore.entrySet()
                 .stream()
+                .filter(entry -> !quitPlayers.contains(entry.getKey())) // 过滤退出玩家
                 .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
                 .collect(Collectors.toList());
 
-        // 根据排名分配小林游戏积分
+        // 根据初始参与人数和排名分配小林游戏积分
+        // 当初始参与人数 <= 3 时，只有第一名获得3分，其他人1分
+        // 当初始参与人数 >= 4 时，按正常规则：第一10分，第二5分，第三3分，其他1分
         for (int i = 0; i < sortedPlayers.size(); i++) {
             String userId = sortedPlayers.get(i).getKey();
             int gameScore;
-            switch (i) {
-                case 0: gameScore = 10; break; // 第一名
-                case 1: gameScore = 5; break;  // 第二名
-                case 2: gameScore = 3; break;  // 第三名
-                default: gameScore = 1;        // 其他参与者
+            
+            if (initialPlayerCount <= 3) {
+                // 少于等于3人：第一名3分，其他1分
+                gameScore = (i == 0) ? 3 : 1;
+            } else {
+                // 4人及以上：正常结算规则
+                switch (i) {
+                    case 0: gameScore = 10; break; // 第一名
+                    case 1: gameScore = 5; break;  // 第二名
+                    case 2: gameScore = 3; break;  // 第三名
+                    default: gameScore = 1;        // 其他参与者
+                }
             }
             scores.put(userId, gameScore);
         }
@@ -201,54 +229,88 @@ public class SevenPickGamePlay extends BaseGamePlay {
         sb.append("🏆 游戏结算 🏆\n");
         sb.append("─────────────\n\n");
 
-        // 按总分排序
-        List<Map.Entry<String, Integer>> sortedPlayers = totalScore.entrySet()
+        // 分离退出玩家和完整参与玩家
+        List<Map.Entry<String, Integer>> activePlayers = totalScore.entrySet()
                 .stream()
+                .filter(entry -> !quitPlayers.contains(entry.getKey()))
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .collect(Collectors.toList());
+        
+        List<Map.Entry<String, Integer>> quitPlayersList = totalScore.entrySet()
+                .stream()
+                .filter(entry -> quitPlayers.contains(entry.getKey()))
                 .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
                 .collect(Collectors.toList());
 
-        // 游戏内成绩排名
+        // 游戏内成绩排名（仅显示完整参与玩家）
         sb.append("🎮 游戏成绩:\n");
         String[] rankIcons = {"🥇", "🥈", "🥉"}; // 金银铜牌
-        String[] rankNames = {"第一名", "第二名", "第三名", "第四名"};
         
-        for (int i = 0; i < sortedPlayers.size(); i++) {
+        for (int i = 0; i < activePlayers.size(); i++) {
             String rankIcon = i < rankIcons.length ? rankIcons[i] + " " : "   ";
-            String rankName = i < rankNames.length ? rankNames[i] : "第" + (i + 1) + "名";
-            String userId = sortedPlayers.get(i).getKey();
+            String rankName = "第" + convertToChineseNumber(i + 1) + "名";
+            String userId = activePlayers.get(i).getKey();
             String displayName = getPlayerDisplayName(userId);
-            int score = sortedPlayers.get(i).getValue();
+            int score = activePlayers.get(i).getValue();
             
             sb.append(rankIcon).append(rankName).append(": ")
               .append(displayName).append(" - ")
               .append(score).append("分\n");
         }
+        
+        // 如果有退出玩家，单独列出（不参与排名和结算）
+        if (!quitPlayersList.isEmpty()) {
+            sb.append("\n⚠️ 中途退出（不参与结算）:\n");
+            for (Map.Entry<String, Integer> entry : quitPlayersList) {
+                String displayName = getPlayerDisplayName(entry.getKey());
+                int score = entry.getValue();
+                sb.append("  • ").append(displayName)
+                  .append(" - ").append(score).append("分\n");
+            }
+        }
 
-        // 游戏系统积分奖励
+        // 游戏系统积分奖励（仅奖励完整参与玩家）
         sb.append("\n⭐ 系统积分奖励:\n");
         
-        for (int i = 0; i < sortedPlayers.size(); i++) {
-            String userId = sortedPlayers.get(i).getKey();
+        // 根据初始参与人数决定奖励规则
+        if (initialPlayerCount <= 3) {
+            sb.append("(参与人数≤3，防刷分模式)\n");
+        }
+        
+        for (int i = 0; i < activePlayers.size(); i++) {
+            String userId = activePlayers.get(i).getKey();
             String displayName = getPlayerDisplayName(userId);
             int gameScore;
             String rewardDesc;
             
-            switch (i) {
-                case 0: 
-                    gameScore = 10; 
-                    rewardDesc = "🎉 冠军奖励";
-                    break;
-                case 1: 
-                    gameScore = 5; 
-                    rewardDesc = "🌟 亚军奖励";
-                    break;
-                case 2: 
-                    gameScore = 3; 
-                    rewardDesc = "✨ 季军奖励";
-                    break;
-                default: 
+            if (initialPlayerCount <= 3) {
+                // 少于等于3人：第一名3分，其他1分
+                if (i == 0) {
+                    gameScore = 3;
+                    rewardDesc = "🏆 第一名";
+                } else {
                     gameScore = 1;
                     rewardDesc = "🎁 参与奖励";
+                }
+            } else {
+                // 4人及以上：正常结算
+                switch (i) {
+                    case 0: 
+                        gameScore = 10; 
+                        rewardDesc = "🎉 冠军奖励";
+                        break;
+                    case 1: 
+                        gameScore = 5; 
+                        rewardDesc = "🌟 亚军奖励";
+                        break;
+                    case 2: 
+                        gameScore = 3; 
+                        rewardDesc = "✨ 季军奖励";
+                        break;
+                    default: 
+                        gameScore = 1;
+                        rewardDesc = "🎁 参与奖励";
+                }
             }
             
             sb.append("  • ").append(displayName)
@@ -273,7 +335,7 @@ public class SevenPickGamePlay extends BaseGamePlay {
         updateLastActivityTime();
 
         if (!isPlayer(userId)) {
-            return "您不是本局游戏的参与者~";
+            return null;
         }
 
         instruction = instruction.trim();
@@ -282,10 +344,23 @@ public class SevenPickGamePlay extends BaseGamePlay {
         if ("退出游戏".equals(instruction)) {
             return handleQuitGame(userId);
         }
+        
+        // 处理积分查询
+        if ("积分".equals(instruction)) {
+            return handleQueryScores();
+        }
+        
+        // 处理牌堆查询
+        if ("牌堆".equals(instruction)) {
+            return handleQueryDeck();
+        }
 
         // 处理待处理的功能牌选择
         if (pendingEffectType != PendingEffectType.NONE) {
             if (userId.equals(pendingOperatorUserId)) {
+                // 玩家选择目标：取消本次选择超时
+                cancelChoiceTimeout();
+                choiceHandled = true;
                 return handlePendingEffectChoice(userId, instruction);
             } else {
                 String operatorName = getPlayerDisplayName(pendingOperatorUserId);
@@ -293,13 +368,13 @@ public class SevenPickGamePlay extends BaseGamePlay {
             }
         }
 
-        // 正常回合处理
+        // 正常回合处理：只有有效指令才取消超时
         if ("翻牌".equals(instruction)) {
             return handleDrawCard(userId);
         } else if ("结束".equals(instruction)) {
             return handleEndTurn(userId);
         } else {
-            return "无效指令,请发送【翻牌】或【结束】";
+            return "";
         }
     }
 
@@ -307,11 +382,20 @@ public class SevenPickGamePlay extends BaseGamePlay {
      * 处理翻牌
      */
     private String handleDrawCard(String userId) {
+        // 防止并发重复翻牌：检查是否已处理过本回合
+        if (turnHandled) {
+            return "操作已处理，请等待下一回合~";
+        }
+        
         // 检查是否轮到该玩家
         String currentPlayer = playerIds.get(currentSeatIndex);
         if (!userId.equals(currentPlayer)) {
             return "还没轮到您哦~";
         }
+        
+        // 取消超时并立即标记为已处理，防止并发
+        cancelTurnTimeout();
+        turnHandled = true;
 
         // 检查是否已结束本轮
         if (endedThisRound.get(userId)) {
@@ -338,18 +422,138 @@ public class SevenPickGamePlay extends BaseGamePlay {
      */
     private String handleQuitGame(String userId) {
         String displayName = getPlayerDisplayName(userId);
-        String quitMessage = String.format("房间[%s] 游戏[%s]\n\n玩家 %s 退出游戏,游戏终止!\n\n房间已解散,其他玩家可重新创建或加入房间~",
-                roomCode, gameName, displayName);
+        
+        // 将玩家标记为已结束
+        endedThisRound.put(userId, true);
+        
+        // 标记为中途退出（不参与结算）
+        quitPlayers.add(userId);
+        
+        // 从玩家列表中移除
+        int quitIndex = playerIds.indexOf(userId);
+        if (quitIndex == -1) {
+            return "你不在游戏中~";
+        }
+        
+        playerIds.remove(quitIndex);
         
         // 广播退出消息
+        String quitMessage = String.format("房间[%s] 游戏[%s]\n\n玩家 %s 退出游戏!", 
+                roomCode, gameName, displayName);
         sendBroadcastMessage(quitMessage);
         
-        // 结束游戏(不结算积分)
-        gameEnded = true;
+        // 检查剩余玩家数量
+        if (playerIds.size() < 2) {
+            // 玩家不足，结束游戏
+            String endMessage = "\n剩余玩家不足，游戏结束！";
+            sendBroadcastMessage(endMessage);
+            gameEnded = true;
+            return "QUIT_GAME:" + userId;
+        }
         
-        // 通知GameRoomManager解散房间
-        // 注意:这里不直接调用finishGame,而是返回特殊标记给上层处理
-        return "QUIT_GAME:" + userId;
+        // 调整当前座位索引
+        if (quitIndex <= currentSeatIndex && currentSeatIndex > 0) {
+            currentSeatIndex--;
+        }
+        if (currentSeatIndex >= playerIds.size()) {
+            currentSeatIndex = 0;
+        }
+        
+        // 如果当前轮到退出玩家，移动到下一个玩家
+        String continueMessage = "\n游戏继续！";
+        sendBroadcastMessage(continueMessage);
+        
+        // 发送下一个玩家的回合消息
+        String nextPlayer = playerIds.get(currentSeatIndex);
+        sendTurnMessage(nextPlayer);
+        
+        return "玩家已退出，游戏继续。";
+    }
+
+    /**
+     * 处理积分查询
+     */
+    private String handleQueryScores() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("─────────────\n");
+        sb.append("📊 当前积分情况\n");
+        sb.append("─────────────\n\n");
+            
+        // 按总分排序
+        List<Map.Entry<String, Integer>> sortedPlayers = totalScore.entrySet()
+                .stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .collect(Collectors.toList());
+            
+        for (Map.Entry<String, Integer> entry : sortedPlayers) {
+            String userId = entry.getKey();
+            String displayName = getPlayerDisplayName(userId);
+            int total = entry.getValue();
+                
+            // 检查玩家是否已结束
+            boolean isEnded = endedThisRound.getOrDefault(userId, false) || !playerIds.contains(userId);
+                
+            if (isEnded) {
+                // 已结束的玩家只显示全局积分
+                sb.append(String.format("%s: %d(已结束)\n", displayName, total));
+            } else {
+                // 未结束的玩家显示全局+本轮
+                int round = calculateRoundScore(userId);
+                sb.append(String.format("%s: %d+%d(全局+本轮)\n", displayName, total, round));
+            }
+        }
+            
+        return sb.toString();
+    }
+
+    /**
+     * 处理牌堆查询
+     */
+    private String handleQueryDeck() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("─────────────\n");
+        sb.append("🎴 剩余牌堆\n");
+        sb.append("─────────────\n\n");
+        
+        // 统计牌堆中的牌
+        Map<String, Integer> cardCount = new HashMap<>();
+        for (Card card : deck) {
+            String cardName = card.name;
+            cardCount.put(cardName, cardCount.getOrDefault(cardName, 0) + 1);
+        }
+        
+        if (cardCount.isEmpty()) {
+            sb.append("牌堆已空~\n");
+        } else {
+            // 按特定顺序展示：基础牌、计分牌、功能牌
+            // 基础牌
+            for (int i = 12; i >= 1; i--) {
+                String cardName = String.valueOf(i);
+                if (cardCount.containsKey(cardName)) {
+                    sb.append(String.format("『%s』 x%d张\n", cardName, cardCount.get(cardName)));
+                }
+            }
+            
+            // 计分牌
+            String[] scoreCards = {"x2", "+2", "+4", "+6", "+8", "+10"};
+            for (String cardName : scoreCards) {
+                if (cardCount.containsKey(cardName)) {
+                    sb.append(String.format("『%s』 x%d张\n", cardName, cardCount.get(cardName)));
+                }
+            }
+            
+            // 功能牌
+            String[] actionCards = {"再翻三张", "冻结", "二次机会"};
+            for (String cardName : actionCards) {
+                if (cardCount.containsKey(cardName)) {
+                    sb.append(String.format("『%s』 x%d张\n", cardName, cardCount.get(cardName)));
+                }
+            }
+        }
+        
+        sb.append(String.format("\n总计剩余：%d张", deck.size()));
+        
+        return sb.toString();
     }
 
     /**
@@ -362,7 +566,10 @@ public class SevenPickGamePlay extends BaseGamePlay {
         message.append(buildAtMessage(userId));
         message.append("当前总分:").append(totalScore.get(userId)).append("+")
                .append(calculateRoundScore(userId)).append("(全局+本轮)\n");
-        message.append("你翻到了\n『").append(card.name).append("』\n");
+        
+        // 翻牌卡面简报
+        message.append("─────────────\n");
+        message.append("你翻到了：『").append(card.name).append("』\n");
 
         boolean needMoveToNext = true;
 
@@ -400,20 +607,18 @@ public class SevenPickGamePlay extends BaseGamePlay {
     private boolean processBasicCard(String userId, Card card, StringBuilder message) {
         Set<Integer> ownedBasic = roundOwnedBasic.get(userId);
 
-        // 检查是否已拥有该牌
+            // 检查是否已拥有该牌
         if (ownedBasic.contains(card.value)) {
             // 检查是否有二次机会
             if (roundHasSecondChance.get(userId)) {
-                message.append("很遗憾,你已经有这张牌了\n");
-                message.append("消耗『二次机会』继续游戏!\n");
+                message.append("第1张：『").append(card.value).append("』 | 重复 → 消耗『二次机会』继续\n");
                 roundHasSecondChance.put(userId, false);
                 // 从功能牌列表移除
                 roundActionCards.get(userId).remove("二次机会");
                 return true; // 继续当前玩家回合
             } else {
                 // 强制结束
-                message.append("很遗憾，你已经有这张牌了\n");
-                message.append("强制结束，本轮次计分为0！\n");
+                message.append("第1张：『").append(card.value).append("』 | 重复 → 强制结束，本轮记分清零\n");
                 endPlayerRound(userId, 0);
                 return true; // 移动到下一个玩家
             }
@@ -426,9 +631,13 @@ public class SevenPickGamePlay extends BaseGamePlay {
             if (checkSevenCards(ownedBasic)) {
                 roundExtraSum.put(userId, roundExtraSum.get(userId) + 15);
                 int finalScore = calculateRoundScore(userId);
+                message.append("第1张：『").append(card.value)
+                       .append("』 | 基础 +").append(card.value)
+                       .append(" | 本轮基础:").append(roundBaseSum.get(userId))
+                       .append(" | 七张达成 → 强制结束 +15\n");
                 message.append("wow，你完成了七连翻,所得积分额外+15!!\n");
                 message.append("强制结束，本轮次计分为").append(finalScore)
-                       .append("，总分为").append(totalScore.get(userId) + finalScore).append("!");
+                       .append("，总分为").append(totalScore.get(userId) + finalScore).append("!\n");
                 endPlayerRound(userId, finalScore);
                 
                 // 向所有群广播七连翻喜讯
@@ -439,6 +648,9 @@ public class SevenPickGamePlay extends BaseGamePlay {
                 
                 return true;
             } else {
+                message.append("第1张：『").append(card.value)
+                       .append("』 | 基础 +").append(card.value)
+                       .append(" | 本轮基础:").append(roundBaseSum.get(userId)).append("\n");
                 message.append("恭喜,此轮安全,成功计分!\n");
                 return true; // 继续当前玩家回合
             }
@@ -501,6 +713,8 @@ public class SevenPickGamePlay extends BaseGamePlay {
             pendingEffectType = PendingEffectType.FREEZE;
             pendingOperatorUserId = userId;
             pendingTargets = targets;
+            // 启动功能牌选择超时计时
+            scheduleChoiceTimeout();
             return false; // 等待选择
         } else if ("再翻三张".equals(card.name)) {
             message.append("🎯 请选择目标（发送序号）：\n");
@@ -508,6 +722,8 @@ public class SevenPickGamePlay extends BaseGamePlay {
             pendingEffectType = PendingEffectType.RE_DRAW_3;
             pendingOperatorUserId = userId;
             pendingTargets = targets;
+            // 启动功能牌选择超时计时
+            scheduleChoiceTimeout();
             return false; // 等待选择
         }
 
@@ -540,11 +756,16 @@ public class SevenPickGamePlay extends BaseGamePlay {
                 sendMessageToPlayer(targetUserId, message.toString());
 
                 endPlayerRound(targetUserId, targetRoundScore);
+                
+                // 向其他群广播简短通知（排除操作者和目标玩家所在群）
+                broadcastActionCardNotification(userId, targetUserId, "冻结");
 
                 // 清除待处理状态
                 pendingEffectType = PendingEffectType.NONE;
                 pendingOperatorUserId = null;
                 pendingTargets.clear();
+                choiceHandled = true;
+                cancelChoiceTimeout();
                 
                 // 检查是否有待处理的功能牌
                 if (!pendingActionQueue.isEmpty()) {
@@ -610,11 +831,16 @@ public class SevenPickGamePlay extends BaseGamePlay {
 
                 message.append("\n").append(buildCardStatus(targetUserId));
                 sendMessageToPlayer(targetUserId, message.toString());
+                
+                // 向其他群广播简短通知（排除操作者和目标玩家所在群）
+                broadcastActionCardNotification(userId, targetUserId, "再翻三张");
 
                 // 清除当前待处理状态
                 pendingEffectType = PendingEffectType.NONE;
                 pendingOperatorUserId = null;
                 pendingTargets.clear();
+                choiceHandled = true;
+                cancelChoiceTimeout();
 
                 // 如果被强制结束,已在processCardForReDraw3中处理
                 if (!forceEnded) {
@@ -635,7 +861,10 @@ public class SevenPickGamePlay extends BaseGamePlay {
                         actionMessage.append("请选择使用对象(发序号):\n");
                         List<String> targets = buildTargetList(nextAction.operatorUserId, actionMessage);
                         pendingTargets = targets;
-                        
+
+                        // 新的功能牌选择：启动选择超时
+                        scheduleChoiceTimeout();
+
                         sendMessageToPlayer(nextAction.operatorUserId, actionMessage.toString());
                         return ""; // 消息已发送,不需要返回
                     }
@@ -652,6 +881,48 @@ public class SevenPickGamePlay extends BaseGamePlay {
         }
 
         return "处理失败~";
+    }
+
+    // 功能牌目标选择：启动与取消
+    private void scheduleChoiceTimeout() {
+        // 取消之前的选择计时
+        cancelChoiceTimeout();
+        choiceHandled = false;
+        // 若没有待选择的效果或目标为空，直接返回
+        if (pendingEffectType == PendingEffectType.NONE || pendingTargets == null || pendingTargets.isEmpty()) {
+            return;
+        }
+        final PendingEffectType effectSnapshot = pendingEffectType;
+        final String operatorSnapshot = pendingOperatorUserId;
+        final List<String> targetsSnapshot = new ArrayList<>(pendingTargets);
+
+        choiceTimeoutFuture = ThreadPoolManager.schedule(() -> {
+            try {
+                if (gameEnded) return;
+                if (effectSnapshot == PendingEffectType.NONE) return;
+                if (choiceHandled) return;
+                if (operatorSnapshot == null) return;
+                if (targetsSnapshot.isEmpty()) return;
+
+                // 自动选择第一个目标
+                String targetUserId = targetsSnapshot.get(0);
+                String operatorName = getPlayerDisplayName(operatorSnapshot);
+                String targetName = getPlayerDisplayName(targetUserId);
+                sendMessageToPlayer(operatorSnapshot,
+                        "【系统提示】40 秒内未选择目标，已自动为你选择【" + targetName + "】作为『" +
+                                (effectSnapshot == PendingEffectType.FREEZE ? "冻结" : "再翻三张") + "』目标。");
+
+                // 构造一个“选择第一个目标”的虚拟指令
+                handlePendingEffectChoice(operatorSnapshot, "1");
+            } catch (Exception ignored) {
+            }
+        }, 40, TimeUnit.SECONDS);
+    }
+
+    private void cancelChoiceTimeout() {
+        if (choiceTimeoutFuture != null && !choiceTimeoutFuture.isDone()) {
+            try { choiceTimeoutFuture.cancel(false); } catch (Exception ignored) {}
+        }
     }
 
     /**
@@ -687,7 +958,7 @@ public class SevenPickGamePlay extends BaseGamePlay {
                         
                         // 向所有群广播七连翻喜讯（在再翻三张过程中触发）
                         String displayName = getPlayerDisplayName(userId);
-                        String broadcastMsg = String.format("🎉 喜讯！玩家【%s】在再翻三张过程中完成了七连翻，额外获得15分奖励！\n本轮得分：%d分，总分：%d分", 
+                        String broadcastMsg = String.format("🎉 喜讯！玩家【%s】在再翻三张过程中完成了七连翻，额外获得15分奖励！",
                                 displayName, finalScore, totalScore.get(userId) + finalScore);
                         sendBroadcastMessage(broadcastMsg);
                         
@@ -946,6 +1217,9 @@ public class SevenPickGamePlay extends BaseGamePlay {
      */
     private void finishGame() {
         gameEnded = true;
+        // 结束游戏：取消回合超时计时
+        cancelTurnTimeout();
+        turnHandled = true;
         String settlement = generateSettlementMessage();
         sendBroadcastMessage(settlement);
         
@@ -963,6 +1237,7 @@ public class SevenPickGamePlay extends BaseGamePlay {
         message.append("当前总分:").append(totalScore.get(userId)).append("+")
                .append(calculateRoundScore(userId)).append("(全局+本轮)\n");
         message.append("🎯 轮到你啦！发送【翻牌】或【结束】\n");
+        message.append("⏱ 若 40 秒内未操作，系统将自动为你翻牌。\n");
 
         // 检查是否有人达到200分
         if (hasPlayerReached200 && !userId.equals(playerReached200)) {
@@ -975,6 +1250,37 @@ public class SevenPickGamePlay extends BaseGamePlay {
         message.append("\n").append(buildCardStatus(userId));
 
         sendMessageToPlayer(userId, message.toString());
+
+        // 启动本回合超时计时
+        scheduleTurnTimeout(userId);
+    }
+
+    // 回合超时：启动与取消
+    private void scheduleTurnTimeout(String userId) {
+        // 取消上一轮残留计时
+        cancelTurnTimeout();
+        turnHandled = false;
+        turnTimeoutFuture = ThreadPoolManager.schedule(() -> {
+            try {
+                // 校验状态仍然有效
+                if (gameEnded) return;
+                String currentPlayer = playerIds.get(currentSeatIndex);
+                if (!userId.equals(currentPlayer)) return;
+                if (endedThisRound.get(userId) || frozenThisRound.get(userId)) return;
+                if (turnHandled) return;
+
+                // 提示并自动翻牌
+                sendMessageToPlayer(userId, "【系统提示】超过 40 秒未操作，系统已自动为你翻牌。");
+                handleDrawCard(userId);
+            } catch (Exception ignored) {
+            }
+        }, 40, TimeUnit.SECONDS);
+    }
+
+    private void cancelTurnTimeout() {
+        if (turnTimeoutFuture != null && !turnTimeoutFuture.isDone()) {
+            try { turnTimeoutFuture.cancel(false); } catch (Exception ignored) {}
+        }
     }
 
     /**
@@ -1028,64 +1334,103 @@ public class SevenPickGamePlay extends BaseGamePlay {
         return false;
     }
 
-    /**
-     * 构建牌型状态
-     */
-    private String buildCardStatus(String userId) {
-        StringBuilder sb = new StringBuilder("\n当前牌型\n");
+ /**
+ * 构建牌型状态
+ */
+private String buildCardStatus(String userId) {
+    StringBuilder sb = new StringBuilder("\n当前牌型\n");
 
-        // 基础牌
-        Set<Integer> basic = roundOwnedBasic.get(userId);
-        if (!basic.isEmpty()) {
-            sb.append("基础:");
-            List<Integer> sortedBasic = new ArrayList<>(basic);
-            Collections.sort(sortedBasic);
-            for (Integer value : sortedBasic) {
-                sb.append("『").append(value).append("』");
-            }
-            sb.append("\n");
+    // 基础牌
+    Set<Integer> basic = roundOwnedBasic.get(userId);
+    if (basic != null && !basic.isEmpty()) {
+        sb.append("基础:");
+        List<Integer> sortedBasic = new ArrayList<>(basic);
+        Collections.sort(sortedBasic);
+        for (Integer value : sortedBasic) {
+            sb.append("『").append(value).append("』");
         }
-
-        // 计分牌
-        List<String> scoreCards = roundScoreCards.get(userId);
-        if (!scoreCards.isEmpty()) {
-            sb.append("计分:");
-            for (String card : scoreCards) {
-                sb.append("『").append(card).append("』");
-            }
-            sb.append("\n");
+        int baseSum = roundBaseSum.get(userId);
+        sb.append("  合计:").append(baseSum);
+        Boolean hasX2 = roundHasX2.get(userId);
+        if (hasX2 != null && hasX2) {
+            sb.append("（x2生效 → ").append(baseSum * 2).append("）");
         }
-
-        // 功能牌
-        List<String> actionCards = roundActionCards.get(userId);
-        if (!actionCards.isEmpty()) {
-            sb.append("功能:");
-            for (String card : actionCards) {
-                if (!"冻结".equals(card) && !"再翻三张".equals(card)) {
-                    sb.append("『").append(card).append("』");
-                }
-            }
-            sb.append("\n");
-        }
-
-        return sb.toString();
+        sb.append("\n");
     }
 
+    // 计分牌
+    List<String> scoreCards = roundScoreCards.get(userId);
+    if (scoreCards != null && !scoreCards.isEmpty()) {
+        sb.append("计分:");
+        int extraSum = 0;
+        for (String card : scoreCards) {
+            sb.append("『").append(card).append("』");
+            if (card != null && card.startsWith("+")) {
+                try {
+                    extraSum += Integer.parseInt(card.substring(1));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        sb.append("  合计:+").append(extraSum).append("\n");
+    }
+
+    // 功能牌
+    List<String> actionCards = roundActionCards.get(userId);
+    if (actionCards != null && !actionCards.isEmpty()) {
+        sb.append("功能:");
+        for (String card : actionCards) {
+            // 冻结 / 再翻三张 属于即时功能，通过功能触发提示展示
+            if (!"冻结".equals(card) && !"再翻三张".equals(card)) {
+                sb.append("『").append(card).append("』");
+            }
+        }
+        sb.append("\n");
+    }
+
+    return sb.toString();
+}
+
     /**
-     * 获取玩家显示名称
+     * 获取玩家显示名称（带词条）
      */
     private String getPlayerDisplayName(String userId) {
         if (participationMap == null) {
             return userId;
         }
         String groupId = participationMap.get(userId);
+        String nickName;
         if (groupId != null && !groupId.trim().isEmpty()) {
             // 群聊参与,获取群昵称
-            String nickName = SendMsgUtil.getGroupNickName(groupId, userId);
-            return nickName != null && !nickName.trim().isEmpty() ? nickName : userId;
+            nickName = SendMsgUtil.getGroupNickName(groupId, userId);
+            nickName = nickName != null && !nickName.trim().isEmpty() ? nickName : userId;
         } else {
             // 私聊参与,直接返回userId
-            return userId;
+            nickName = userId;
+        }
+        
+        // 带上佩戴的词条（如果有）
+        if (SystemConfigCache.userWordMap != null && SystemConfigCache.userWordMap.containsKey(userId)) {
+            String word = SystemConfigCache.userWordMap.get(userId);
+            if (word != null && !word.trim().isEmpty()) {
+                return nickName + "「" + word + "」";
+            }
+        }
+        
+        return nickName;
+    }
+
+    /**
+     * 将阿拉伯数字转换为中文数字
+     */
+    private String convertToChineseNumber(int num) {
+        String[] chineseNumbers = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
+        if (num <= 10) {
+            return chineseNumbers[num];
+        } else if (num < 20) {
+            return "十" + chineseNumbers[num - 10];
+        } else {
+            return chineseNumbers[num / 10] + "十" + (num % 10 == 0 ? "" : chineseNumbers[num % 10]);
         }
     }
 
@@ -1111,6 +1456,45 @@ public class SevenPickGamePlay extends BaseGamePlay {
         } else {
             // 私聊参与
             SendMsgUtil.sendMsg(userId, message);
+        }
+    }
+
+    /**
+     * 广播功能牌使用通知（排除操作者和目标玩家所在群）
+     */
+    private void broadcastActionCardNotification(String operatorUserId, String targetUserId, String actionCardName) {
+        String operatorName = getPlayerDisplayName(operatorUserId);
+        String targetName = getPlayerDisplayName(targetUserId);
+        
+        // 构建极简通知消息
+        String notification = String.format("🎯 [%s] 使用『%s』→ [%s]", 
+                operatorName, actionCardName, targetName);
+        
+        // 获取操作者和目标玩家所在的群ID
+        String operatorGroupId = participationMap != null ? participationMap.get(operatorUserId) : null;
+        String targetGroupId = participationMap != null ? participationMap.get(targetUserId) : null;
+        
+        // 收集需要排除的群ID
+        Set<String> excludeGroups = new HashSet<>();
+        if (operatorGroupId != null && !operatorGroupId.trim().isEmpty()) {
+            excludeGroups.add(operatorGroupId);
+        }
+        if (targetGroupId != null && !targetGroupId.trim().isEmpty()) {
+            excludeGroups.add(targetGroupId);
+        }
+        
+        // 分组并广播
+        Map<String, List<String>> groupPlayers = new HashMap<>();
+        for (String playerId : playerIds) {
+            String groupId = participationMap != null ? participationMap.get(playerId) : null;
+            if (groupId != null && !groupId.trim().isEmpty() && !excludeGroups.contains(groupId)) {
+                groupPlayers.computeIfAbsent(groupId, k -> new ArrayList<>()).add(playerId);
+            }
+        }
+        
+        // 向其他群发送通知（每个群只发一次）
+        for (String groupId : groupPlayers.keySet()) {
+            SendMsgUtil.sendGroupMsgForGame(groupId, notification, "");
         }
     }
 
