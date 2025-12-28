@@ -583,6 +583,206 @@ public class BotGameUserScoreExample {
             addCriterion("accumulate_merit not between", value1, value2, "accumulateMerit");
             return (Criteria) this;
         }
+
+        public Criteria andInviteCodeIsNull() {
+            addCriterion("invite_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeIsNotNull() {
+            addCriterion("invite_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeEqualTo(String value) {
+            addCriterion("invite_code =", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeNotEqualTo(String value) {
+            addCriterion("invite_code <>", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeGreaterThan(String value) {
+            addCriterion("invite_code >", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("invite_code >=", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeLessThan(String value) {
+            addCriterion("invite_code <", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeLessThanOrEqualTo(String value) {
+            addCriterion("invite_code <=", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeLike(String value) {
+            addCriterion("invite_code like", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeNotLike(String value) {
+            addCriterion("invite_code not like", value, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeIn(List<String> values) {
+            addCriterion("invite_code in", values, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeNotIn(List<String> values) {
+            addCriterion("invite_code not in", values, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeBetween(String value1, String value2) {
+            addCriterion("invite_code between", value1, value2, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCodeNotBetween(String value1, String value2) {
+            addCriterion("invite_code not between", value1, value2, "inviteCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountIsNull() {
+            addCriterion("invite_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountIsNotNull() {
+            addCriterion("invite_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountEqualTo(Integer value) {
+            addCriterion("invite_count =", value, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountNotEqualTo(Integer value) {
+            addCriterion("invite_count <>", value, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountGreaterThan(Integer value) {
+            addCriterion("invite_count >", value, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("invite_count >=", value, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountLessThan(Integer value) {
+            addCriterion("invite_count <", value, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountLessThanOrEqualTo(Integer value) {
+            addCriterion("invite_count <=", value, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountIn(List<Integer> values) {
+            addCriterion("invite_count in", values, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountNotIn(List<Integer> values) {
+            addCriterion("invite_count not in", values, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountBetween(Integer value1, Integer value2) {
+            addCriterion("invite_count between", value1, value2, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInviteCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("invite_count not between", value1, value2, "inviteCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousIsNull() {
+            addCriterion("anonymous is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousIsNotNull() {
+            addCriterion("anonymous is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousEqualTo(String value) {
+            addCriterion("anonymous =", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousNotEqualTo(String value) {
+            addCriterion("anonymous <>", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousGreaterThan(String value) {
+            addCriterion("anonymous >", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousGreaterThanOrEqualTo(String value) {
+            addCriterion("anonymous >=", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousLessThan(String value) {
+            addCriterion("anonymous <", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousLessThanOrEqualTo(String value) {
+            addCriterion("anonymous <=", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousLike(String value) {
+            addCriterion("anonymous like", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousNotLike(String value) {
+            addCriterion("anonymous not like", value, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousIn(List<String> values) {
+            addCriterion("anonymous in", values, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousNotIn(List<String> values) {
+            addCriterion("anonymous not in", values, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousBetween(String value1, String value2) {
+            addCriterion("anonymous between", value1, value2, "anonymous");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnonymousNotBetween(String value1, String value2) {
+            addCriterion("anonymous not between", value1, value2, "anonymous");
+            return (Criteria) this;
+        }
     }
 
     /**

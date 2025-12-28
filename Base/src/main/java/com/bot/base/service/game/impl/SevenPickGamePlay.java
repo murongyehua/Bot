@@ -145,7 +145,7 @@ public class SevenPickGamePlay extends BaseGamePlay {
         }
 
         // 行动牌:各4张
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 8; i++) {
             allCards.add(new Card(CardType.ACTION, "再翻三张", 0));
             allCards.add(new Card(CardType.ACTION, "冻结", 0));
             allCards.add(new Card(CardType.ACTION, "二次机会", 0));
@@ -710,6 +710,13 @@ public class SevenPickGamePlay extends BaseGamePlay {
         } else if ("冻结".equals(card.name)) {
             message.append("🎯 请选择目标（发送序号）：\n");
             List<String> targets = buildTargetList(userId, message);
+            
+            // 检查是否有可选目标
+            if (targets.isEmpty()) {
+                message.append("\n暂无可选目标，『冻结』作废!");
+                return true; // 直接移动到下一个玩家
+            }
+            
             pendingEffectType = PendingEffectType.FREEZE;
             pendingOperatorUserId = userId;
             pendingTargets = targets;
@@ -719,6 +726,13 @@ public class SevenPickGamePlay extends BaseGamePlay {
         } else if ("再翻三张".equals(card.name)) {
             message.append("🎯 请选择目标（发送序号）：\n");
             List<String> targets = buildTargetList(userId, message);
+            
+            // 检查是否有可选目标
+            if (targets.isEmpty()) {
+                message.append("\n暂无可选目标，『再翻三张』作废!");
+                return true; // 直接移动到下一个玩家
+            }
+            
             pendingEffectType = PendingEffectType.RE_DRAW_3;
             pendingOperatorUserId = userId;
             pendingTargets = targets;
@@ -783,10 +797,26 @@ public class SevenPickGamePlay extends BaseGamePlay {
                     }
                     actionMessage.append("请选择使用对象(发序号):\n");
                     List<String> targets = buildTargetList(nextAction.operatorUserId, actionMessage);
-                    pendingTargets = targets;
                     
-                    sendMessageToPlayer(nextAction.operatorUserId, actionMessage.toString());
-                    return ""; // 消息已发送,不需要返回
+                    // 检查是否有可选目标，如果没有则跳过该功能牌
+                    if (targets.isEmpty()) {
+                        // 清除待处理状态
+                        pendingEffectType = PendingEffectType.NONE;
+                        pendingOperatorUserId = null;
+                        pendingTargets.clear();
+                        
+                        // 通知玩家功能牌作废
+                        String cardName = nextAction.type == PendingEffectType.FREEZE ? "冻结" : "再翻三张";
+                        sendMessageToPlayer(nextAction.operatorUserId, 
+                            actionMessage.toString() + "\n暂无可选目标，『" + cardName + "』作废!");
+                        
+                        // 继续检查队列中是否还有其他功能牌
+                        // 递归处理（通过移动到下一个玩家会自动处理队列）
+                    } else {
+                        pendingTargets = targets;
+                        sendMessageToPlayer(nextAction.operatorUserId, actionMessage.toString());
+                        return ""; // 消息已发送,不需要返回
+                    }
                 }
 
                 // 移动到下一个玩家
@@ -860,14 +890,35 @@ public class SevenPickGamePlay extends BaseGamePlay {
                         }
                         actionMessage.append("请选择使用对象(发序号):\n");
                         List<String> targets = buildTargetList(nextAction.operatorUserId, actionMessage);
-                        pendingTargets = targets;
+                        
+                        // 检查是否有可选目标，如果没有则跳过该功能牌
+                        if (targets.isEmpty()) {
+                            // 清除待处理状态
+                            pendingEffectType = PendingEffectType.NONE;
+                            pendingOperatorUserId = null;
+                            pendingTargets.clear();
+                            
+                            // 通知玩家功能牌作废
+                            String cardName = nextAction.type == PendingEffectType.FREEZE ? "冻结" : "再翻三张";
+                            sendMessageToPlayer(nextAction.operatorUserId, 
+                                actionMessage.toString() + "\n暂无可选目标，『" + cardName + "』作废!");
+                            
+                            // 继续检查队列中是否还有其他功能牌
+                            // 递归处理（通过移动到下一个玩家会自动处理队列）
+                        } else {
+                            pendingTargets = targets;
 
-                        // 新的功能牌选择：启动选择超时
-                        scheduleChoiceTimeout();
+                            // 新的功能牌选择：启动选择超时
+                            scheduleChoiceTimeout();
 
-                        sendMessageToPlayer(nextAction.operatorUserId, actionMessage.toString());
-                        return ""; // 消息已发送,不需要返回
+                            sendMessageToPlayer(nextAction.operatorUserId, actionMessage.toString());
+                            return ""; // 消息已发送,不需要返回
+                        }
                     }
+                } else {
+                    // 强制结束时，清空所有待处理的功能牌队列
+                    // 因为玩家已经结束，不能再使用功能牌
+                    pendingActionQueue.clear();
                 }
 
                 // 移动到下一个玩家
@@ -909,14 +960,14 @@ public class SevenPickGamePlay extends BaseGamePlay {
                 String operatorName = getPlayerDisplayName(operatorSnapshot);
                 String targetName = getPlayerDisplayName(targetUserId);
                 sendMessageToPlayer(operatorSnapshot,
-                        "【系统提示】40 秒内未选择目标，已自动为你选择【" + targetName + "】作为『" +
+                        "【系统提示】25 秒内未选择目标，已自动为你选择【" + targetName + "】作为『" +
                                 (effectSnapshot == PendingEffectType.FREEZE ? "冻结" : "再翻三张") + "』目标。");
 
                 // 构造一个“选择第一个目标”的虚拟指令
                 handlePendingEffectChoice(operatorSnapshot, "1");
             } catch (Exception ignored) {
             }
-        }, 40, TimeUnit.SECONDS);
+        }, 25, TimeUnit.SECONDS);
     }
 
     private void cancelChoiceTimeout() {
@@ -1237,7 +1288,7 @@ public class SevenPickGamePlay extends BaseGamePlay {
         message.append("当前总分:").append(totalScore.get(userId)).append("+")
                .append(calculateRoundScore(userId)).append("(全局+本轮)\n");
         message.append("🎯 轮到你啦！发送【翻牌】或【结束】\n");
-        message.append("⏱ 若 40 秒内未操作，系统将自动为你翻牌。\n");
+        message.append("⏱ 若 25 秒内未操作，系统将自动为你翻牌。\n");
 
         // 检查是否有人达到200分
         if (hasPlayerReached200 && !userId.equals(playerReached200)) {
@@ -1270,11 +1321,11 @@ public class SevenPickGamePlay extends BaseGamePlay {
                 if (turnHandled) return;
 
                 // 提示并自动翻牌
-                sendMessageToPlayer(userId, "【系统提示】超过 40 秒未操作，系统已自动为你翻牌。");
+                sendMessageToPlayer(userId, "【系统提示】超过 25 秒未操作，系统已自动为你翻牌。");
                 handleDrawCard(userId);
             } catch (Exception ignored) {
             }
-        }, 40, TimeUnit.SECONDS);
+        }, 25, TimeUnit.SECONDS);
     }
 
     private void cancelTurnTimeout() {

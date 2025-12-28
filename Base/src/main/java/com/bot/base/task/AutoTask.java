@@ -4,6 +4,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.service.WorkManager;
+import com.bot.base.service.impl.BottleMessageServiceImpl;
 import com.bot.common.util.ThreadPoolManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class AutoTask {
                     if (DateUtil.isIn(now, DateUtil.beginOfDay(now), endTime)) {
                         WorkManager.WORK_TOKENS.clear();
                         WorkManager.WAIT_DEAL_DATA_LIST.clear();
+                        BottleMessageServiceImpl.TODAY_ID = null;
                     }
                 }catch (Exception e) {
                     log.error("每日自动任务异常", e);

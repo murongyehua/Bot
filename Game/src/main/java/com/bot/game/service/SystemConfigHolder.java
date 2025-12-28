@@ -89,7 +89,29 @@ public class SystemConfigHolder {
         List<BotGameUserScore> userScoreList = gameUserScoreMapper.selectByExample(new BotGameUserScoreExample());
         SystemConfigCache.userWordMap.clear();
         SystemConfigCache.userWordMap.putAll(userScoreList.stream().filter(x -> StrUtil.isNotEmpty(x.getCurrentWord())).collect(Collectors.toMap(BotGameUserScore::getUserId, BotGameUserScore::getCurrentWord)));
+        SystemConfigCache.userAnonymousName.clear();
+        SystemConfigCache.userAnonymousName.putAll(userScoreList.stream().filter(x -> StrUtil.isNotEmpty(x.getAnonymous())).collect(Collectors.toMap(BotGameUserScore::getUserId, BotGameUserScore::getAnonymous)));
+        this.loadInviteCodes();
+        this.loadAnonymousName();
+    }
 
+    /**
+     * 加载邀请码缓存
+     */
+    public void loadInviteCodes() {
+        List<BotGameUserScore> userScoreList = gameUserScoreMapper.selectByExample(new BotGameUserScoreExample());
+        SystemConfigCache.userInviteCodeMap.clear();
+        SystemConfigCache.userInviteCodeMap.putAll(
+            userScoreList.stream()
+                .filter(x -> StrUtil.isNotEmpty(x.getInviteCode()))
+                .collect(Collectors.toMap(BotGameUserScore::getInviteCode, BotGameUserScore::getUserId))
+        );
+    }
+
+    public void loadAnonymousName() {
+        List<BotGameUserScore> userScoreList = gameUserScoreMapper.selectByExample(new BotGameUserScoreExample());
+        SystemConfigCache.userAnonymousName.clear();
+        SystemConfigCache.userAnonymousName.putAll(userScoreList.stream().filter(x -> StrUtil.isNotEmpty(x.getAnonymous())).collect(Collectors.toMap(BotGameUserScore::getUserId, BotGameUserScore::getAnonymous)));
     }
 
 }

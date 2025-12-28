@@ -82,6 +82,9 @@ public class DistributorServiceImpl implements Distributor {
     @Resource
     private ActivityServiceImpl activityService;
 
+    @Resource
+    private InviteCodeServiceImpl inviteCodeService;
+
     @Value("${help.img.path}")
     private String helpImgPath;
 
@@ -251,6 +254,11 @@ public class DistributorServiceImpl implements Distributor {
         CommonResp userResp = userBoxService.doQueryReturn(reqContent, token, groupId, channel);
         if (userResp != null) {
             return userResp;
+        }
+        // 邀请码服务
+        CommonResp inviteResp = inviteCodeService.doQueryReturn(reqContent, token, groupId, channel);
+        if (inviteResp != null) {
+            return inviteResp;
         }
         // 开通服务
         if (reqContent.startsWith(BaseConsts.SystemManager.TEMP_REG_PREFIX)) {

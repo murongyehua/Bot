@@ -131,7 +131,7 @@ public class newInstructDistributeController {
             }
             String nickName = SendMsgUtil.getGroupNickName(groupId, userId);
             String withoutPexContent = effectMsg;
-            effectMsg = String.format("%s对你说：" + effectMsg, nickName);
+            effectMsg = String.format("%s在群里说：" + effectMsg, nickName);
             CommonResp resp = distributor.doDistributeWithString(effectMsg, userId, groupId, at, at, "wx", withoutPexContent);
             if (resp !=null && ENRespType.IMG.getType().equals(resp.getType()) && StrUtil.isNotEmpty(resp.getMsg())) {
                 SendMsgUtil.sendImg(groupId, resp.getMsg());

@@ -196,6 +196,7 @@ public class DefaultChatServiceImpl implements BaseService {
             }
             return UnicodeUtil.toString(answer.toString());
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             e.printStackTrace();
         }
         return "分析失败，请联系管理员检查。";

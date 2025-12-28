@@ -16,6 +16,7 @@ import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENRegStatus;
 import com.bot.common.enums.ENRegType;
 import com.bot.common.enums.ENRespType;
+import com.bot.common.enums.ENSystemWord;
 import com.bot.common.enums.ENUserGoodType;
 import com.bot.common.enums.ENWordRarity;
 import com.bot.common.util.SendMsgUtil;
@@ -73,6 +74,43 @@ public class UserBoxServiceImpl implements BaseService {
 
     // 用于维护用户等待查看词条详情的状态
     private static final Map<String, List<BotUserWord>> USER_WORD_VIEW_CONTEXT = new HashMap<>();
+    
+    // 用于维护用户词条筛选上下文
+    private static final Map<String, WordFilterContext> USER_WORD_FILTER_CONTEXT = new HashMap<>();
+    
+    /**
+     * 词条筛选上下文
+     */
+    private static class WordFilterContext {
+        String filterType; // "GROUP"词组 / "RARITY"稀有度 / "ALL"全部
+        String filterValue; // 具体的词组名或稀有度值
+        int currentPage; // 当前页码（全部模式使用）
+        
+        WordFilterContext(String filterType, String filterValue, int currentPage) {
+            this.filterType = filterType;
+            this.filterValue = filterValue;
+            this.currentPage = currentPage;
+        }
+    }
+
+    /**
+     * 词组进度信息
+     */
+    private static class GroupProgress {
+        String groupName;
+        int ownedCount;
+        int totalCount;
+        int bonusMerit;
+        boolean isCompleted;
+        
+        GroupProgress(String groupName, int ownedCount, int totalCount, int bonusMerit) {
+            this.groupName = groupName;
+            this.ownedCount = ownedCount;
+            this.totalCount = totalCount;
+            this.bonusMerit = bonusMerit;
+            this.isCompleted = ownedCount >= totalCount;
+        }
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -111,8 +149,15 @@ public class UserBoxServiceImpl implements BaseService {
                 score.setScore(score.getScore() + number);
                 gameUserScoreMapper.updateByPrimaryKey(score);
             }
+            
+            // 圣诞节特殊词条发放（2025年12月25日）
+            String christmasReward = "";
+            if ("2025-12-25".equals(DateUtil.today())) {
+                christmasReward = this.grantChristmasWord(token);
+            }
+            
             String message = this.getRandomMessage();
-            String response = String.format("签到成功，积分+%s\r\n\r\n%s", number, message);
+            String response = String.format("签到成功，积分+%s\r\n\r\n%s%s", number, christmasReward, message);
             SendMsgUtil.sendGroupMsgForGame(groupId, response, token);
             return new CommonResp(null, ENRespType.TEXT.getType());
         }
@@ -374,13 +419,15 @@ public class UserBoxServiceImpl implements BaseService {
             return handleWordLibrary(token);
         }
         // 处理词条查看和佩戴
-        if (USER_WORD_VIEW_CONTEXT.containsKey(token) || USER_WORD_VIEW_CONTEXT.containsKey(token + "_SELECTED")) {
+        if (USER_WORD_VIEW_CONTEXT.containsKey(token) || USER_WORD_VIEW_CONTEXT.containsKey(token + "_SELECTED") 
+                || USER_WORD_FILTER_CONTEXT.containsKey(token)) {
             // 如果用户发送其他指令，清除词条上下文
             if (reqContent.equals("开盲盒") || reqContent.equals("我的词条") 
                     || reqContent.equals("小林魅力排名") || reqContent.equals("词条库")
                     || reqContent.equals("小林积分排名") || reqContent.equals("取消")) {
                 USER_WORD_VIEW_CONTEXT.remove(token);
                 USER_WORD_VIEW_CONTEXT.remove(token + "_SELECTED");
+                USER_WORD_FILTER_CONTEXT.remove(token);
                 // 如果是取消指令，直接返回
                 if (reqContent.equals("取消")) {
                     return new CommonResp("已取消词条操作~", ENRespType.TEXT.getType());
@@ -516,26 +563,26 @@ public class UserBoxServiceImpl implements BaseService {
             int scoreReward = 0;
             boolean isWord = false;
             
-            if (rand < 0.25) {
+            if (rand < 0.20) {
                 // 25% 空
                 boxContent = "空";
-            } else if (rand < 0.45) {
+            } else if (rand < 0.40) {
                 // 20% 1积分
                 boxContent = "1积分";
                 scoreReward = 1;
-            } else if (rand < 0.65) {
+            } else if (rand < 0.60) {
                 // 20% 2积分
                 boxContent = "2积分";
                 scoreReward = 2;
-            } else if (rand < 0.80) {
+            } else if (rand < 0.75) {
                 // 15% 3积分
                 boxContent = "3积分";
                 scoreReward = 3;
-            } else if (rand < 0.90) {
+            } else if (rand < 0.85) {
                 // 10% 5积分
                 boxContent = "5积分";
                 scoreReward = 5;
-            } else if (rand < 0.95) {
+            } else if (rand < 0.90) {
                 // 5% 8积分
                 boxContent = "8积分";
                 scoreReward = 8;
@@ -623,21 +670,21 @@ public class UserBoxServiceImpl implements BaseService {
                 int scoreReward = 0;
                 boolean isWord = false;
                 
-                if (rand < 0.25) {
+                if (rand < 0.20) {
                     boxContent = "空";
-                } else if (rand < 0.45) {
+                } else if (rand < 0.40) {
                     boxContent = "1积分";
                     scoreReward = 1;
-                } else if (rand < 0.65) {
+                } else if (rand < 0.60) {
                     boxContent = "2积分";
                     scoreReward = 2;
-                } else if (rand < 0.80) {
+                } else if (rand < 0.75) {
                     boxContent = "3积分";
                     scoreReward = 3;
-                } else if (rand < 0.90) {
+                } else if (rand < 0.85) {
                     boxContent = "5积分";
                     scoreReward = 5;
-                } else if (rand < 0.95) {
+                } else if (rand < 0.90) {
                     boxContent = "8积分";
                     scoreReward = 8;
                 } else {
@@ -842,12 +889,7 @@ public class UserBoxServiceImpl implements BaseService {
             if (ownedCount > 0) {
                 // 已拥有，返还2积分，不计入次数
                 userScore.setScore(userScore.getScore() + 2);
-                // 记录空盲盒
-                BotUserBlindBox blindBox = new BotUserBlindBox();
-                blindBox.setUserId(userId);
-                blindBox.setBoxContent("词条-" + drawnWord.getWord() + "(已拥有)");
-                blindBox.setFetchDate(DateUtil.today());
-                userBlindBoxMapper.insert(blindBox);
+                // 重复词条不记录盲盒记录，不占用开盲盒次数
                 // 返回重复词条信息
                 return new DrawWordResult(drawnWord.getWord());
             }
@@ -1272,33 +1314,207 @@ public class UserBoxServiceImpl implements BaseService {
             int totalMerit = (scores != null && !scores.isEmpty() && scores.get(0).getAccumulateMerit() != null) 
                     ? scores.get(0).getAccumulateMerit() : 0;
             
-            // 4. 构建消息
-            StringBuilder message = new StringBuilder();
-            message.append("━━━━━━━━━━━━\n");
-            message.append("📚 我的词条收藏 📚\n");
-            message.append("━━━━━━━━━━━━\n\n");
-            message.append(String.format("✨ 总魅力值：%d\n", totalMerit));
-            message.append(String.format("📖 词条数量：%d\n\n", userWords.size()));
+            // 4. 查询词组完成情况
+            Map<String, GroupProgress> groupProgressMap = calculateGroupProgress(userId);
             
-            for (int i = 0; i < sortedWords.size(); i++) {
-                BotUserWord word = sortedWords.get(i);
-                String rarityLabel = ENWordRarity.getLabelByValue(word.getRarity());
-                message.append(String.format("%d. 『%s』 [%s] 魅力+%d\n", 
-                        i + 1, word.getWordContent(), rarityLabel, word.getMerit()));
+            // 5. 根据词条数量决定展示模式
+            if (sortedWords.size() <= 10) {
+                // 词条较少，直接全部展示
+                return buildSimpleWordList(userId, sortedWords, totalMerit, groupProgressMap);
+            } else {
+                // 词条较多，展示分类菜单 + 最近10条
+                return buildAdvancedWordList(userId, sortedWords, totalMerit, groupProgressMap);
             }
-            
-            message.append("\n━━━━━━━━━━━━\n");
-            message.append("💡 回复序号查看详情，回复【取消】退出");
-            
-            // 5. 保存上下文
-            USER_WORD_VIEW_CONTEXT.put(userId, sortedWords);
-            
-            return new CommonResp(message.toString(), ENRespType.TEXT.getType());
             
         } catch (Exception e) {
             log.error("查询我的词条异常", e);
             return new CommonResp("查询失败，请稍后再试~", ENRespType.TEXT.getType());
         }
+    }
+
+    /**
+     * 计算词组完成进度
+     */
+    private Map<String, GroupProgress> calculateGroupProgress(String userId) {
+        Map<String, GroupProgress> progressMap = new HashMap<>();
+        try {
+            // 查询所有词条（按词组分组）
+            BotBaseWordExample wordExample = new BotBaseWordExample();
+            List<BotBaseWord> allWords = baseWordMapper.selectByExample(wordExample);
+            
+            // 查询用户已拥有的词条
+            BotUserWordExample userWordExample = new BotUserWordExample();
+            userWordExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotUserWord> userWords = userWordMapper.selectByExample(userWordExample);
+            Set<Long> ownedWordIds = userWords.stream()
+                    .map(BotUserWord::getWordId)
+                    .collect(Collectors.toSet());
+            
+            // 按词组统计
+            Map<String, List<BotBaseWord>> groupWordsMap = allWords.stream()
+                    .filter(w -> w.getGroupFlag() != null && !w.getGroupFlag().trim().isEmpty())
+                    .collect(Collectors.groupingBy(BotBaseWord::getGroupFlag));
+            
+            for (Map.Entry<String, List<BotBaseWord>> entry : groupWordsMap.entrySet()) {
+                String groupName = entry.getKey();
+                List<BotBaseWord> groupWords = entry.getValue();
+                
+                int ownedCount = (int) groupWords.stream()
+                        .filter(w -> ownedWordIds.contains(w.getId()))
+                        .count();
+                
+                int totalCount = groupWords.size();
+                
+                // 计算奖励（奖励词条分组不参与额外奖励）
+                int bonusMerit = 0;
+                if ("奖励词条".equals(groupName)) {
+                    // 系统赠送词条，固定为+0
+                    bonusMerit = 0;
+                } else if (ownedCount >= totalCount) {
+                    int totalGroupMerit = groupWords.stream()
+                            .mapToInt(BotBaseWord::getMerit)
+                            .sum();
+                    bonusMerit = (int) (totalGroupMerit * 0.05);
+                }
+                
+                progressMap.put(groupName, new GroupProgress(groupName, ownedCount, totalCount, bonusMerit));
+            }
+            
+            // 统计未分组词条
+            long ungroupedCount = userWords.stream()
+                    .filter(uw -> {
+                        BotBaseWord baseWord = allWords.stream()
+                                .filter(bw -> bw.getId().equals(uw.getWordId()))
+                                .findFirst()
+                                .orElse(null);
+                        return baseWord == null || baseWord.getGroupFlag() == null || baseWord.getGroupFlag().trim().isEmpty();
+                    })
+                    .count();
+            
+            if (ungroupedCount > 0) {
+                progressMap.put("未分组", new GroupProgress("未分组", (int)ungroupedCount, (int)ungroupedCount, 0));
+            }
+            
+        } catch (Exception e) {
+            log.error("计算词组进度异常", e);
+        }
+        return progressMap;
+    }
+    
+    /**
+     * 构建简单词条列表（词条<=10时）
+     */
+    private CommonResp buildSimpleWordList(String userId, List<BotUserWord> sortedWords, 
+                                          int totalMerit, Map<String, GroupProgress> groupProgressMap) {
+        StringBuilder message = new StringBuilder();
+        message.append("━━━━━━━━━━━━\n");
+        message.append("📚 我的词条收藏 📚\n");
+        message.append("━━━━━━━━━━━━\n\n");
+        message.append(String.format("✨ 总魅力值：%d\n", totalMerit));
+        message.append(String.format("📖 词条数量：%d\n\n", sortedWords.size()));
+        
+        for (int i = 0; i < sortedWords.size(); i++) {
+            BotUserWord word = sortedWords.get(i);
+            String rarityLabel = ENWordRarity.getLabelByValue(word.getRarity());
+            message.append(String.format("%d. 『%s』 [%s] 魅力+%d\n", 
+                    i + 1, word.getWordContent(), rarityLabel, word.getMerit()));
+        }
+        
+        message.append("\n━━━━━━━━━━━━\n");
+        message.append("💡 回复【序号】查看详情\n");
+        message.append("💡 回复【取消】退出");
+        
+        // 保存上下文
+        USER_WORD_VIEW_CONTEXT.put(userId, sortedWords);
+        
+        return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+    }
+    
+    /**
+     * 构建高级词条列表（词条>10时）
+     */
+    private CommonResp buildAdvancedWordList(String userId, List<BotUserWord> sortedWords,
+                                            int totalMerit, Map<String, GroupProgress> groupProgressMap) {
+        StringBuilder message = new StringBuilder();
+        message.append("━━━━━━━━━━━━\n");
+        message.append("📚 我的词条收藏 📚\n");
+        message.append("━━━━━━━━━━━━\n\n");
+        message.append(String.format("✨ 总魅力值：%d\n", totalMerit));
+        message.append(String.format("📖 词条总数：%d\n\n", sortedWords.size()));
+        
+        // 显示词组收集进度
+        if (!groupProgressMap.isEmpty()) {
+            message.append("【词组收集进度】\n");
+            // 按完成度排序（未完成的在前，已完成的在后）
+            List<GroupProgress> sortedProgress = groupProgressMap.values().stream()
+                    .sorted((a, b) -> {
+                        if (a.isCompleted != b.isCompleted) {
+                            return a.isCompleted ? 1 : -1;
+                        }
+                        return b.ownedCount - a.ownedCount;
+                    })
+                    .collect(Collectors.toList());
+            
+            for (GroupProgress progress : sortedProgress) {
+                if (progress.groupName.equals("未分组")) {
+                    message.append(String.format("🎁 %s [%d条]\n", progress.groupName, progress.ownedCount));
+                } else if (progress.isCompleted) {
+                    message.append(String.format("🎁 %s [%d/%d] ✅ +%d\n", 
+                            progress.groupName, progress.ownedCount, progress.totalCount, progress.bonusMerit));
+                } else {
+                    message.append(String.format("🎁 %s [%d/%d] ⏳\n", 
+                            progress.groupName, progress.ownedCount, progress.totalCount));
+                }
+            }
+            message.append("\n");
+        }
+        
+        // 显示稀有度分类
+        Map<String, Long> rarityCount = sortedWords.stream()
+                .collect(Collectors.groupingBy(BotUserWord::getRarity, Collectors.counting()));
+        
+        message.append("【快捷筛选】\n");
+        message.append(String.format("🔸 传说(%d)  🔸 史诗(%d)\n", 
+                rarityCount.getOrDefault("4", 0L).intValue(),
+                rarityCount.getOrDefault("3", 0L).intValue()));
+        message.append(String.format("🔸 稀有(%d)  🔸 普通(%d)\n\n", 
+                rarityCount.getOrDefault("2", 0L).intValue(),
+                rarityCount.getOrDefault("1", 0L).intValue()));
+        
+        // 显示最近获得的10条
+        message.append("【最近获得】\n");
+        // 按获得时间排序，取最新10条
+        List<BotUserWord> recentWords = sortedWords.stream()
+                .sorted((a, b) -> b.getFetchDate().compareTo(a.getFetchDate()))
+                .limit(10)
+                .collect(Collectors.toList());
+        
+        for (int i = 0; i < recentWords.size(); i++) {
+            BotUserWord word = recentWords.get(i);
+            String rarityLabel = ENWordRarity.getLabelByValue(word.getRarity());
+            
+            // 查询词组信息
+            BotBaseWord baseWord = baseWordMapper.selectByPrimaryKey(word.getWordId());
+            String groupName = (baseWord != null && baseWord.getGroupFlag() != null && !baseWord.getGroupFlag().trim().isEmpty()) 
+                    ? baseWord.getGroupFlag() : "未分组";
+            
+            message.append(String.format("%d. 『%s』[%s·%s] +%d\n", 
+                    i + 1, word.getWordContent(), rarityLabel, groupName, word.getMerit()));
+        }
+        
+        message.append("\n━━━━━━━━━━━━\n");
+        message.append("💡 回复【序号】查看详情\n");
+        message.append("💡 回复【词组名】查看词组词条\n");
+        message.append("💡 回复【传说/史诗/稀有/普通】筛选\n");
+        message.append("💡 回复【全部】查看所有(分页)\n");
+        message.append("💡 回复【返回】返回主列表\n");
+        message.append("💡 回复【取消】退出");
+        
+        // 保存上下文
+        USER_WORD_VIEW_CONTEXT.put(userId, recentWords);
+        USER_WORD_FILTER_CONTEXT.put(userId, new WordFilterContext("RECENT", null, 1));
+        
+        return new CommonResp(message.toString(), ENRespType.TEXT.getType());
     }
 
     /**
@@ -1638,6 +1854,60 @@ public class UserBoxServiceImpl implements BaseService {
         } catch (Exception e) {
             log.error("解析时间异常", e);
             return "(永久)";
+        }
+    }
+    
+    /**
+     * 圣诞节词条发放（2025年12月25日签到获得“金勾拜”词条）
+     * @param userId 用户ID
+     * @return 奖励提示文本
+     */
+    private String grantChristmasWord(String userId) {
+        try {
+            // 1. 检查用户是否已经拥有该词条
+            BotUserWordExample checkExample = new BotUserWordExample();
+            checkExample.createCriteria()
+                    .andUserIdEqualTo(userId)
+                    .andWordIdEqualTo(ENSystemWord.CHRISTMAS.getId());
+            int existCount = userWordMapper.countByExample(checkExample);
+            
+            if (existCount > 0) {
+                // 已经拥有，不重复发放
+                return "";
+            }
+            
+            // 2. 发放词条
+            BotUserWord userWord = new BotUserWord();
+            userWord.setUserId(userId);
+            userWord.setWordId(ENSystemWord.CHRISTMAS.getId());
+            userWord.setWordContent(ENSystemWord.CHRISTMAS.getWord());
+            userWord.setRarity(ENSystemWord.CHRISTMAS.getRariy());
+            userWord.setMerit(ENSystemWord.CHRISTMAS.getMerit());
+            userWord.setFetchDate(DateUtil.now());
+            userWordMapper.insert(userWord);
+            
+            // 3. 增加用户魅力值
+            BotGameUserScoreExample scoreExample = new BotGameUserScoreExample();
+            scoreExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotGameUserScore> scores = gameUserScoreMapper.selectByExample(scoreExample);
+            
+            if (!CollectionUtil.isEmpty(scores)) {
+                BotGameUserScore userScore = scores.get(0);
+                int currentMerit = userScore.getAccumulateMerit() != null ? userScore.getAccumulateMerit() : 0;
+                userScore.setAccumulateMerit(currentMerit + ENSystemWord.CHRISTMAS.getMerit());
+                gameUserScoreMapper.updateByPrimaryKey(userScore);
+            }
+            
+            // 4. 返回奖励提示
+            String rarityLabel = ENWordRarity.getLabelByValue(ENSystemWord.CHRISTMAS.getRariy());
+            return String.format("🎄圣诞快乐！获得特殊词条『%s』[%s] 魅力+%d\r\n\r\n",
+                    ENSystemWord.CHRISTMAS.getWord(),
+                    rarityLabel,
+                    ENSystemWord.CHRISTMAS.getMerit());
+                    
+        } catch (Exception e) {
+            log.error("发放圣诞词条异常", e);
+            return "";
         }
     }
 

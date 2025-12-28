@@ -115,11 +115,21 @@ public class SystemConfigCache {
     /**
      * 词条提示词
      */
-    public static final Map<String, String> wordPrompt = new HashMap<>();;
+    public static final Map<String, String> wordPrompt = new HashMap<>();
+
+    /**
+     * 用户匿名名称
+     */
+    public static final Map<String, String> userAnonymousName = new HashMap<>();
 
     /**
      * 当前开启的抽奖活动奖品
      */
     public static final CopyOnWriteArrayList<ActivityAwardDTO> activityAwardList = new CopyOnWriteArrayList<>();
+
+    /**
+     * 用户邀请码映射（邀请码 -> 用户ID）
+     */
+    public static final Map<String, String> userInviteCodeMap = new HashMap<>();
 
 }
