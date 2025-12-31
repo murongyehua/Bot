@@ -56,6 +56,8 @@ public class SystemConfigCache {
 
     public static final String ACCEPT_URL = "/acceptUrl";
 
+    public static final String SEND_APPLET_URL = "/sendApplet";
+
     public static final String OWNER_ID = "wxid_gt9s4k14zz7l22";
 
     /**

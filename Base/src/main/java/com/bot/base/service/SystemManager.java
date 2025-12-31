@@ -55,6 +55,11 @@ public class SystemManager {
      */
     public static volatile String noticeModel = null;
 
+    /**
+     * 小程序模式
+     */
+    public static volatile String appletModel = null;
+
     @Value("${system.manager.password}")
     private String managerPassword;
 
@@ -274,6 +279,10 @@ public class SystemManager {
                 }
             }
             return BaseConsts.SystemManager.SUCCESS;
+        }
+        if (reqContent.startsWith("小程序")) {
+            appletModel = "1";
+            return "请发送小程序消息";
         }
         userTempInfo.setOutTime(DateUtil.offset(new Date(), DateField.MINUTE, 1));
         return BaseConsts.SystemManager.UN_KNOW_MANAGER_CODE;

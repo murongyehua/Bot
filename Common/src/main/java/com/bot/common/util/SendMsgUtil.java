@@ -9,6 +9,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.bot.common.config.SystemConfigCache;
 import com.bot.common.dto.*;
+import com.bot.common.dto.qqsender.SendAppletDTO;
 import lombok.extern.slf4j.Slf4j;
 import ws.schild.jave.MultimediaInfo;
 import ws.schild.jave.MultimediaObject;
@@ -286,6 +287,21 @@ public class SendMsgUtil {
             System.out.println("发送消息失败");
         }
         return "";
+    }
+
+    public static void sendApplet(String content, String user) {
+        try {
+            SendAppletDTO appletDTO = new SendAppletDTO();
+            appletDTO.setWId(SystemConfigCache.wId);
+            appletDTO.setWcId(user);
+            appletDTO.setContent(content);
+            appletDTO.setImgUrl("http://47.92.127.30/file/appletPic.jpg");
+            String response = HttpSenderUtil.postJsonData(SystemConfigCache.baseUrl + SystemConfigCache.SEND_APPLET_URL, JSONUtil.toJsonStr(appletDTO));
+            System.out.println(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送小程序失败");
+        }
     }
 
 

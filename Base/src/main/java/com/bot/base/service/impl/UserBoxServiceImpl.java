@@ -156,8 +156,15 @@ public class UserBoxServiceImpl implements BaseService {
                 christmasReward = this.grantChristmasWord(token);
             }
             
+            // 跨年特殊词条发放（2025年12月31日或2026年1月1日）
+            String newYearReward = "";
+            String today = DateUtil.today();
+            if ("2025-12-31".equals(today) || "2026-01-01".equals(today)) {
+                newYearReward = this.grantNewYearWord(token);
+            }
+            
             String message = this.getRandomMessage();
-            String response = String.format("签到成功，积分+%s\r\n\r\n%s%s", number, christmasReward, message);
+            String response = String.format("签到成功，积分+%s\r\n\r\n%s%s%s", number, christmasReward, newYearReward, message);
             SendMsgUtil.sendGroupMsgForGame(groupId, response, token);
             return new CommonResp(null, ENRespType.TEXT.getType());
         }
@@ -655,6 +662,8 @@ public class UserBoxServiceImpl implements BaseService {
             Map<String, Integer> resultMap = new HashMap<>();
             List<BotBaseWord> drawnWords = new ArrayList<>();
             List<String> duplicateWords = new ArrayList<>(); // 记录重复的词条名称
+            List<String> ouhuangWords = new ArrayList<>(); // 记录触发欧皇效果的词条
+            List<String> ouhuangFailedWords = new ArrayList<>(); // 记录欧皇效果失败的词条
             int refundCount = 0; // 返还次数统计
             int totalCost = count * 2;
             int originalScore = userScore.getScore();
@@ -718,10 +727,18 @@ public class UserBoxServiceImpl implements BaseService {
                     DrawWordResult wordResult = drawWordFromPoolWithInfo(userId, userScore);
                     if (wordResult.word != null) {
                         drawnWords.add(wordResult.word);
+                        // 记录是否触发了欧皇效果
+                        if (wordResult.isOuhuangTriggered) {
+                            ouhuangWords.add(wordResult.word.getWord());
+                        }
                     } else if (wordResult.isDuplicate) {
                         // 重复词条，记录名称并统计返还次数
                         duplicateWords.add(wordResult.duplicateWordName);
                         refundCount++;
+                        // 检查是否是欧皇效果失败（该稀有度所有词条都已拥有）
+                        if (wordResult.isOuhuangTriggered) {
+                            ouhuangFailedWords.add(wordResult.duplicateWordName);
+                        }
                     }
                 }
             }
@@ -758,6 +775,12 @@ public class UserBoxServiceImpl implements BaseService {
                             ? word.getGroupFlag() : "无分组";
                     
                     message.append("━━━━━━━━━━━━\n");
+                    
+                    // 检查是否触发了欧皇效果
+                    if (ouhuangWords.contains(word.getWord())) {
+                        message.append("🌟【欧皇】效果触发！\n");
+                    }
+                    
                     message.append(String.format("『%s』\n", word.getWord()));
                     message.append(String.format("✨ 稀有度：%s\n", rarityLabel));
                     message.append(String.format("💫 魅力值：+%d\n", word.getMerit()));
@@ -776,10 +799,22 @@ public class UserBoxServiceImpl implements BaseService {
                 }
                 // 展示重复词条
                 for (Map.Entry<String, Integer> entry : duplicateCount.entrySet()) {
-                    if (entry.getValue() > 1) {
-                        message.append(String.format("『%s』 × %d次\n", entry.getKey(), entry.getValue()));
+                    String wordName = entry.getKey();
+                    int wordCount = entry.getValue();
+                    
+                    // 检查是否是欧皇效果失败
+                    if (ouhuangFailedWords.contains(wordName)) {
+                        if (wordCount > 1) {
+                            message.append(String.format("『%s』 × %d次 🌟欧皇无法替换\n", wordName, wordCount));
+                        } else {
+                            message.append(String.format("『%s』 🌟欧皇无法替换\n", wordName));
+                        }
                     } else {
-                        message.append(String.format("『%s』\n", entry.getKey()));
+                        if (wordCount > 1) {
+                            message.append(String.format("『%s』 × %d次\n", wordName, wordCount));
+                        } else {
+                            message.append(String.format("『%s』\n", wordName));
+                        }
                     }
                 }
                 message.append(String.format("已返还开盲盒次数：%d次（返还积分：%d）\n", refundCount, refundCount * 2));
@@ -806,16 +841,25 @@ public class UserBoxServiceImpl implements BaseService {
         BotBaseWord word; // 抽到的新词条
         boolean isDuplicate; // 是否为重复词条
         String duplicateWordName; // 重复词条的名称
+        boolean isOuhuangTriggered; // 是否触发了欧皇效果
         
         DrawWordResult(BotBaseWord word) {
             this.word = word;
             this.isDuplicate = false;
+            this.isOuhuangTriggered = false;
         }
         
         DrawWordResult(String duplicateWordName) {
             this.word = null;
             this.isDuplicate = true;
             this.duplicateWordName = duplicateWordName;
+            this.isOuhuangTriggered = false;
+        }
+        
+        DrawWordResult(BotBaseWord word, boolean isOuhuangTriggered) {
+            this.word = word;
+            this.isDuplicate = false;
+            this.isOuhuangTriggered = isOuhuangTriggered;
         }
     }
 
@@ -887,11 +931,33 @@ public class UserBoxServiceImpl implements BaseService {
             int ownedCount = userWordMapper.countByExample(userWordExample);
             
             if (ownedCount > 0) {
-                // 已拥有，返还2积分，不计入次数
-                userScore.setScore(userScore.getScore() + 2);
-                // 重复词条不记录盲盒记录，不占用开盲盒次数
-                // 返回重复词条信息
-                return new DrawWordResult(drawnWord.getWord());
+                // 检查是否佩戴了「欧皇」词条
+                String currentWord = SystemConfigCache.userWordMap.get(userId);
+                boolean isOuhuangActive = "欧皇".equals(currentWord);
+                
+                if (isOuhuangActive) {
+                    // 触发欧皇效果：尝试替换为同等稀有度未拥有的词条
+                    BotBaseWord replacedWord = tryReplaceWithSameRarity(userId, drawnWord.getRarity(), rarityWords, availableWords);
+                    
+                    if (replacedWord != null) {
+                        // 成功替换，保存新词条
+                        drawnWord = replacedWord;
+                        ownedCount = 0; // 重置拥有标记，继续执行新词条保存逻辑
+                    } else {
+                        // 该稀有度所有词条都已拥有，返还2积分，不计入次数
+                        userScore.setScore(userScore.getScore() + 2);
+                        // 返回重复词条信息（带欧皇触发标记）
+                        DrawWordResult result = new DrawWordResult(drawnWord.getWord());
+                        result.isOuhuangTriggered = true;
+                        return result;
+                    }
+                } else {
+                    // 未佩戴欧皇，正常返还2积分，不计入次数
+                    userScore.setScore(userScore.getScore() + 2);
+                    // 重复词条不记录盲盒记录，不占用开盲盒次数
+                    // 返回重复词条信息
+                    return new DrawWordResult(drawnWord.getWord());
+                }
             }
             
             // 6. 新词条，保存到用户词条表
@@ -924,7 +990,11 @@ public class UserBoxServiceImpl implements BaseService {
             blindBox.setFetchDate(DateUtil.today());
             userBlindBoxMapper.insert(blindBox);
             
-            return new DrawWordResult(drawnWord);
+            // 检查是否触发了欧皇效果
+            String currentWord = SystemConfigCache.userWordMap.get(userId);
+            boolean wasOuhuangTriggered = "欧皇".equals(currentWord) && ownedCount == 0;
+            
+            return new DrawWordResult(drawnWord, wasOuhuangTriggered);
             
         } catch (Exception e) {
             log.error("抽取词条异常", e);
@@ -1103,21 +1173,54 @@ public class UserBoxServiceImpl implements BaseService {
             int ownedCount = userWordMapper.countByExample(userWordExample);
             
             if (ownedCount > 0) {
-                // 已拥有，返还2积分，不计入次数
-                userScore.setScore(userScore.getScore() + 2);
-                gameUserScoreMapper.updateByPrimaryKey(userScore);
+                // 检查是否佩戴了「欧皇」词条
+                String currentWord = SystemConfigCache.userWordMap.get(userId);
+                boolean isOuhuangActive = "欧皇".equals(currentWord);
                 
-                String rarityLabel = ENWordRarity.getLabelByValue(drawnWord.getRarity());
-                StringBuilder message = new StringBuilder();
-                message.append("━━━━━━━━━━━━\n");
-                message.append("✨ 开启盲盒 ✨\n");
-                message.append("━━━━━━━━━━━━\n\n");
-                message.append(String.format("🎁 抽到词条：『%s』\n", drawnWord.getWord()));
-                message.append(String.format("✨ 稀有度：%s\n\n", rarityLabel));
-                message.append("⚠️ 该词条已拥有，已返还2积分\n");
-                message.append(String.format("💰 当前积分：%d", userScore.getScore()));
-                
-                return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+                if (isOuhuangActive) {
+                    // 触发欧皇效果：尝试替换为同等稀有度未拥有的词条
+                    BotBaseWord replacedWord = tryReplaceWithSameRarity(userId, drawnWord.getRarity(), rarityWords, availableWords);
+                    
+                    if (replacedWord != null) {
+                        // 成功替换，保存新词条
+                        drawnWord = replacedWord;
+                        ownedCount = 0; // 重置拥有标记，继续执行新词条保存逻辑
+                    } else {
+                        // 该稀有度所有词条都已拥有，返还2积分
+                        userScore.setScore(userScore.getScore() + 2);
+                        gameUserScoreMapper.updateByPrimaryKey(userScore);
+                        
+                        String rarityLabel = ENWordRarity.getLabelByValue(drawnWord.getRarity());
+                        StringBuilder message = new StringBuilder();
+                        message.append("━━━━━━━━━━━━\n");
+                        message.append("✨ 开启盲盒 ✨\n");
+                        message.append("━━━━━━━━━━━━\n\n");
+                        message.append("🌟【欧皇】效果触发！\n\n");
+                        message.append(String.format("🎁 抽到词条：『%s』\n", drawnWord.getWord()));
+                        message.append(String.format("✨ 稀有度：%s\n\n", rarityLabel));
+                        message.append("⚠️ 该稀有度所有词条均已拥有\n");
+                        message.append("   无法替换，已返还2积分\n");
+                        message.append(String.format("💰 当前积分：%d", userScore.getScore()));
+                        
+                        return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+                    }
+                } else {
+                    // 未佩戴欧皇，正常返还2积分
+                    userScore.setScore(userScore.getScore() + 2);
+                    gameUserScoreMapper.updateByPrimaryKey(userScore);
+                    
+                    String rarityLabel = ENWordRarity.getLabelByValue(drawnWord.getRarity());
+                    StringBuilder message = new StringBuilder();
+                    message.append("━━━━━━━━━━━━\n");
+                    message.append("✨ 开启盲盒 ✨\n");
+                    message.append("━━━━━━━━━━━━\n\n");
+                    message.append(String.format("🎁 抽到词条：『%s』\n", drawnWord.getWord()));
+                    message.append(String.format("✨ 稀有度：%s\n\n", rarityLabel));
+                    message.append("⚠️ 该词条已拥有，已返还2积分\n");
+                    message.append(String.format("💰 当前积分：%d", userScore.getScore()));
+                    
+                    return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+                }
             }
             
             // 6. 新词条，保存到用户词条表
@@ -1158,10 +1261,20 @@ public class UserBoxServiceImpl implements BaseService {
             String groupInfo = (drawnWord.getGroupFlag() != null && !drawnWord.getGroupFlag().trim().isEmpty()) 
                     ? drawnWord.getGroupFlag() : "无分组";
             
+            // 检查是否触发了欧皇效果（通过检查ownedCount是否从1变回了0）
+            String currentWord = SystemConfigCache.userWordMap.get(userId);
+            boolean wasOuhuangTriggered = "欧皇".equals(currentWord) && ownedCount == 0;
+            
             StringBuilder message = new StringBuilder();
             message.append("━━━━━━━━━━━━\n");
             message.append("✨ 开启盲盒 ✨\n");
             message.append("━━━━━━━━━━━━\n\n");
+            
+            if (wasOuhuangTriggered) {
+                message.append("🌟【欧皇】效果触发！\n");
+                message.append("   重复词条已替换为同等稀有度新词条\n\n");
+            }
+            
             message.append(String.format("💸 消耗积分：2\n\n"));
             message.append(String.format("🎊 恭喜获得词条：『%s』\n\n", drawnWord.getWord()));
             message.append(String.format("✨ 稀有度：%s\n", rarityLabel));
@@ -1237,6 +1350,46 @@ public class UserBoxServiceImpl implements BaseService {
         
         // 兜底返回最后一个
         return words.get(words.size() - 1);
+    }
+
+    /**
+     * 尝试替换为同等稀有度未拥有的词条（欧皇效果）
+     * @param userId 用户ID
+     * @param rarity 稀有度
+     * @param rarityWords 当前稀有度的词条列表
+     * @param availableWords 所有可用词条列表
+     * @return 替换后的词条，如果没有可替换的返回null
+     */
+    private BotBaseWord tryReplaceWithSameRarity(String userId, String rarity, 
+                                                   List<BotBaseWord> rarityWords, 
+                                                   List<BotBaseWord> availableWords) {
+        try {
+            // 1. 查询用户已拥有的词条ID
+            BotUserWordExample userWordExample = new BotUserWordExample();
+            userWordExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotUserWord> userWords = userWordMapper.selectByExample(userWordExample);
+            Set<Long> ownedWordIds = userWords.stream()
+                    .map(BotUserWord::getWordId)
+                    .collect(Collectors.toSet());
+            
+            // 2. 筛选同等稀有度且未拥有的词条
+            List<BotBaseWord> unownedRarityWords = availableWords.stream()
+                    .filter(w -> w.getRarity().equals(rarity))
+                    .filter(w -> !ownedWordIds.contains(w.getId()))
+                    .collect(Collectors.toList());
+            
+            if (CollectionUtil.isEmpty(unownedRarityWords)) {
+                // 该稀有度所有词条都已拥有
+                return null;
+            }
+            
+            // 3. 从未拥有的词条中按概率抽取一个
+            return drawWordByProbability(unownedRarityWords);
+            
+        } catch (Exception e) {
+            log.error("欧皇效果替换词条异常", e);
+            return null;
+        }
     }
 
     /**
@@ -1858,7 +2011,7 @@ public class UserBoxServiceImpl implements BaseService {
     }
     
     /**
-     * 圣诞节词条发放（2025年12月25日签到获得“金勾拜”词条）
+     * 圣诞节词条发放（2025年12月25日签到获得"金勾拜"词条）
      * @param userId 用户ID
      * @return 奖励提示文本
      */
@@ -1870,12 +2023,12 @@ public class UserBoxServiceImpl implements BaseService {
                     .andUserIdEqualTo(userId)
                     .andWordIdEqualTo(ENSystemWord.CHRISTMAS.getId());
             int existCount = userWordMapper.countByExample(checkExample);
-            
+                
             if (existCount > 0) {
                 // 已经拥有，不重复发放
                 return "";
             }
-            
+                
             // 2. 发放词条
             BotUserWord userWord = new BotUserWord();
             userWord.setUserId(userId);
@@ -1885,28 +2038,82 @@ public class UserBoxServiceImpl implements BaseService {
             userWord.setMerit(ENSystemWord.CHRISTMAS.getMerit());
             userWord.setFetchDate(DateUtil.now());
             userWordMapper.insert(userWord);
-            
+                
             // 3. 增加用户魅力值
             BotGameUserScoreExample scoreExample = new BotGameUserScoreExample();
             scoreExample.createCriteria().andUserIdEqualTo(userId);
             List<BotGameUserScore> scores = gameUserScoreMapper.selectByExample(scoreExample);
-            
+                
             if (!CollectionUtil.isEmpty(scores)) {
                 BotGameUserScore userScore = scores.get(0);
                 int currentMerit = userScore.getAccumulateMerit() != null ? userScore.getAccumulateMerit() : 0;
                 userScore.setAccumulateMerit(currentMerit + ENSystemWord.CHRISTMAS.getMerit());
                 gameUserScoreMapper.updateByPrimaryKey(userScore);
             }
-            
+                
             // 4. 返回奖励提示
             String rarityLabel = ENWordRarity.getLabelByValue(ENSystemWord.CHRISTMAS.getRariy());
             return String.format("🎄圣诞快乐！获得特殊词条『%s』[%s] 魅力+%d\r\n\r\n",
                     ENSystemWord.CHRISTMAS.getWord(),
                     rarityLabel,
                     ENSystemWord.CHRISTMAS.getMerit());
-                    
+                        
         } catch (Exception e) {
             log.error("发放圣诞词条异常", e);
+            return "";
+        }
+    }
+    
+    /**
+     * 跨年词条发放（2025年12月31日至2026年1月1日签到获得"夜未央"词条）
+     * @param userId 用户ID
+     * @return 奖励提示文本
+     */
+    private String grantNewYearWord(String userId) {
+        try {
+            // 1. 检查用户是否已经拥有该词条
+            BotUserWordExample checkExample = new BotUserWordExample();
+            checkExample.createCriteria()
+                    .andUserIdEqualTo(userId)
+                    .andWordIdEqualTo(ENSystemWord.NEW_YEAR.getId());
+            int existCount = userWordMapper.countByExample(checkExample);
+                
+            if (existCount > 0) {
+                // 已经拥有，不重复发放
+                return "";
+            }
+                
+            // 2. 发放词条
+            BotUserWord userWord = new BotUserWord();
+            userWord.setUserId(userId);
+            userWord.setWordId(ENSystemWord.NEW_YEAR.getId());
+            userWord.setWordContent(ENSystemWord.NEW_YEAR.getWord());
+            userWord.setRarity(ENSystemWord.NEW_YEAR.getRariy());
+            userWord.setMerit(ENSystemWord.NEW_YEAR.getMerit());
+            userWord.setFetchDate(DateUtil.now());
+            userWordMapper.insert(userWord);
+                
+            // 3. 增加用户魅力值
+            BotGameUserScoreExample scoreExample = new BotGameUserScoreExample();
+            scoreExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotGameUserScore> scores = gameUserScoreMapper.selectByExample(scoreExample);
+                
+            if (!CollectionUtil.isEmpty(scores)) {
+                BotGameUserScore userScore = scores.get(0);
+                int currentMerit = userScore.getAccumulateMerit() != null ? userScore.getAccumulateMerit() : 0;
+                userScore.setAccumulateMerit(currentMerit + ENSystemWord.NEW_YEAR.getMerit());
+                gameUserScoreMapper.updateByPrimaryKey(userScore);
+            }
+                
+            // 4. 返回奖励提示
+            String rarityLabel = ENWordRarity.getLabelByValue(ENSystemWord.NEW_YEAR.getRariy());
+            return String.format("🎆跨年快乐！获得特殊词条『%s』[%s] 魅力+%d\r\n\r\n",
+                    ENSystemWord.NEW_YEAR.getWord(),
+                    rarityLabel,
+                    ENSystemWord.NEW_YEAR.getMerit());
+                        
+        } catch (Exception e) {
+            log.error("发放跨年词条异常", e);
             return "";
         }
     }

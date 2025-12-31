@@ -13,6 +13,7 @@ import com.bot.base.dto.jx.ShowHistoryResp;
 import com.bot.base.service.Distributor;
 import com.bot.base.service.EmojiDistributor;
 import com.bot.base.service.PictureDistributor;
+import com.bot.base.service.SystemManager;
 import com.bot.base.service.impl.JXShowHistoryManager;
 import com.bot.base.service.impl.QQDealDistributor;
 import com.bot.common.config.SystemConfigCache;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/newInstruct")
@@ -84,7 +87,8 @@ public class newInstructDistributeController {
                 && ObjectUtil.notEqual("85009", messageType)
                 && ObjectUtil.notEqual("60006", messageType)
                 && ObjectUtil.notEqual("80006", messageType)
-                && ObjectUtil.notEqual("60022", messageType)) {
+                && ObjectUtil.notEqual("60022", messageType)
+                && ObjectUtil.notEqual("60010", messageType)) {
             return;
         }
         if (msgIdList.contains(msgId)) {
@@ -205,6 +209,27 @@ public class newInstructDistributeController {
             if (content != null) {
                 SendMsgUtil.sendGroupMsg(groupId, content, toUser);
             }
+        }
+
+        // 私聊小程序消息
+        if ("60010".equals(messageType)) {
+            String content = (String) data.get("content");
+            int startIndex = content.indexOf("<appmsg");
+            int endIndex = content.indexOf("</appmsg>");
+            if (startIndex != -1 && endIndex != -1) {
+                String appmsgContent = content.substring(startIndex, endIndex + 8); // +8 包含 "</appmsg>"
+                if ("1".equals(SystemManager.appletModel)) {
+                    appmsgContent = appmsgContent.replace("如寄", "小林");
+                    sendApplet2AllUser(appmsgContent);
+                    SystemManager.appletModel = null;
+                }
+            }
+        }
+    }
+
+    private void sendApplet2AllUser(String content) {
+        for (String token : SystemConfigCache.userDateMap.keySet()) {
+            SendMsgUtil.sendApplet(content, token);
         }
     }
 

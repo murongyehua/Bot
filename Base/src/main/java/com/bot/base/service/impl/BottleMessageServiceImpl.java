@@ -169,19 +169,30 @@ public class BottleMessageServiceImpl implements BaseService {
             try {
                 log.info("====>" + nameApiKey);
                 String response = HttpSenderUtil.postJsonDataWithToken(defaultUrl,
-                        JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), "生成", "blocking", null, IdUtil.fastUUID())),
+                        JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), "生成", "blocking", TODAY_ID, IdUtil.fastUUID())),
                         nameApiKey);
                 log.info("=====>" + response);
                 StringBuilder answer = new StringBuilder();
                 JSONObject json = JSONUtil.parseObj(response);
-                answer = new StringBuilder(json.getStr("answer"));
+                String answerStr = json.getStr("answer");
+                if (StrUtil.isEmpty(answerStr)) {
+                    TODAY_ID = null;
+                    continue;
+                }
+                answer = new StringBuilder(answerStr);
+                String conversationId = json.getStr("conversation_id");
+                if (StrUtil.isEmpty(conversationId)) {
+                    TODAY_ID = null;
+                }else {
+                    TODAY_ID = conversationId;
+                }
                 String result = UnicodeUtil.toString(answer.toString());
                 // 检查是否重复
                 if (!SystemConfigCache.userAnonymousName.containsValue(result)) {
                     return result;
                 }
             } catch (Exception e) {
-                log.error("AI生成邀请码异常", e);
+                log.error("AI获取昵称失败", e);
             }
         }
 
@@ -193,8 +204,9 @@ public class BottleMessageServiceImpl implements BaseService {
     private String review(String content) {
         try {
             String response = HttpSenderUtil.postJsonDataWithToken(defaultUrl,
-                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), content, "streaming", TODAY_ID, IdUtil.fastUUID())),
+                    JSONUtil.toJsonStr(new DeepChatReq(new JSONObject(), content, "streaming", null, IdUtil.fastUUID())),
                     apiKey);
+            log.info("AI审核返回消息=====>" + response);
             StringBuilder answer = new StringBuilder();
             String[] datas = response.split("data: ");
             for (String data : datas) {
@@ -205,9 +217,6 @@ public class BottleMessageServiceImpl implements BaseService {
                         case "agent_message":
                             String answerPart = dataObject.getStr("answer");
                             answer.append(answerPart);
-                            break;
-                        case "message_end":
-                            TODAY_ID = dataObject.getStr("conversation_id");
                             break;
                     }
                 }
