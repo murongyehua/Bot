@@ -22,6 +22,7 @@ import com.bot.common.enums.ENWordRarity;
 import com.bot.common.util.SendMsgUtil;
 import com.bot.game.dao.entity.*;
 import com.bot.game.dao.mapper.*;
+import com.bot.game.enums.ENWordType;
 import com.bot.game.service.SystemConfigHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,13 +99,15 @@ public class UserBoxServiceImpl implements BaseService {
      */
     private static class GroupProgress {
         String groupName;
+        String groupType;  // 词组类型
         int ownedCount;
         int totalCount;
         int bonusMerit;
         boolean isCompleted;
         
-        GroupProgress(String groupName, int ownedCount, int totalCount, int bonusMerit) {
+        GroupProgress(String groupName, String groupType, int ownedCount, int totalCount, int bonusMerit) {
             this.groupName = groupName;
+            this.groupType = groupType;
             this.ownedCount = ownedCount;
             this.totalCount = totalCount;
             this.bonusMerit = bonusMerit;
@@ -570,26 +573,26 @@ public class UserBoxServiceImpl implements BaseService {
             int scoreReward = 0;
             boolean isWord = false;
             
-            if (rand < 0.20) {
+            if (rand < 0.25) {
                 // 25% 空
                 boxContent = "空";
-            } else if (rand < 0.40) {
+            } else if (rand < 0.45) {
                 // 20% 1积分
                 boxContent = "1积分";
                 scoreReward = 1;
-            } else if (rand < 0.60) {
+            } else if (rand < 0.65) {
                 // 20% 2积分
                 boxContent = "2积分";
                 scoreReward = 2;
-            } else if (rand < 0.75) {
+            } else if (rand < 0.80) {
                 // 15% 3积分
                 boxContent = "3积分";
                 scoreReward = 3;
-            } else if (rand < 0.85) {
+            } else if (rand < 0.90) {
                 // 10% 5积分
                 boxContent = "5积分";
                 scoreReward = 5;
-            } else if (rand < 0.90) {
+            } else if (rand < 0.95) {
                 // 5% 8积分
                 boxContent = "8积分";
                 scoreReward = 8;
@@ -679,21 +682,21 @@ public class UserBoxServiceImpl implements BaseService {
                 int scoreReward = 0;
                 boolean isWord = false;
                 
-                if (rand < 0.20) {
+                if (rand < 0.25) {
                     boxContent = "空";
-                } else if (rand < 0.40) {
+                } else if (rand < 0.45) {
                     boxContent = "1积分";
                     scoreReward = 1;
-                } else if (rand < 0.60) {
+                } else if (rand < 0.65) {
                     boxContent = "2积分";
                     scoreReward = 2;
-                } else if (rand < 0.75) {
+                } else if (rand < 0.80) {
                     boxContent = "3积分";
                     scoreReward = 3;
-                } else if (rand < 0.85) {
+                } else if (rand < 0.90) {
                     boxContent = "5积分";
                     scoreReward = 5;
-                } else if (rand < 0.90) {
+                } else if (rand < 0.95) {
                     boxContent = "8积分";
                     scoreReward = 8;
                 } else {
@@ -1491,9 +1494,17 @@ public class UserBoxServiceImpl implements BaseService {
     private Map<String, GroupProgress> calculateGroupProgress(String userId) {
         Map<String, GroupProgress> progressMap = new HashMap<>();
         try {
-            // 查询所有词条（按词组分组）
-            BotBaseWordExample wordExample = new BotBaseWordExample();
-            List<BotBaseWord> allWords = baseWordMapper.selectByExample(wordExample);
+            // 查询所有词条（包括已过期的），用于统计词组进度
+            BotBaseWordExample allWordExample = new BotBaseWordExample();
+            List<BotBaseWord> allBaseWords = baseWordMapper.selectByExample(allWordExample);
+            
+            // 查询当前时间可抽取的词条（用于筛选展示哪些词组）
+            String currentTime = DateUtil.now();
+            Set<Long> availableWordIds = allBaseWords.stream()
+                    .filter(w -> w.getBeginDate() != null && w.getEndDate() != null)
+                    .filter(w -> w.getBeginDate().compareTo(currentTime) <= 0 && w.getEndDate().compareTo(currentTime) >= 0)
+                    .map(BotBaseWord::getId)
+                    .collect(Collectors.toSet());
             
             // 查询用户已拥有的词条
             BotUserWordExample userWordExample = new BotUserWordExample();
@@ -1503,49 +1514,82 @@ public class UserBoxServiceImpl implements BaseService {
                     .map(BotUserWord::getWordId)
                     .collect(Collectors.toSet());
             
-            // 按词组统计
-            Map<String, List<BotBaseWord>> groupWordsMap = allWords.stream()
+            // 按词组分组（所有词条）
+            Map<String, List<BotBaseWord>> allGroupWordsMap = allBaseWords.stream()
                     .filter(w -> w.getGroupFlag() != null && !w.getGroupFlag().trim().isEmpty())
                     .collect(Collectors.groupingBy(BotBaseWord::getGroupFlag));
             
-            for (Map.Entry<String, List<BotBaseWord>> entry : groupWordsMap.entrySet()) {
+            for (Map.Entry<String, List<BotBaseWord>> entry : allGroupWordsMap.entrySet()) {
                 String groupName = entry.getKey();
                 List<BotBaseWord> groupWords = entry.getValue();
                 
-                int ownedCount = (int) groupWords.stream()
+                // 特殊处理：系统奖励始终展示，不受时间和拥有数量限制
+                boolean isSystemReward = "系统奖励".equals(groupName);
+                
+                // 如果不是系统奖励，只统计当前可抽取的词条
+                List<BotBaseWord> effectiveWords;
+                if (isSystemReward) {
+                    effectiveWords = groupWords; // 系统奖励不受时间限制
+                } else {
+                    effectiveWords = groupWords.stream()
+                            .filter(w -> availableWordIds.contains(w.getId()))
+                            .collect(Collectors.toList());
+                    
+                    // 如果没有可抽取的词条，跳过该词组
+                    if (effectiveWords.isEmpty()) {
+                        continue;
+                    }
+                }
+                
+                // 获取词组类型（取第一个词条的type）
+                String groupType = effectiveWords.get(0).getType();
+                
+                // 统计用户已拥有的词条数
+                int ownedCount = (int) effectiveWords.stream()
                         .filter(w -> ownedWordIds.contains(w.getId()))
                         .count();
                 
-                int totalCount = groupWords.size();
+                int totalCount = effectiveWords.size();
                 
-                // 计算奖励（奖励词条分组不参与额外奖励）
+                // 过滤规则：如果用户一个都没拥有，不展示该分组（系统奖励除外）
+                if (!isSystemReward && ownedCount == 0) {
+                    continue;
+                }
+                
+                // 计算奖励（系统奖励分组不参与额外奖励）
                 int bonusMerit = 0;
-                if ("奖励词条".equals(groupName)) {
+                if (isSystemReward) {
                     // 系统赠送词条，固定为+0
                     bonusMerit = 0;
                 } else if (ownedCount >= totalCount) {
-                    int totalGroupMerit = groupWords.stream()
+                    int totalGroupMerit = effectiveWords.stream()
                             .mapToInt(BotBaseWord::getMerit)
                             .sum();
                     bonusMerit = (int) (totalGroupMerit * 0.05);
                 }
                 
-                progressMap.put(groupName, new GroupProgress(groupName, ownedCount, totalCount, bonusMerit));
+                progressMap.put(groupName, new GroupProgress(groupName, groupType, ownedCount, totalCount, bonusMerit));
             }
             
-            // 统计未分组词条
+            // 构建所有词条的Map，用于快速查找
+            Map<Long, BotBaseWord> baseWordMap = allBaseWords.stream()
+                    .collect(Collectors.toMap(BotBaseWord::getId, w -> w));
+            
+            // 统计未分组词条（排除"系统奖励"分组的词条）
             long ungroupedCount = userWords.stream()
                     .filter(uw -> {
-                        BotBaseWord baseWord = allWords.stream()
-                                .filter(bw -> bw.getId().equals(uw.getWordId()))
-                                .findFirst()
-                                .orElse(null);
-                        return baseWord == null || baseWord.getGroupFlag() == null || baseWord.getGroupFlag().trim().isEmpty();
+                        BotBaseWord baseWord = baseWordMap.get(uw.getWordId());
+                        if (baseWord == null) {
+                            return true; // 词条信息不存在，归为未分组
+                        }
+                        String groupFlag = baseWord.getGroupFlag();
+                        // 排除系统奖励，只统计真正的未分组（group_flag为空）
+                        return groupFlag == null || groupFlag.trim().isEmpty();
                     })
                     .count();
             
             if (ungroupedCount > 0) {
-                progressMap.put("未分组", new GroupProgress("未分组", (int)ungroupedCount, (int)ungroupedCount, 0));
+                progressMap.put("未分组", new GroupProgress("未分组", "1", (int)ungroupedCount, (int)ungroupedCount, 0));
             }
             
         } catch (Exception e) {
@@ -1609,14 +1653,18 @@ public class UserBoxServiceImpl implements BaseService {
                     .collect(Collectors.toList());
             
             for (GroupProgress progress : sortedProgress) {
+                // 获取词组类型图标和标签
+                String typeIcon = ENWordType.getIconByValue(progress.groupType);
+                String typeLabel = ENWordType.getLabelByValue(progress.groupType);
+                
                 if (progress.groupName.equals("未分组")) {
-                    message.append(String.format("🎁 %s [%d条]\n", progress.groupName, progress.ownedCount));
+                    message.append(String.format("%s [%d条]\n", progress.groupName, progress.ownedCount));
                 } else if (progress.isCompleted) {
-                    message.append(String.format("🎁 %s [%d/%d] ✅ +%d\n", 
-                            progress.groupName, progress.ownedCount, progress.totalCount, progress.bonusMerit));
+                    message.append(String.format("%s %s [%d/%d] ✅ +%d [%s]\n", 
+                            typeIcon, progress.groupName, progress.ownedCount, progress.totalCount, progress.bonusMerit, typeLabel));
                 } else {
-                    message.append(String.format("🎁 %s [%d/%d] ⏳\n", 
-                            progress.groupName, progress.ownedCount, progress.totalCount));
+                    message.append(String.format("%s %s [%d/%d] ⏳ [%s]\n", 
+                            typeIcon, progress.groupName, progress.ownedCount, progress.totalCount, typeLabel));
                 }
             }
             message.append("\n");
@@ -1634,12 +1682,12 @@ public class UserBoxServiceImpl implements BaseService {
                 rarityCount.getOrDefault("2", 0L).intValue(),
                 rarityCount.getOrDefault("1", 0L).intValue()));
         
-        // 显示最近获得的10条
+        // 显示最近获得的5条
         message.append("【最近获得】\n");
-        // 按获得时间排序，取最新10条
+        // 按获得时间排序，取最新5条
         List<BotUserWord> recentWords = sortedWords.stream()
                 .sorted((a, b) -> b.getFetchDate().compareTo(a.getFetchDate()))
-                .limit(10)
+                .limit(5)
                 .collect(Collectors.toList());
         
         for (int i = 0; i < recentWords.size(); i++) {
@@ -1675,8 +1723,10 @@ public class UserBoxServiceImpl implements BaseService {
      */
     private CommonResp handleWordOperation(String userId, String instruction, String groupId) {
         try {
+            String trimmedInstruction = instruction.trim();
+            
             // 先检查是否是佩戴指令
-            if (instruction.trim().equals("佩戴")) {
+            if (trimmedInstruction.equals("佩戴")) {
                 List<BotUserWord> selectedWords = USER_WORD_VIEW_CONTEXT.get(userId + "_SELECTED");
                 if (CollectionUtil.isEmpty(selectedWords)) {
                     return new CommonResp("请先回复序号查看词条详情~", ENRespType.TEXT.getType());
@@ -1707,6 +1757,7 @@ public class UserBoxServiceImpl implements BaseService {
                 // 清除上下文
                 USER_WORD_VIEW_CONTEXT.remove(userId);
                 USER_WORD_VIEW_CONTEXT.remove(userId + "_SELECTED");
+                USER_WORD_FILTER_CONTEXT.remove(userId);
 
                 // 更新缓存
                 List<BotGameUserScore> userScoreList = gameUserScoreMapper.selectByExample(new BotGameUserScoreExample());
@@ -1717,20 +1768,58 @@ public class UserBoxServiceImpl implements BaseService {
                         ENRespType.TEXT.getType());
             }
             
+            // 处理返回主列表
+            if (trimmedInstruction.equals("返回")) {
+                USER_WORD_VIEW_CONTEXT.remove(userId + "_SELECTED");
+                USER_WORD_FILTER_CONTEXT.remove(userId);
+                return handleMyWords(userId);
+            }
+            
+            // 检查是否是稀有度筛选
+            if (trimmedInstruction.equals("传说") || trimmedInstruction.equals("史诗") || 
+                trimmedInstruction.equals("稀有") || trimmedInstruction.equals("普通")) {
+                return handleRarityFilter(userId, trimmedInstruction);
+            }
+            
+            // 检查是否是全部筛选
+            if (trimmedInstruction.equals("全部")) {
+                return handleAllWordsFilter(userId, 1);
+            }
+            
+            // 检查是否是词组名筛选
+            WordFilterContext filterContext = USER_WORD_FILTER_CONTEXT.get(userId);
+            if (filterContext != null && filterContext.filterType.equals("ALL")) {
+                // 在全部模式下，可能是翻页指令
+                try {
+                    int page = Integer.parseInt(trimmedInstruction);
+                    return handleAllWordsFilter(userId, page);
+                } catch (NumberFormatException e) {
+                    // 不是数字，可能是词组名
+                }
+            }
+            
+            // 尝试作为词组名处理
+            CommonResp groupFilterResp = tryHandleGroupFilter(userId, trimmedInstruction);
+            if (groupFilterResp != null) {
+                return groupFilterResp;
+            }
+            
             // 处理查看序号
             List<BotUserWord> userWords = USER_WORD_VIEW_CONTEXT.get(userId);
             
             if (CollectionUtil.isEmpty(userWords)) {
                 USER_WORD_VIEW_CONTEXT.remove(userId);
+                USER_WORD_FILTER_CONTEXT.remove(userId);
                 return null;
             }
             
             // 尝试解析序号
             try {
-                int index = Integer.parseInt(instruction.trim());
+                int index = Integer.parseInt(trimmedInstruction);
                 
                 if (index < 1 || index > userWords.size()) {
                     USER_WORD_VIEW_CONTEXT.remove(userId);
+                    USER_WORD_FILTER_CONTEXT.remove(userId);
                     return null;
                 }
                 
@@ -1767,9 +1856,10 @@ public class UserBoxServiceImpl implements BaseService {
                 return new CommonResp(message.toString(), ENRespType.TEXT.getType());
                 
             } catch (NumberFormatException e) {
-                // 不是数字，也不是佩戴指令，清除上下文
+                // 不是数字，也不是已知指令，清除上下文
                 USER_WORD_VIEW_CONTEXT.remove(userId);
                 USER_WORD_VIEW_CONTEXT.remove(userId + "_SELECTED");
+                USER_WORD_FILTER_CONTEXT.remove(userId);
                 return null;
             }
             
@@ -1777,7 +1867,230 @@ public class UserBoxServiceImpl implements BaseService {
             log.error("处理词条操作异常", e);
             USER_WORD_VIEW_CONTEXT.remove(userId);
             USER_WORD_VIEW_CONTEXT.remove(userId + "_SELECTED");
+            USER_WORD_FILTER_CONTEXT.remove(userId);
             return new CommonResp("操作失败，请稍后再试~", ENRespType.TEXT.getType());
+        }
+    }
+    
+    /**
+     * 处理稀有度筛选
+     */
+    private CommonResp handleRarityFilter(String userId, String rarityName) {
+        try {
+            // 查询用户所有词条
+            BotUserWordExample wordExample = new BotUserWordExample();
+            wordExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotUserWord> allUserWords = userWordMapper.selectByExample(wordExample);
+            
+            if (CollectionUtil.isEmpty(allUserWords)) {
+                return new CommonResp("你还没有任何词条~", ENRespType.TEXT.getType());
+            }
+            
+            // 根据稀有度名称获取稀有度值
+            String rarityValue = null;
+            for (ENWordRarity rarity : ENWordRarity.values()) {
+                if (rarity.getLabel().equals(rarityName)) {
+                    rarityValue = rarity.getValue();
+                    break;
+                }
+            }
+            
+            if (rarityValue == null) {
+                return new CommonResp("稀有度类型错误~", ENRespType.TEXT.getType());
+            }
+            
+            // 筛选出该稀有度的词条
+            final String targetRarity = rarityValue;
+            List<BotUserWord> filteredWords = allUserWords.stream()
+                    .filter(w -> w.getRarity().equals(targetRarity))
+                    .sorted((a, b) -> b.getMerit().compareTo(a.getMerit()))
+                    .collect(Collectors.toList());
+            
+            if (CollectionUtil.isEmpty(filteredWords)) {
+                return new CommonResp(String.format("你还没有%s稀有度的词条~", rarityName), ENRespType.TEXT.getType());
+            }
+            
+            // 构建消息
+            StringBuilder message = new StringBuilder();
+            message.append("━━━━━━━━━━━━\n");
+            message.append(String.format("📚 %s词条 (%d条) 📚\n", rarityName, filteredWords.size()));
+            message.append("━━━━━━━━━━━━\n\n");
+            
+            for (int i = 0; i < filteredWords.size(); i++) {
+                BotUserWord word = filteredWords.get(i);
+                
+                // 查询词组信息
+                BotBaseWord baseWord = baseWordMapper.selectByPrimaryKey(word.getWordId());
+                String groupName = (baseWord != null && baseWord.getGroupFlag() != null && !baseWord.getGroupFlag().trim().isEmpty()) 
+                        ? baseWord.getGroupFlag() : "未分组";
+                
+                message.append(String.format("%d. 『%s』[%s] +%d\n", 
+                        i + 1, word.getWordContent(), groupName, word.getMerit()));
+            }
+            
+            message.append("\n━━━━━━━━━━━━\n");
+            message.append("💡 回复【序号】查看详情\n");
+            message.append("💡 回复【返回】返回主列表\n");
+            message.append("💡 回复【取消】退出");
+            
+            // 保存上下文
+            USER_WORD_VIEW_CONTEXT.put(userId, filteredWords);
+            USER_WORD_FILTER_CONTEXT.put(userId, new WordFilterContext("RARITY", rarityName, 1));
+            
+            return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+            
+        } catch (Exception e) {
+            log.error("处理稀有度筛选异常", e);
+            return new CommonResp("操作失败，请稍后再试~", ENRespType.TEXT.getType());
+        }
+    }
+    
+    /**
+     * 处理全部筛选（分页）
+     */
+    private CommonResp handleAllWordsFilter(String userId, int page) {
+        try {
+            // 查询用户所有词条
+            BotUserWordExample wordExample = new BotUserWordExample();
+            wordExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotUserWord> allUserWords = userWordMapper.selectByExample(wordExample);
+            
+            if (CollectionUtil.isEmpty(allUserWords)) {
+                return new CommonResp("你还没有任何词条~", ENRespType.TEXT.getType());
+            }
+            
+            // 按稀有度和魅力值排序
+            List<BotUserWord> sortedWords = allUserWords.stream()
+                    .sorted((a, b) -> {
+                        int rarityCompare = b.getRarity().compareTo(a.getRarity());
+                        if (rarityCompare != 0) {
+                            return rarityCompare;
+                        }
+                        return b.getMerit().compareTo(a.getMerit());
+                    })
+                    .collect(Collectors.toList());
+            
+            // 分页处理
+            int pageSize = 20;
+            int totalPages = (int) Math.ceil(sortedWords.size() * 1.0 / pageSize);
+            
+            if (page < 1 || page > totalPages) {
+                return new CommonResp(String.format("页码错误，请输入1-%d之间的页码~", totalPages), ENRespType.TEXT.getType());
+            }
+            
+            int startIndex = (page - 1) * pageSize;
+            int endIndex = Math.min(startIndex + pageSize, sortedWords.size());
+            List<BotUserWord> pageWords = sortedWords.subList(startIndex, endIndex);
+            
+            // 构建消息
+            StringBuilder message = new StringBuilder();
+            message.append("━━━━━━━━━━━━\n");
+            message.append(String.format("📚 全部词条 (第%d/%d页) 📚\n", page, totalPages));
+            message.append("━━━━━━━━━━━━\n\n");
+            
+            for (int i = 0; i < pageWords.size(); i++) {
+                BotUserWord word = pageWords.get(i);
+                String rarityLabel = ENWordRarity.getLabelByValue(word.getRarity());
+                
+                // 查询词组信息
+                BotBaseWord baseWord = baseWordMapper.selectByPrimaryKey(word.getWordId());
+                String groupName = (baseWord != null && baseWord.getGroupFlag() != null && !baseWord.getGroupFlag().trim().isEmpty()) 
+                        ? baseWord.getGroupFlag() : "未分组";
+                
+                message.append(String.format("%d. 『%s』[%s·%s] +%d\n", 
+                        i + 1, word.getWordContent(), rarityLabel, groupName, word.getMerit()));
+            }
+            
+            message.append("\n━━━━━━━━━━━━\n");
+            message.append("💡 回复【序号】查看详情\n");
+            if (page < totalPages) {
+                message.append(String.format("💡 回复【%d】查看下一页\n", page + 1));
+            }
+            message.append("💡 回复【返回】返回主列表\n");
+            message.append("💡 回复【取消】退出");
+            
+            // 保存上下文
+            USER_WORD_VIEW_CONTEXT.put(userId, pageWords);
+            USER_WORD_FILTER_CONTEXT.put(userId, new WordFilterContext("ALL", null, page));
+            
+            return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+            
+        } catch (Exception e) {
+            log.error("处理全部筛选异常", e);
+            return new CommonResp("操作失败，请稍后再试~", ENRespType.TEXT.getType());
+        }
+    }
+    
+    /**
+     * 尝试处理词组名筛选
+     */
+    private CommonResp tryHandleGroupFilter(String userId, String groupName) {
+        try {
+            // 查询用户所有词条
+            BotUserWordExample wordExample = new BotUserWordExample();
+            wordExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotUserWord> allUserWords = userWordMapper.selectByExample(wordExample);
+            
+            if (CollectionUtil.isEmpty(allUserWords)) {
+                return null;
+            }
+            
+            // 筛选出该词组的词条
+            List<BotUserWord> groupWords = new ArrayList<>();
+            for (BotUserWord userWord : allUserWords) {
+                BotBaseWord baseWord = baseWordMapper.selectByPrimaryKey(userWord.getWordId());
+                if (baseWord != null) {
+                    String wordGroup = (baseWord.getGroupFlag() != null && !baseWord.getGroupFlag().trim().isEmpty()) 
+                            ? baseWord.getGroupFlag() : "未分组";
+                    if (wordGroup.equals(groupName)) {
+                        groupWords.add(userWord);
+                    }
+                }
+            }
+            
+            if (CollectionUtil.isEmpty(groupWords)) {
+                return null; // 没有该词组的词条，不是有效的词组名
+            }
+            
+            // 按稀有度和魅力值排序
+            groupWords = groupWords.stream()
+                    .sorted((a, b) -> {
+                        int rarityCompare = b.getRarity().compareTo(a.getRarity());
+                        if (rarityCompare != 0) {
+                            return rarityCompare;
+                        }
+                        return b.getMerit().compareTo(a.getMerit());
+                    })
+                    .collect(Collectors.toList());
+            
+            // 构建消息
+            StringBuilder message = new StringBuilder();
+            message.append("━━━━━━━━━━━━\n");
+            message.append(String.format("📚 %s (%d条) 📚\n", groupName, groupWords.size()));
+            message.append("━━━━━━━━━━━━\n\n");
+            
+            for (int i = 0; i < groupWords.size(); i++) {
+                BotUserWord word = groupWords.get(i);
+                String rarityLabel = ENWordRarity.getLabelByValue(word.getRarity());
+                
+                message.append(String.format("%d. 『%s』[%s] +%d\n", 
+                        i + 1, word.getWordContent(), rarityLabel, word.getMerit()));
+            }
+            
+            message.append("\n━━━━━━━━━━━━\n");
+            message.append("💡 回复【序号】查看详情\n");
+            message.append("💡 回复【返回】返回主列表\n");
+            message.append("💡 回复【取消】退出");
+            
+            // 保存上下文
+            USER_WORD_VIEW_CONTEXT.put(userId, groupWords);
+            USER_WORD_FILTER_CONTEXT.put(userId, new WordFilterContext("GROUP", groupName, 1));
+            
+            return new CommonResp(message.toString(), ENRespType.TEXT.getType());
+            
+        } catch (Exception e) {
+            log.error("处理词组筛选异常", e);
+            return null;
         }
     }
 
@@ -1920,11 +2233,16 @@ public class UserBoxServiceImpl implements BaseService {
                 String groupName = groupEntry.getKey();
                 List<BotBaseWord> words = groupEntry.getValue();
                 
+                // 获取词组类型（取第一个词条的type，同一词组类型应该一致）
+                String wordType = words.get(0).getType();
+                String typeIcon = ENWordType.getIconByValue(wordType);
+                String typeLabel = ENWordType.getLabelByValue(wordType);
+                
                 // 计算结束时间
                 String timeInfo = calculateTimeInfo(words);
                 
-                message.append("【").append(groupName).append("】\n");
-                message.append(timeInfo).append("\n\n");
+                message.append("【").append(typeIcon).append(" ").append(groupName).append("】\n");
+                message.append(timeInfo).append(" [").append(typeLabel).append("]\n\n");
                 
                 // 按稀有度分组
                 Map<String, List<BotBaseWord>> rarityGroups = words.stream()

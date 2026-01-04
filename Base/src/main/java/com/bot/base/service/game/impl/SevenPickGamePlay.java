@@ -145,7 +145,7 @@ public class SevenPickGamePlay extends BaseGamePlay {
         }
 
         // 行动牌:各4张
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 4; i++) {
             allCards.add(new Card(CardType.ACTION, "再翻三张", 0));
             allCards.add(new Card(CardType.ACTION, "冻结", 0));
             allCards.add(new Card(CardType.ACTION, "二次机会", 0));
