@@ -74,12 +74,14 @@ public class BottleMessageServiceImpl implements BaseService {
                 return new CommonResp(String.format("匿名：\r\n%s", message.getContent()), ENRespType.TEXT.getType());
             }
             if (reqs.length >= 2) {
+                log.info("漂流瓶===>准备发送");
                 // 发送漂流瓶
                 String content = reqContent.replaceFirst("漂流瓶 ", "");
                 if (content.length() > 200) {
                     return new CommonResp("漂流瓶内容不能超过200字哦。", ENRespType.TEXT.getType());
                 }
-                // 查当前用户最近一条记录，防刷屏，30s内只能发送一条
+                log.info("漂流瓶===>进入校验逻辑");
+                // 查当前用户最近一条记录，防刷屏，15s内只能发送一条
                 BotBottleMessageExample example = new BotBottleMessageExample();
                 example.createCriteria().andUserIdEqualTo(token);
                 example.setOrderByClause("send_time desc");
@@ -90,20 +92,21 @@ public class BottleMessageServiceImpl implements BaseService {
                     if (DateUtil.isSameDay(DateUtil.parseDate(message.getSendTime()), new Date())) {
                         isLastToday = true;
                     }
-                    if (DateUtil.between(DateUtil.parse(message.getSendTime()), new Date(), DateUnit.SECOND) < 30) {
-                        return new CommonResp("为防止刷屏，发送漂流瓶有30秒cd，请稍后再试~", ENRespType.TEXT.getType());
+                    if (DateUtil.between(DateUtil.parse(message.getSendTime()), new Date(), DateUnit.SECOND) < 15) {
+                        return new CommonResp("为防止刷屏，发送漂流瓶有15秒cd，请稍后再试~", ENRespType.TEXT.getType());
                     }
                 }
+                log.info("漂流瓶===>校验通过，进入审核逻辑");
                 // 审核
                 String reviewResult = this.review(content);
                 // 判断结果
                 if ("通过".equals(reviewResult)) {
+                    log.info("漂流瓶===>审核通过");
                     BotBottleMessage message = new BotBottleMessage();
                     message.setContent(content);
                     message.setUserId(token);
                     message.setSendTime(DateUtil.now());
                     message.setShowTimes(0);
-                    botBottleMessageMapper.insert(message);
                     // 给开了广播的用户推送
                     if (CollectionUtil.isNotEmpty(SystemConfigCache.bottleUser)) {
                         // 查是不是当天第一条，如果是就获取名字作为当天的匿名名称
@@ -154,16 +157,19 @@ public class BottleMessageServiceImpl implements BaseService {
                     if (!isLastToday) {
                         extend = "，你今天的昵称是：" + SystemConfigCache.userAnonymousName.get(token);
                     }
+                    botBottleMessageMapper.insert(message);
                     return new CommonResp(String.format("发送成功%s", extend), ENRespType.TEXT.getType());
                 }else {
                     return new CommonResp(reviewResult, ENRespType.TEXT.getType());
                 }
             }
         }
+        log.info("漂流瓶===>未匹配 直接返回");
         return null;
     }
 
     private String getAnonymousName() {
+        log.info("漂流瓶===>获取名字");
         int maxRetries = 5;
         for (int i = 0; i < maxRetries; i++) {
             try {

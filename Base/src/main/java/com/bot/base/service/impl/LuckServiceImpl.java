@@ -12,9 +12,11 @@ import com.bot.base.dto.LuckDTO;
 import com.bot.base.service.BaseService;
 import com.bot.common.constant.BaseConsts;
 import com.bot.common.enums.ENRespType;
+import com.bot.game.dao.mapper.BotBaseQianMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +33,9 @@ public class LuckServiceImpl implements BaseService {
     @Value("${luck.url}")
     private String url;
 
+    @Value("${luck.bak.url}")
+    private String bakUrl;
+
     @Override
     @Deprecated
     public CommonResp doQueryReturn(String reqContent, String token, String groupId, String channel) {
@@ -44,7 +49,7 @@ public class LuckServiceImpl implements BaseService {
             if (resp == null) {
                 return new CommonResp("你今天还未求签，要先求签才能解签哦~", ENRespType.TEXT.getType());
             }
-            String contentFormat = "签名：%s\r\n内容：%s\r\n解签：%s\r\n(此为附带的解签结果，仅供参考，也可以自行解签或使用小林的ai能力解签哦OvO)";
+            String contentFormat = "签名：%s\r\n内容：%s\r\n解签：%s\r\n(此为附带的解签结果，仅供参考娱乐，请勿迷信，健康生活)";
             String content = String.format(contentFormat, resp.getTitle(), resp.getPoem(), resp.getContent());
             return new CommonResp(content, ENRespType.TEXT.getType());
         }
@@ -52,10 +57,22 @@ public class LuckServiceImpl implements BaseService {
     }
 
     private LuckDTO getLuck() {
-        String response = HttpUtil.get(url);
-        JSONObject jsonObject = JSONUtil.parseObj(response);
-        JSONObject data = (JSONObject) jsonObject.get("data");
-        return JSONUtil.toBean(data, LuckDTO.class);
+        try {
+            String response = HttpUtil.get(url);
+            JSONObject jsonObject = JSONUtil.parseObj(response);
+            JSONObject data = (JSONObject) jsonObject.get("data");
+            return JSONUtil.toBean(data, LuckDTO.class);
+        }catch (Exception e) {
+            String response = HttpUtil.get(bakUrl);
+            JSONObject jsonObject = JSONUtil.parseObj(response);
+            JSONObject data = (JSONObject) jsonObject.get("data");
+            LuckDTO luckDTO = new LuckDTO();
+            luckDTO.setPic(data.getStr("image_url"));
+            luckDTO.setContent(data.getStr("interpretation"));
+            luckDTO.setTitle("观音灵签");
+            luckDTO.setPoem("见图片");
+            return luckDTO;
+        }
     }
 
 }

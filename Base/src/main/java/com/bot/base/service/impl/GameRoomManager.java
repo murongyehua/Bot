@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.bot.base.service.game.BaseGamePlay;
+import com.bot.base.service.game.impl.LoveLetterGamePlay;
 import com.bot.common.constant.GameRoomConsts;
 import com.bot.common.enums.ENGameInfo;
 import com.bot.common.enums.ENGameRoomStatus;
@@ -242,11 +243,6 @@ public class GameRoomManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public String createRoom(String userId, String instruction, String groupId) {
-        // 检查是否为群聊
-        if (groupId == null || groupId.trim().isEmpty()) {
-            return "小林游戏房间仅支持群聊玩法，私聊暂不支持哦~";
-        }
-        
         String[] parts = instruction.split("\\s+");
         if (parts.length < 2) {
             return "指令格式错误，正确格式：创建房间 游戏名 [口令]";
@@ -264,6 +260,20 @@ public class GameRoomManager {
         ENGameInfo gameInfo = ENGameInfo.getByName(gameName);
         if (gameInfo == null) {
             return GameRoomConsts.Tips.GAME_NOT_FOUND;
+        }
+        
+        // 判断是否为私聊游戏（情书）
+        boolean isPrivateGame = "LOVE_LETTER".equals(gameInfo.getCode());
+        
+        // 私聊游戏只能在私聊创建，群聊游戏只能在群聊创建
+        if (isPrivateGame) {
+            if (groupId != null && !groupId.trim().isEmpty()) {
+                return "【情书】游戏仅支持私聊参与，请在私聊中创建房间~";
+            }
+        } else {
+            if (groupId == null || groupId.trim().isEmpty()) {
+                return "该游戏仅支持群聊玩法，私聊暂不支持哦~";
+            }
         }
 
         // 检查用户是否已在其他房间
@@ -301,12 +311,14 @@ public class GameRoomManager {
         USER_PARTICIPATION_GROUP.put(userId, groupId == null ? "" : groupId);
 
         String roomType = StrUtil.isBlank(password) ? "公开房间" : "私密房间";
-        return String.format(GameRoomConsts.Tips.CREATE_ROOM_SUCCESS,
+        String participationType = isPrivateGame ? "（私聊）" : "（群聊）";
+        return String.format(GameRoomConsts.Tips.CREATE_ROOM_SUCCESS + " %s",
                 roomCode,
                 gameInfo.getName(),
                 gameInfo.getMinPeople(),
                 gameInfo.getMaxPeople(),
-                roomType);
+                roomType,
+                participationType);
     }
 
     /**
@@ -315,11 +327,6 @@ public class GameRoomManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public String joinRoom(String userId, String instruction, String groupId) {
-        // 检查是否为群聊
-        if (groupId == null || groupId.trim().isEmpty()) {
-            return "小林游戏房间仅支持群聊玩法，私聊暂不支持哦~";
-        }
-        
         String[] parts = instruction.split("\\s+");
         if (parts.length < 2) {
             return "指令格式错误，正确格式：加入房间 房间号 [密码]";
@@ -339,6 +346,20 @@ public class GameRoomManager {
         BotGameRoom targetRoom = roomMapper.selectByRoomCode(roomCode);
         if (targetRoom == null) {
             return GameRoomConsts.Tips.ROOM_NOT_FOUND;
+        }
+        
+        // 判断是否为私聊游戏
+        boolean isPrivateGame = "LOVE_LETTER".equals(targetRoom.getGameCode());
+        
+        // 私聊游戏只能在私聊加入，群聊游戏只能在群聊加入
+        if (isPrivateGame) {
+            if (groupId != null && !groupId.trim().isEmpty()) {
+                return "【情书】游戏仅支持私聊参与，请在私聊中加入房间~";
+            }
+        } else {
+            if (groupId == null || groupId.trim().isEmpty()) {
+                return "该游戏仅支持群聊玩法，私聊暂不支持哦~";
+            }
         }
 
         // 3. 校验房间状态
@@ -616,10 +637,16 @@ public class GameRoomManager {
                     userScore.setNickname(nickname);
                     userScoreMapper.insertSelective(userScore);
                 } else {
-                    // 存在，更新积分和昵称
+                    // 存在，更新积分，仅当是群聊时才更新昵称（私聊保留原有昵称）
                     BotGameUserScore userScore = existingScores.get(0);
                     userScore.setScore(userScore.getScore() + score);
-                    userScore.setNickname(nickname);
+                    // 只有群聊参与且获取到有效群昵称时，才更新昵称
+                    if (participationMap != null) {
+                        String groupId = participationMap.get(userId);
+                        if (groupId != null && !groupId.trim().isEmpty()) {
+                            userScore.setNickname(nickname);
+                        }
+                    }
                     userScoreMapper.updateByPrimaryKeySelective(userScore);
                 }
             }
@@ -694,9 +721,16 @@ public class GameRoomManager {
             
             // 反射创建游戏实例
             Class<?> clazz = Class.forName(className);
-            return (BaseGamePlay) clazz.getDeclaredConstructor(
+            BaseGamePlay gamePlay = (BaseGamePlay) clazz.getDeclaredConstructor(
                     String.class, String.class, String.class, List.class)
                     .newInstance(roomCode, gameInfo.getCode(), gameInfo.getName(), playerIds);
+            
+            // 如果是情书游戏，注入Mapper
+            if (gamePlay instanceof LoveLetterGamePlay) {
+                ((LoveLetterGamePlay) gamePlay).setGameUserScoreMapper(userScoreMapper);
+            }
+            
+            return gamePlay;
                     
         } catch (Exception e) {
             log.error("创建游戏实例失败: {}, playServiceName: {}", 

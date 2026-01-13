@@ -51,7 +51,7 @@
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-        <table tableName="bot_base_word" domainObjectName="BotBaseWord"
+        <table tableName="bot_base_qian" domainObjectName="BotBaseQian"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableSelectByPrimaryKey="true">

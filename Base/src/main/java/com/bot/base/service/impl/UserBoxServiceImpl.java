@@ -165,9 +165,15 @@ public class UserBoxServiceImpl implements BaseService {
             if ("2025-12-31".equals(today) || "2026-01-01".equals(today)) {
                 newYearReward = this.grantNewYearWord(token);
             }
+
+            // 春节特殊词条发放（2026年2月9日至2026年2月17日）
+            String springReward = "";
+            if (today.compareTo("2026-02-09") >= 0 && today.compareTo("2026-02-17") <= 0) {
+                springReward = this.grantSpringWord(token);
+            }
             
             String message = this.getRandomMessage();
-            String response = String.format("签到成功，积分+%s\r\n\r\n%s%s%s", number, christmasReward, newYearReward, message);
+            String response = String.format("签到成功，积分+%s\r\n\r\n%s%s%s%s", number, christmasReward, newYearReward, springReward, message);
             SendMsgUtil.sendGroupMsgForGame(groupId, response, token);
             return new CommonResp(null, ENRespType.TEXT.getType());
         }
@@ -573,26 +579,26 @@ public class UserBoxServiceImpl implements BaseService {
             int scoreReward = 0;
             boolean isWord = false;
             
-            if (rand < 0.25) {
+            if (rand < 0.20) {
                 // 25% 空
                 boxContent = "空";
-            } else if (rand < 0.45) {
+            } else if (rand < 0.40) {
                 // 20% 1积分
                 boxContent = "1积分";
                 scoreReward = 1;
-            } else if (rand < 0.65) {
+            } else if (rand < 0.60) {
                 // 20% 2积分
                 boxContent = "2积分";
                 scoreReward = 2;
-            } else if (rand < 0.80) {
+            } else if (rand < 0.75) {
                 // 15% 3积分
                 boxContent = "3积分";
                 scoreReward = 3;
-            } else if (rand < 0.90) {
+            } else if (rand < 0.85) {
                 // 10% 5积分
                 boxContent = "5积分";
                 scoreReward = 5;
-            } else if (rand < 0.95) {
+            } else if (rand < 0.90) {
                 // 5% 8积分
                 boxContent = "8积分";
                 scoreReward = 8;
@@ -682,21 +688,21 @@ public class UserBoxServiceImpl implements BaseService {
                 int scoreReward = 0;
                 boolean isWord = false;
                 
-                if (rand < 0.25) {
+                if (rand < 0.20) {
                     boxContent = "空";
-                } else if (rand < 0.45) {
+                } else if (rand < 0.40) {
                     boxContent = "1积分";
                     scoreReward = 1;
-                } else if (rand < 0.65) {
+                } else if (rand < 0.60) {
                     boxContent = "2积分";
                     scoreReward = 2;
-                } else if (rand < 0.80) {
+                } else if (rand < 0.75) {
                     boxContent = "3积分";
                     scoreReward = 3;
-                } else if (rand < 0.90) {
+                } else if (rand < 0.85) {
                     boxContent = "5积分";
                     scoreReward = 5;
-                } else if (rand < 0.95) {
+                } else if (rand < 0.90) {
                     boxContent = "8积分";
                     scoreReward = 8;
                 } else {
@@ -2432,6 +2438,60 @@ public class UserBoxServiceImpl implements BaseService {
                         
         } catch (Exception e) {
             log.error("发放跨年词条异常", e);
+            return "";
+        }
+    }
+    
+    /**
+     * 春节词条发放（2026年2月9日至2月17日签到获得"迎春"词条）
+     * @param userId 用户ID
+     * @return 奖励提示文本
+     */
+    private String grantSpringWord(String userId) {
+        try {
+            // 1. 检查用户是否已经拥有该词条
+            BotUserWordExample checkExample = new BotUserWordExample();
+            checkExample.createCriteria()
+                    .andUserIdEqualTo(userId)
+                    .andWordIdEqualTo(ENSystemWord.SPRING_YEAR.getId());
+            int existCount = userWordMapper.countByExample(checkExample);
+                
+            if (existCount > 0) {
+                // 已经拥有，不重复发放
+                return "";
+            }
+                
+            // 2. 发放词条
+            BotUserWord userWord = new BotUserWord();
+            userWord.setUserId(userId);
+            userWord.setWordId(ENSystemWord.SPRING_YEAR.getId());
+            userWord.setWordContent(ENSystemWord.SPRING_YEAR.getWord());
+            userWord.setRarity(ENSystemWord.SPRING_YEAR.getRariy());
+            userWord.setMerit(ENSystemWord.SPRING_YEAR.getMerit());
+            userWord.setFetchDate(DateUtil.now());
+            userWordMapper.insert(userWord);
+                
+            // 3. 增加用户魅力值
+            BotGameUserScoreExample scoreExample = new BotGameUserScoreExample();
+            scoreExample.createCriteria().andUserIdEqualTo(userId);
+            List<BotGameUserScore> scores = gameUserScoreMapper.selectByExample(scoreExample);
+                
+            if (!CollectionUtil.isEmpty(scores)) {
+                BotGameUserScore userScore = scores.get(0);
+                int currentMerit = userScore.getAccumulateMerit() != null ? userScore.getAccumulateMerit() : 0;
+                userScore.setAccumulateMerit(currentMerit + ENSystemWord.SPRING_YEAR.getMerit());
+                gameUserScoreMapper.updateByPrimaryKey(userScore);
+            }
+                
+            // 4. 返回奖励提示
+            String rarityLabel = ENWordRarity.getLabelByValue(ENSystemWord.SPRING_YEAR.getRariy());
+            return String.format("🧧春节快乐！获得特殊词条『%s』[%s] 魅力+%d\r\n\r\n",
+                    ENSystemWord.SPRING_YEAR.getWord(),
+                    rarityLabel,
+                    ENSystemWord.SPRING_YEAR.getMerit());
+                        
+        } catch (Exception e) {
+            log.error("发放春节词条异常", e);
             return "";
         }
     }
