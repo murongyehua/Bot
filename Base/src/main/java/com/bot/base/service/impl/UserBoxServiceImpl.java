@@ -579,26 +579,26 @@ public class UserBoxServiceImpl implements BaseService {
             int scoreReward = 0;
             boolean isWord = false;
             
-            if (rand < 0.20) {
+            if (rand < 0.25) {
                 // 25% 空
                 boxContent = "空";
-            } else if (rand < 0.40) {
+            } else if (rand < 0.45) {
                 // 20% 1积分
                 boxContent = "1积分";
                 scoreReward = 1;
-            } else if (rand < 0.60) {
+            } else if (rand < 0.65) {
                 // 20% 2积分
                 boxContent = "2积分";
                 scoreReward = 2;
-            } else if (rand < 0.75) {
+            } else if (rand < 0.80) {
                 // 15% 3积分
                 boxContent = "3积分";
                 scoreReward = 3;
-            } else if (rand < 0.85) {
+            } else if (rand < 0.90) {
                 // 10% 5积分
                 boxContent = "5积分";
                 scoreReward = 5;
-            } else if (rand < 0.90) {
+            } else if (rand < 0.95) {
                 // 5% 8积分
                 boxContent = "8积分";
                 scoreReward = 8;
@@ -688,21 +688,21 @@ public class UserBoxServiceImpl implements BaseService {
                 int scoreReward = 0;
                 boolean isWord = false;
                 
-                if (rand < 0.20) {
+                if (rand < 0.25) {
                     boxContent = "空";
-                } else if (rand < 0.40) {
+                } else if (rand < 0.45) {
                     boxContent = "1积分";
                     scoreReward = 1;
-                } else if (rand < 0.60) {
+                } else if (rand < 0.65) {
                     boxContent = "2积分";
                     scoreReward = 2;
-                } else if (rand < 0.75) {
+                } else if (rand < 0.80) {
                     boxContent = "3积分";
                     scoreReward = 3;
-                } else if (rand < 0.85) {
+                } else if (rand < 0.90) {
                     boxContent = "5积分";
                     scoreReward = 5;
-                } else if (rand < 0.90) {
+                } else if (rand < 0.95) {
                     boxContent = "8积分";
                     scoreReward = 8;
                 } else {
@@ -1504,7 +1504,7 @@ public class UserBoxServiceImpl implements BaseService {
             BotBaseWordExample allWordExample = new BotBaseWordExample();
             List<BotBaseWord> allBaseWords = baseWordMapper.selectByExample(allWordExample);
             
-            // 查询当前时间可抽取的词条（用于筛选展示哪些词组）
+            // 查询当前时间可抽取的词条
             String currentTime = DateUtil.now();
             Set<Long> availableWordIds = allBaseWords.stream()
                     .filter(w -> w.getBeginDate() != null && w.getEndDate() != null)
@@ -1531,31 +1531,48 @@ public class UserBoxServiceImpl implements BaseService {
                 
                 // 特殊处理：系统奖励始终展示，不受时间和拥有数量限制
                 boolean isSystemReward = "系统奖励".equals(groupName);
-                
-                // 如果不是系统奖励，只统计当前可抽取的词条
+                                
+                // 计算词组中的有效词条（用于判断是否展示该词组）：
+                // 1. 系统奖励：所有词条
+                // 2. 普通词组：当前可抽取的词条 + 用户已拥有的词条（即使过期）
                 List<BotBaseWord> effectiveWords;
                 if (isSystemReward) {
                     effectiveWords = groupWords; // 系统奖励不受时间限制
                 } else {
+                    // 合并当前可抽取的词条和用户已择有的词条
                     effectiveWords = groupWords.stream()
-                            .filter(w -> availableWordIds.contains(w.getId()))
+                            .filter(w -> availableWordIds.contains(w.getId()) || ownedWordIds.contains(w.getId()))
                             .collect(Collectors.toList());
-                    
-                    // 如果没有可抽取的词条，跳过该词组
+                                    
+                    // 如果没有可抽取的词条也没有已拥有的词条，跳过该词组
                     if (effectiveWords.isEmpty()) {
                         continue;
                     }
                 }
-                
+                                
                 // 获取词组类型（取第一个词条的type）
                 String groupType = effectiveWords.get(0).getType();
-                
+                                
                 // 统计用户已拥有的词条数
                 int ownedCount = (int) effectiveWords.stream()
                         .filter(w -> ownedWordIds.contains(w.getId()))
                         .count();
-                
-                int totalCount = effectiveWords.size();
+                                
+                // 计算totalCount：
+                // - 如果全部词条都可抽取，totalCount = effectiveWords.size()
+                // - 如果有已下线但用户已拥有的词条，totalCount = groupWords.size()（该词组的全部词条数）
+                int totalCount;
+                long availableInGroup = groupWords.stream()
+                        .filter(w -> availableWordIds.contains(w.getId()))
+                        .count();
+                                
+                if (availableInGroup == groupWords.size() || isSystemReward) {
+                    // 全部词条都可抽取，或者是系统奖励
+                    totalCount = effectiveWords.size();
+                } else {
+                    // 有已下线的词条，但用户已拥有其中一些，应该展示该词组的全部词条数
+                    totalCount = groupWords.size();
+                }
                 
                 // 过滤规则：如果用户一个都没拥有，不展示该分组（系统奖励除外）
                 if (!isSystemReward && ownedCount == 0) {
@@ -1792,15 +1809,13 @@ public class UserBoxServiceImpl implements BaseService {
                 return handleAllWordsFilter(userId, 1);
             }
             
-            // 检查是否是词组名筛选
+            // 检查是否是翻页指令（优先处理）
             WordFilterContext filterContext = USER_WORD_FILTER_CONTEXT.get(userId);
             if (filterContext != null && filterContext.filterType.equals("ALL")) {
-                // 在全部模式下，可能是翻页指令
-                try {
-                    int page = Integer.parseInt(trimmedInstruction);
-                    return handleAllWordsFilter(userId, page);
-                } catch (NumberFormatException e) {
-                    // 不是数字，可能是词组名
+                if (trimmedInstruction.equals("下一页")) {
+                    return handleAllWordsFilter(userId, filterContext.currentPage + 1);
+                } else if (trimmedInstruction.equals("上一页")) {
+                    return handleAllWordsFilter(userId, filterContext.currentPage - 1);
                 }
             }
             
@@ -2009,8 +2024,11 @@ public class UserBoxServiceImpl implements BaseService {
             
             message.append("\n━━━━━━━━━━━━\n");
             message.append("💡 回复【序号】查看详情\n");
+            if (page > 1) {
+                message.append("💡 回复【上一页】翻到上一页\n");
+            }
             if (page < totalPages) {
-                message.append(String.format("💡 回复【%d】查看下一页\n", page + 1));
+                message.append("💡 回复【下一页】翻到下一页\n");
             }
             message.append("💡 回复【返回】返回主列表\n");
             message.append("💡 回复【取消】退出");

@@ -454,15 +454,17 @@ public class LoveLetterGamePlay extends BaseGamePlay {
         PlayerState targetState = playerStates.get(targetUserId);
         int operatorValue = operatorState.handCard.number;
         int targetValue = targetState.handCard.number;
+        
+        // 向所有人广播结果（不展示具体数值）
         String notification;
         if (operatorValue > targetValue) {
             targetState.alive = false;
-            notification = String.format("⚔️ %s『%d』vs %s『%d』，%s 出局！", operatorName, operatorValue, targetName, targetValue, targetName);
+            notification = String.format("⚔️ %s vs %s，%s 手牌更大，%s 出局！", operatorName, targetName, operatorName, targetName);
         } else if (operatorValue < targetValue) {
             operatorState.alive = false;
-            notification = String.format("⚔️ %s『%d』vs %s『%d』，%s 出局！", operatorName, operatorValue, targetName, targetValue, operatorName);
+            notification = String.format("⚔️ %s vs %s，%s 手牌更大，%s 出局！", operatorName, targetName, targetName, operatorName);
         } else {
-            notification = String.format("⚔️ %s『%d』vs %s『%d』，平局！", operatorName, operatorValue, targetName, targetValue);
+            notification = String.format("⚔️ %s vs %s，双方手牌相同，平局！", operatorName, targetName);
         }
         sendBroadcastMessage(notification);
         resetPendingAction();

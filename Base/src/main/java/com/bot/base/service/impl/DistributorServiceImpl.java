@@ -148,7 +148,7 @@ public class DistributorServiceImpl implements Distributor {
                     if (word != null) {
                         String prompt = SystemConfigCache.wordPrompt.get(word);
                         if (StrUtil.isNotEmpty(prompt)) {
-                            reqContent = String.format("(这个人的身份标志是【%s】，%s)%s", word, prompt, reqContent);
+                            reqContent = String.format("(这个人的身份标志是%s，%s)%s", word, prompt, reqContent);
                         }
                     }
                     if (TEMP_CHAT_RECORD.containsKey(groupId)) {

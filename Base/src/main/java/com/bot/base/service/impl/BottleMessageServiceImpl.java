@@ -74,13 +74,11 @@ public class BottleMessageServiceImpl implements BaseService {
                 return new CommonResp(String.format("匿名：\r\n%s", message.getContent()), ENRespType.TEXT.getType());
             }
             if (reqs.length >= 2) {
-                log.info("漂流瓶===>准备发送");
                 // 发送漂流瓶
                 String content = reqContent.replaceFirst("漂流瓶 ", "");
                 if (content.length() > 200) {
                     return new CommonResp("漂流瓶内容不能超过200字哦。", ENRespType.TEXT.getType());
                 }
-                log.info("漂流瓶===>进入校验逻辑");
                 // 查当前用户最近一条记录，防刷屏，15s内只能发送一条
                 BotBottleMessageExample example = new BotBottleMessageExample();
                 example.createCriteria().andUserIdEqualTo(token);
@@ -96,12 +94,10 @@ public class BottleMessageServiceImpl implements BaseService {
                         return new CommonResp("为防止刷屏，发送漂流瓶有15秒cd，请稍后再试~", ENRespType.TEXT.getType());
                     }
                 }
-                log.info("漂流瓶===>校验通过，进入审核逻辑");
                 // 审核
                 String reviewResult = this.review(content);
                 // 判断结果
                 if ("通过".equals(reviewResult)) {
-                    log.info("漂流瓶===>审核通过");
                     BotBottleMessage message = new BotBottleMessage();
                     message.setContent(content);
                     message.setUserId(token);
@@ -164,7 +160,6 @@ public class BottleMessageServiceImpl implements BaseService {
                 }
             }
         }
-        log.info("漂流瓶===>未匹配 直接返回");
         return null;
     }
 
