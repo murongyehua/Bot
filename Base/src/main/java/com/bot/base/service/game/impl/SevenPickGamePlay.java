@@ -142,10 +142,11 @@ public class SevenPickGamePlay extends BaseGamePlay {
             allCards.add(new Card(CardType.SCORE, "+6", 6));
             allCards.add(new Card(CardType.SCORE, "+8", 8));
             allCards.add(new Card(CardType.SCORE, "+10", 10));
+            allCards.add(new Card(CardType.BASIC, "0", 0));
         }
 
         // 行动牌:各4张
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 8; i++) {
             allCards.add(new Card(CardType.ACTION, "再翻三张", 0));
             allCards.add(new Card(CardType.ACTION, "冻结", 0));
             allCards.add(new Card(CardType.ACTION, "二次机会", 0));
@@ -204,14 +205,14 @@ public class SevenPickGamePlay extends BaseGamePlay {
             
             if (initialPlayerCount <= 3) {
                 // 少于等于3人：第一名3分，其他1分
-                gameScore = (i == 0) ? 3 : 1;
+                gameScore = (i == 0) ? 6 : 2;
             } else {
                 // 4人及以上：正常结算规则
                 switch (i) {
-                    case 0: gameScore = 10; break; // 第一名
-                    case 1: gameScore = 5; break;  // 第二名
-                    case 2: gameScore = 3; break;  // 第三名
-                    default: gameScore = 1;        // 其他参与者
+                    case 0: gameScore = 20; break; // 第一名
+                    case 1: gameScore = 10; break;  // 第二名
+                    case 2: gameScore = 6; break;  // 第三名
+                    default: gameScore = 2;        // 其他参与者
                 }
             }
             scores.put(userId, gameScore);

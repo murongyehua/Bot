@@ -29,9 +29,9 @@ public class RedPacketServiceImpl implements BaseService {
     @Resource
     private BotGameUserScoreMapper userScoreMapper;
 
-    private static final int NEED_SCORE = 1;
+    private static final int NEED_SCORE = 50;
 
-    private static final String ACTIVE_CODE = "test";
+    private static final String ACTIVE_CODE = "spring";
 
     @Override
     @Transactional(rollbackFor = Exception.class)
